@@ -39,12 +39,12 @@ public:
 
 	virtual void onMouseMove(const Point& delta_mouse_pos);
 private:
-	SwapChain* m_swap_chain;
-	VertexBuffer* m_vb;
-	IndexBuffer* m_ib;
-	VertexShader* m_vs;
-	PixelShader* m_ps;
-	ConstantBuffer* m_cb;
+	SwapChainPtr m_swap_chain;
+	VertexBufferPtr m_vb;
+	IndexBufferPtr m_ib;
+	VertexShaderPtr m_vs;
+	PixelShaderPtr m_ps;
+	ConstantBufferPtr m_cb;
 private:
 	float m_old_delta;
 	float m_new_delta;

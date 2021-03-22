@@ -1,9 +1,5 @@
 #include "Window.h"
-
-Window::Window()
-{
-}
-
+#include <exception>
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -14,11 +10,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		// Event fired when the window is created
 		// collected here..
-		Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
-		// .. and then stored for later lookup
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
-		window->setHWND(hwnd);
-		window->onCreate();
+
 		break;
 	}
 
@@ -26,7 +18,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		// Event fired when the window gets focus
 		Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-		window->onFocus();
+		if(window) window->onFocus();
 		break;
 	}
 
@@ -55,10 +47,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return NULL;
 }
 
-
-bool Window::init()
-{
-	//Setting up WNDCLASSEX object
+Window::Window()
+{//Setting up WNDCLASSEX object
 	WNDCLASSEX wc;
 	wc.cbClsExtra = NULL;
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -74,18 +64,18 @@ bool Window::init()
 	wc.lpfnWndProc = &WndProc;
 
 	if (!::RegisterClassEx(&wc)) // If the registration of class will fail, the function will return false
-		return false;
+		throw std::exception("Window not created successfully");
 
 	/*if (!window)
 		window = this;*/
 
 		//Creation of the window
 	m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"MyWindowClass", L"DirectX Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768,
-		NULL, NULL, NULL, this);
+		NULL, NULL, NULL, NULL);
 
 	//if the creation fail return false
 	if (!m_hwnd)
-		return false;
+		throw std::exception("Window not created successfully");
 
 	//show up the window
 	::ShowWindow(m_hwnd, SW_SHOW);
@@ -93,13 +83,17 @@ bool Window::init()
 
 	//set this flag to true to indicate that the window is initialized and running
 	m_is_run = true;
-
-	return true;
 }
 
 bool Window::broadcast()
 {
 	MSG msg;
+
+	if (!this->m_is_init) {
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+		this->onCreate();
+		m_is_init = true;
+	}
 
 	this->onUpdate();
 
@@ -114,18 +108,10 @@ bool Window::broadcast()
 	return true;
 }
 
-
-bool Window::release()
-{
-	//Destroy the window
-	if (!::DestroyWindow(m_hwnd))
-		return false;
-
-	return true;
-}
-
 bool Window::isRun()
 {
+	if(m_is_run)
+		broadcast();
 	return m_is_run;
 }
 
