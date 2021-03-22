@@ -17,7 +17,7 @@ struct constant
 	mat4 m_transform;
 	mat4 m_view;
 	mat4 m_projection;
-	unsigned int m_time;
+	unsigned int m_time=0;
 };
 
 AppWindow::AppWindow()
@@ -27,37 +27,19 @@ AppWindow::AppWindow()
 void AppWindow::update()
 {
 	constant cc;
-	cc.m_time = GetTickCount();
-
-	m_delta_pos += m_delta_time / 10.0f;
-
-	if (m_delta_pos > 1.0f)
-		m_delta_pos = 0;
+	cc.m_time = (unsigned int)GetTickCount64();
 
 	mat4 temp;
 
-	//cc.m_transform.setTranslation(vec3::lerp(vec3(-2, -2, 0), vec3(2, 2, 0), m_delta_pos));
-
-
-	m_delta_scale += m_delta_time / 0.55f;
-	
-	//cc.m_transform.setScale(vec3::lerp(vec3(0.5f, 0.5f, 0), vec3(1, 1, 0), (sin(m_delta_scale)+1.0f)/2.0f));
-
-	//temp.setTranslation(vec3::lerp(vec3(-1.5f, -1.5f, 0), vec3(1.5f, 1.5f, 0), m_delta_pos));
-
-	//cc.m_transform *= temp;
 	cc.m_transform.setScale(vec3(m_scale_cube, m_scale_cube, m_scale_cube));
 
 	temp.setIdentity();
-	//temp.setRotationZ(0.0f);
 	cc.m_transform *= temp;
 
 	temp.setIdentity();
-	//temp.setRotationY(m_rot_y);
 	cc.m_transform *= temp;
 
 	temp.setIdentity();
-	//temp.setRotationX(m_rot_x);
 	cc.m_transform *= temp;
 
 	mat4 world_cam;
@@ -153,7 +135,7 @@ void AppWindow::onCreate()
 
 	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	m_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
-	m_vb = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(vertex_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	m_vb = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(vertex_list, (UINT)sizeof(vertex), size_list, shader_byte_code, (UINT)size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
 
@@ -194,7 +176,7 @@ void AppWindow::onUpdate()
 	m_swap_chain->present(false);
 
 	m_old_delta = m_new_delta;
-	m_new_delta = ::GetTickCount64();
+	m_new_delta = (float)::GetTickCount64();
 
 	m_delta_time = m_old_delta?(m_new_delta - m_old_delta)/1000.0f:0;
 }

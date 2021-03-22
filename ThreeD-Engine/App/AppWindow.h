@@ -46,12 +46,12 @@ private:
 	PixelShaderPtr m_ps;
 	ConstantBufferPtr m_cb;
 private:
-	float m_old_delta;
-	float m_new_delta;
-	float m_delta_time;
+	float m_old_delta=0;
+	float m_new_delta=0;
+	float m_delta_time=0;
 
-	float m_delta_pos;
-	float m_delta_scale;
+	float m_delta_pos=0;
+	float m_delta_scale=1;
 
 	float m_rot_x=0;
 	float m_rot_y=0;

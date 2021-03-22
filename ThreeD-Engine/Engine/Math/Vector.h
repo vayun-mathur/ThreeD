@@ -57,7 +57,9 @@ public:
 
 class mat4 {
 public:
-	mat4() {}
+	mat4() {
+		setIdentity();
+	}
 
 	void setIdentity()
 	{
@@ -107,7 +109,7 @@ public:
 		mat[1][1] = cosf(z);
 	}
 
-	float getDeterminant() 
+	float getDeterminant()
 	{
 		vec4 minor, v1, v2, v3;
 		float det;
@@ -123,7 +125,7 @@ public:
 		return det;
 	}
 
-	void inverse() 
+	void inverse()
 	{
 		int a, i, j;
 		mat4 out;
@@ -148,16 +150,16 @@ public:
 			}
 			v.cross(vec[0], vec[1], vec[2]);
 
-			out.mat[0][i] = pow(-1.0f, i) * v.x / det;
-			out.mat[1][i] = pow(-1.0f, i) * v.y / det;
-			out.mat[2][i] = pow(-1.0f, i) * v.z / det;
-			out.mat[3][i] = pow(-1.0f, i) * v.w / det;
+			out.mat[0][i] = (i & 1 ? -1.0f : 1.0f) * v.x / det;
+			out.mat[1][i] = (i & 1 ? -1.0f : 1.0f) * v.y / det;
+			out.mat[2][i] = (i & 1 ? -1.0f : 1.0f) * v.z / det;
+			out.mat[3][i] = (i & 1 ? -1.0f : 1.0f) * v.w / det;
 		}
 
 		this->setMatrix(out);
 	}
 
-	void setMatrix(const mat4& matrix) 
+	void setMatrix(const mat4& matrix)
 	{
 		::memcpy(mat, matrix.mat, sizeof(float) * 16);
 	}
@@ -193,7 +195,7 @@ public:
 		return *this;
 	}
 
-	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar) 
+	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar)
 	{
 		setIdentity();
 		float yscale = 1.0f / tanf(fov / 2.0f);
@@ -202,10 +204,10 @@ public:
 		mat[1][1] = yscale;
 		mat[2][2] = zfar / (zfar - znear);
 		mat[2][3] = 1.0f;
-		mat[3][2] = (-znear*zfar)/(zfar-znear);
+		mat[3][2] = (-znear * zfar) / (zfar - znear);
 	}
 
-	void setOrthoLH(float width, float height, float near_plane, float far_plane) 
+	void setOrthoLH(float width, float height, float near_plane, float far_plane)
 	{
 		setIdentity();
 		mat[0][0] = 2.0f / width;
@@ -214,7 +216,7 @@ public:
 		mat[3][2] = -(near_plane / (far_plane - near_plane));
 	}
 
-	~mat4() 
+	~mat4()
 	{
 
 	}
