@@ -1,6 +1,35 @@
 #pragma once
 #include <memory>
 
+class vec2 {
+public:
+	vec2() : x(0), y(0) {}
+	vec2(float x, float y) : x(x), y(y) {}
+	vec2(const vec2& vector) : x(vector.x), y(vector.y) {}
+
+	static vec2 lerp(const vec2& start, const vec2& end, float delta) {
+		vec2 v;
+		v.x = start.x * (1.0f - delta) + end.x * delta;
+		v.y = start.y * (1.0f - delta) + end.y * delta;
+		return v;
+	}
+
+	vec2 operator*(float scalar)
+	{
+		return vec2(x * scalar, y * scalar);
+	}
+
+	vec2 operator+(const vec2& other)
+	{
+		return vec2(x + other.x, y + other.y);
+	}
+
+	~vec2() {
+
+	}
+public:
+	float x, y;
+};
 
 class vec3 {
 public:

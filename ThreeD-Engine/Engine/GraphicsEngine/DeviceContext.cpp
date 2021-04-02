@@ -5,6 +5,7 @@
 #include "ConstantBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "Engine/ResourceManager/TextureManager/Texture.h"
 #include <exception>
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
@@ -18,14 +19,14 @@ DeviceContext::~DeviceContext()
 	m_device_context->Release();
 }
 
-void DeviceContext::clearRenderTargetColor(SwapChainPtr swap_chain, float r, float g, float b, float a)
+void DeviceContext::clearRenderTargetColor(const SwapChainPtr& swap_chain, float r, float g, float b, float a)
 {
 	FLOAT color[] = { r, g, b, a };
 	m_device_context->ClearRenderTargetView(swap_chain->m_rtv, color);
 	m_device_context->OMSetRenderTargets(1, &swap_chain->m_rtv, NULL);
 }
 
-void DeviceContext::setVertexBuffer(VertexBufferPtr vertex_buffer)
+void DeviceContext::setVertexBuffer(const VertexBufferPtr& vertex_buffer)
 {
 	UINT stride = vertex_buffer->m_size_vertex;
 	UINT offset = 0;
@@ -33,7 +34,7 @@ void DeviceContext::setVertexBuffer(VertexBufferPtr vertex_buffer)
 	m_device_context->IASetInputLayout(vertex_buffer->m_layout);
 }
 
-void DeviceContext::setIndexBuffer(IndexBufferPtr index_buffer)
+void DeviceContext::setIndexBuffer(const IndexBufferPtr& index_buffer)
 {
 	m_device_context->IASetIndexBuffer(index_buffer->m_buffer, DXGI_FORMAT_R32_UINT, 0);
 }
@@ -66,21 +67,31 @@ void DeviceContext::setViewportSize(UINT width, UINT height)
 	m_device_context->RSSetViewports(1, &vp);
 }
 
-void DeviceContext::setVertexShader(VertexShaderPtr vertex_shader)
+void DeviceContext::setVertexShader(const VertexShaderPtr& vertex_shader)
 {
 	m_device_context->VSSetShader(vertex_shader->m_vs, nullptr, 0);
 }
-void DeviceContext::setPixelShader(PixelShaderPtr pixel_shader)
+void DeviceContext::setPixelShader(const PixelShaderPtr& pixel_shader)
 {
 	m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0);
 }
 
-void DeviceContext::setConstantBuffer(VertexShaderPtr vertex_shader, ConstantBufferPtr buffer)
+void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const TexturePtr& texture)
+{
+	m_device_context->VSSetShaderResources(0, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const TexturePtr& texture)
+{
+	m_device_context->PSSetShaderResources(0, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& buffer)
 {
 	m_device_context->VSSetConstantBuffers(0, 1, &buffer->m_buffer);
 }
 
-void DeviceContext::setConstantBuffer(PixelShaderPtr pixel_shader, ConstantBufferPtr buffer)
+void DeviceContext::setConstantBuffer(const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& buffer)
 {
 	m_device_context->PSSetConstantBuffers(0, 1, &buffer->m_buffer);
 }

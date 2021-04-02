@@ -6,9 +6,7 @@
 struct vertex
 {
 	vec3 position;
-	vec3 position1;
-	vec3 color;
-	vec3 color1;
+	vec2 texcoord;
 };
 
 __declspec(align(16))
@@ -90,22 +88,70 @@ void AppWindow::onCreate()
 	InputSystem::get()->addListener(this);
 	InputSystem::get()->showCursor(false);
 
+
+	m_wood_tex = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
+
+
+
+
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
 	m_world_cam.setTranslation(vec3(0, 0, -2));
 
+	vec3 position_list[] =
+	{
+		{vec3(-0.5f,-0.5f,-0.5f)},
+		{vec3(-0.5f, 0.5f,-0.5f)},
+		{vec3(0.5f, 0.5f,-0.5f)},
+		{vec3(0.5f, -0.5f,-0.5f)},
+
+		{vec3(0.5f,-0.5f,0.5f)},
+		{vec3(0.5f, 0.5f,0.5f)},
+		{vec3(-0.5f, 0.5f,0.5f)},
+		{vec3(-0.5f, -0.5f,0.5f)}
+	};
+
+
+	vec2 texcoord_list[] =
+	{
+		{vec2(0.0f, 0.0f)},
+		{vec2(0.0f, 1.0f)},
+		{vec2(1.0f, 0.0f)},
+		{vec2(1.0f, 1.0f)},
+	};
+
 	vertex vertex_list[] =
 	{
-		{vec3(-0.5f,-0.5f,-0.5f),	vec3(1,0,0),	vec3(0.2f,0,0)},
-		{vec3(-0.5f, 0.5f,-0.5f),	vec3(1,1,0),	vec3(0.2f,0.2f,0)},
-		{vec3(0.5f, 0.5f,-0.5f),	vec3(1,1,0),	vec3(0.2f,0.2f,0)},
-		{vec3(0.5f, -0.5f,-0.5f),	vec3(1,0,0),	vec3(0.2f,0,0)},
+		{position_list[0], texcoord_list[1]},
+		{position_list[1], texcoord_list[0]},
+		{position_list[2], texcoord_list[2]},
+		{position_list[3], texcoord_list[3]},
 
-		{vec3(0.5f,-0.5f,0.5f),		vec3(0,1,0),	vec3(0,0.2f,0)},
-		{vec3(0.5f, 0.5f,0.5f),		vec3(0,1,1),	vec3(0,0.2f,0.2f)},
-		{vec3(-0.5f, 0.5f,0.5f),	vec3(0,1,1),	vec3(0,0.2f,0.2f)},
-		{vec3(-0.5f, -0.5f,0.5f),	vec3(0,1,0),	vec3(0,0.2f,0)}
+		{position_list[4], texcoord_list[1]},
+		{position_list[5], texcoord_list[0]},
+		{position_list[6], texcoord_list[2]},
+		{position_list[7], texcoord_list[3]},
+
+		{position_list[1], texcoord_list[1]},
+		{position_list[6], texcoord_list[0]},
+		{position_list[5], texcoord_list[2]},
+		{position_list[2], texcoord_list[3]},
+
+		{position_list[7], texcoord_list[1]},
+		{position_list[0], texcoord_list[0]},
+		{position_list[3], texcoord_list[2]},
+		{position_list[4], texcoord_list[3]},
+
+		{position_list[3], texcoord_list[1]},
+		{position_list[2], texcoord_list[0]},
+		{position_list[5], texcoord_list[2]},
+		{position_list[4], texcoord_list[3]},
+
+		{position_list[7], texcoord_list[1]},
+		{position_list[6], texcoord_list[0]},
+		{position_list[1], texcoord_list[2]},
+		{position_list[0], texcoord_list[3]},
 	};
 
 	UINT size_list = ARRAYSIZE(vertex_list);
@@ -114,16 +160,21 @@ void AppWindow::onCreate()
 	{
 		0, 1, 2,
 		2, 3, 0,
+
 		4, 5, 6,
 		6, 7, 4,
-		1, 6, 5,
-		5, 2, 1,
-		7, 0, 3,
-		3, 4, 7,
-		3, 2, 5,
-		5, 4, 3,
-		7, 6, 1,
-		1, 0, 7
+
+		8, 9, 10,
+		10, 11, 8,
+
+		12, 13, 14,
+		14, 15, 12,
+
+		16, 17, 18,
+		18, 19, 16,
+
+		20, 21, 22,
+		22, 23, 20
 	};
 
 	UINT size_index_list = ARRAYSIZE(index_list);
@@ -168,6 +219,9 @@ void AppWindow::onUpdate()
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
+
+
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, m_wood_tex);
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
