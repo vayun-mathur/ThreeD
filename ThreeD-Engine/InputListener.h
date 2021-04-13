@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Math/Point.h"
+#include "Point.h"
 
 class InputListener
 {

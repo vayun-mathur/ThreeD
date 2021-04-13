@@ -1,15 +1,15 @@
 #pragma once
-#include "Engine/Window/Window.h"
-#include "Engine/GraphicsEngine/GraphicsEngine.h"
-#include "Engine/GraphicsEngine/SwapChain.h"
-#include "Engine/GraphicsEngine/DeviceContext.h"
-#include "Engine/GraphicsEngine/VertexBuffer.h"
-#include "Engine/GraphicsEngine/IndexBuffer.h"
-#include "Engine/GraphicsEngine/ConstantBuffer.h"
-#include "Engine/GraphicsEngine/VertexShader.h"
-#include "Engine/GraphicsEngine/PixelShader.h"
-#include "Engine/InputSystem/InputListener.h"
-#include "Engine/Math/Vector.h"
+#include "Window.h"
+#include "GraphicsEngine.h"
+#include "SwapChain.h"
+#include "DeviceContext.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "ConstantBuffer.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
+#include "InputListener.h"
+#include "Vector.h"
 
 class AppWindow : public Window, public InputListener
 {

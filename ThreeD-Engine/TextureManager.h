@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/ResourceManager/ResourceManager.h"
+#include "ResourceManager.h"
 
 class TextureManager : public ResourceManager
 {

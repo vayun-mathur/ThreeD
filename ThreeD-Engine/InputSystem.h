@@ -1,7 +1,7 @@
 #pragma once
 #include "InputListener.h"
 #include <set>
-#include "Engine/Math/Point.h"
+#include "Point.h"
 
 
 class InputSystem

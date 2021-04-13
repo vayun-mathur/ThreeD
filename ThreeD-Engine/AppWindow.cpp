@@ -1,7 +1,7 @@
 #include "AppWindow.h"
 #include <Windows.h>
-#include "Engine/Math/Vector.h"
-#include "Engine/InputSystem/InputSystem.h"
+#include "Vector.h"
+#include "InputSystem.h"
 
 struct vertex
 {

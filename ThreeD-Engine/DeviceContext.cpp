@@ -5,7 +5,7 @@
 #include "ConstantBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
-#include "Engine/ResourceManager/TextureManager/Texture.h"
+#include "Texture.h"
 #include <exception>
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)

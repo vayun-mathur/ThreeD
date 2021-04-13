@@ -2,7 +2,7 @@
 #include <d3d11.h>
 #include "prerequisites.h"
 #include "RenderSystem.h"
-#include "Engine/ResourceManager/TextureManager/TextureManager.h"
+#include "TextureManager.h"
 
 class GraphicsEngine
 {
