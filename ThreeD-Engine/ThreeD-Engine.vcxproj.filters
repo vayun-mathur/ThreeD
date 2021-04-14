@@ -16,50 +16,41 @@
     <Filter Include="Engine\Math">
       <UniqueIdentifier>{6884fc2d-837f-4cab-9c9e-71bde922394e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\ResourceManager">
-      <UniqueIdentifier>{c6828e4d-8bd4-47ca-84fa-8b0d97da4973}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Window">
       <UniqueIdentifier>{0b9f6d4b-9e53-4d50-baab-d5b194af4ee9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\ResourceManager\Resource">
-      <UniqueIdentifier>{32d52072-c4f5-4d56-b166-08ff09ee4507}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ResourceManager\ResourceManager">
-      <UniqueIdentifier>{dce7d3e0-e4bf-4789-8ea4-e42fbdb7e8f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ResourceManager\TextureManager">
-      <UniqueIdentifier>{ef093482-2d33-4f58-8d80-9b3d43a1510a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ResourceManager\TextureManager\TextureManager">
-      <UniqueIdentifier>{0cbbaef6-4e2e-4b55-9458-9aa2ea7862be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ResourceManager\TextureManager\Texture">
-      <UniqueIdentifier>{6fa87dab-59e2-46fc-95db-980c1bd16bee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\ConstantBuffer">
-      <UniqueIdentifier>{7620a68f-31cd-495c-af30-d2759e5134b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\DeviceContext">
-      <UniqueIdentifier>{14a4d1dd-f0fd-438c-bb9e-72dfd25deb5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\IndexBuffer">
-      <UniqueIdentifier>{c25186ae-57c7-4a14-9a75-00dc0d54d620}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\VertexShader">
-      <UniqueIdentifier>{65d0f7b0-a7bf-43a3-84f8-688a7acf85f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\VertexBuffer">
-      <UniqueIdentifier>{8f5fefda-820a-4f9f-b4ab-9b56f7bb5d57}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\PixelShader">
-      <UniqueIdentifier>{23ef5a09-51f6-45ea-8a1a-02bf3f818239}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\GraphicsEngine\SwapChain">
-      <UniqueIdentifier>{ebe63758-b028-4e1e-8799-a1e10ab6a7eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\GraphicsEngine\RenderSystem">
       <UniqueIdentifier>{57255a3c-1d90-47a5-a14c-0dd83dc30474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\SwapChain">
+      <UniqueIdentifier>{ebe63758-b028-4e1e-8799-a1e10ab6a7eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\VertexBuffer">
+      <UniqueIdentifier>{8f5fefda-820a-4f9f-b4ab-9b56f7bb5d57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\VertexShader">
+      <UniqueIdentifier>{65d0f7b0-a7bf-43a3-84f8-688a7acf85f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\PixelShader">
+      <UniqueIdentifier>{23ef5a09-51f6-45ea-8a1a-02bf3f818239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\DeviceContext">
+      <UniqueIdentifier>{14a4d1dd-f0fd-438c-bb9e-72dfd25deb5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\IndexBuffer">
+      <UniqueIdentifier>{c25186ae-57c7-4a14-9a75-00dc0d54d620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\ConstantBuffer">
+      <UniqueIdentifier>{7620a68f-31cd-495c-af30-d2759e5134b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\ResourceManager">
+      <UniqueIdentifier>{c6828e4d-8bd4-47ca-84fa-8b0d97da4973}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\ResourceManager\TextureManager">
+      <UniqueIdentifier>{ef093482-2d33-4f58-8d80-9b3d43a1510a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\ResourceManager\MeshManager">
+      <UniqueIdentifier>{20e6bc3f-1e9f-4aaa-b848-b59f2e29edef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,50 +60,56 @@
     <ClCompile Include="Window.cpp">
       <Filter>Engine\Window</Filter>
     </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Engine\ResourceManager\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Engine\ResourceManager\ResourceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>Engine\ResourceManager\TextureManager\TextureManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Engine\ResourceManager\TextureManager\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="InputSystem.cpp">
       <Filter>Engine\InputSystem</Filter>
     </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
-      <Filter>Engine\GraphicsEngine\ConstantBuffer</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="DeviceContext.cpp">
-      <Filter>Engine\GraphicsEngine\DeviceContext</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
     </ClCompile>
     <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Engine\GraphicsEngine\IndexBuffer</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\IndexBuffer</Filter>
     </ClCompile>
     <ClCompile Include="PixelShader.cpp">
-      <Filter>Engine\GraphicsEngine\PixelShader</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\PixelShader</Filter>
     </ClCompile>
     <ClCompile Include="RenderSystem.cpp">
       <Filter>Engine\GraphicsEngine\RenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="SwapChain.cpp">
-      <Filter>Engine\GraphicsEngine\SwapChain</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\SwapChain</Filter>
     </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Engine\GraphicsEngine\VertexBuffer</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\VertexBuffer</Filter>
     </ClCompile>
     <ClCompile Include="VertexShader.cpp">
-      <Filter>Engine\GraphicsEngine\VertexShader</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\VertexShader</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine.cpp">
       <Filter>Engine\GraphicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager\MeshManager</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager\MeshManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,18 +125,6 @@
     <ClInclude Include="Vector.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Engine\ResourceManager\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Engine\ResourceManager\ResourceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Engine\ResourceManager\TextureManager\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Engine\ResourceManager\TextureManager\TextureManager</Filter>
-    </ClInclude>
     <ClInclude Include="InputListener.h">
       <Filter>Engine\InputSystem</Filter>
     </ClInclude>
@@ -150,31 +135,57 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
-      <Filter>Engine\GraphicsEngine\ConstantBuffer</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="DeviceContext.h">
-      <Filter>Engine\GraphicsEngine\DeviceContext</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
-      <Filter>Engine\GraphicsEngine\IndexBuffer</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\IndexBuffer</Filter>
     </ClInclude>
     <ClInclude Include="PixelShader.h">
-      <Filter>Engine\GraphicsEngine\PixelShader</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\PixelShader</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>Engine\GraphicsEngine\RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="SwapChain.h">
-      <Filter>Engine\GraphicsEngine\SwapChain</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\SwapChain</Filter>
     </ClInclude>
     <ClInclude Include="VertexBuffer.h">
-      <Filter>Engine\GraphicsEngine\VertexBuffer</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\VertexBuffer</Filter>
     </ClInclude>
     <ClInclude Include="VertexShader.h">
-      <Filter>Engine\GraphicsEngine\VertexShader</Filter>
+      <Filter>Engine\GraphicsEngine\RenderSystem\VertexShader</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine.h">
       <Filter>Engine\GraphicsEngine</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager\MeshManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshManager.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager\MeshManager</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexMesh.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexMeshLayoutShader.hlsl">
+      <Filter>Engine\GraphicsEngine</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
-#include "App/AppWindow.h"
-#include "Engine/InputSystem/InputSystem.h"
+#include "AppWindow.h"
+#include "InputSystem.h"
 
 int main() {
 	try {
