@@ -55,9 +55,12 @@ private:
 
 	float m_delta_pos=0;
 	float m_delta_scale=1;
+	float m_delta_rot;
 
 	float m_rot_x=0;
 	float m_rot_y=0;
+
+	float m_light_rot_y = 0.0f;
 
 	float m_scale_cube = 1;
 

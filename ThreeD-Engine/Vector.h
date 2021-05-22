@@ -67,6 +67,7 @@ public:
 	vec4() : x(0), y(0), z(0), w(0) {}
 	vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 	vec4(const vec4& vector) : x(vector.x), y(vector.y), z(vector.z), w(vector.w) {}
+	vec4(const vec3& vector) : x(vector.x), y(vector.y), z(vector.z), w(1) {}
 
 	void cross(vec4& v1, vec4& v2, vec4& v3)
 	{
@@ -101,14 +102,12 @@ public:
 
 	void setTranslation(const vec3& translation)
 	{
-		setIdentity();
 		mat[3][0] = translation.x;
 		mat[3][1] = translation.y;
 		mat[3][2] = translation.z;
 	}
 
 	void setScale(const vec3& scale) {
-		setIdentity();
 		mat[0][0] = scale.x;
 		mat[1][1] = scale.y;
 		mat[2][2] = scale.z;
@@ -220,13 +219,12 @@ public:
 					+ mat[i][3] * matrix.mat[3][j];
 			}
 		}
-		::memcpy(mat, out.mat, sizeof(float) * 16);
+		setMatrix(out);
 		return *this;
 	}
 
 	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar)
 	{
-		setIdentity();
 		float yscale = 1.0f / tanf(fov / 2.0f);
 		float xscale = yscale / aspect;
 		mat[0][0] = xscale;
@@ -250,5 +248,5 @@ public:
 
 	}
 private:
-	float mat[4][4];
+	float mat[4][4] = {};
 };
