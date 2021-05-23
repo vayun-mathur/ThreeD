@@ -173,6 +173,8 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
+    <ClCompile Include="MeshObject.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -188,9 +190,11 @@
     <ClInclude Include="AppWindow.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
+    <ClInclude Include="MeshObject.h" />
     <ClInclude Include="prerequisites.h" />
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
     <ClInclude Include="Window.h" />

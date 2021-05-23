@@ -11,6 +11,8 @@
 #include "InputListener.h"
 #include "Mesh.h"
 #include "Vector.h"
+#include "SceneObject.h"
+#include "MeshObject.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -41,28 +43,18 @@ public:
 	virtual void onMouseMove(const Point& delta_mouse_pos);
 private:
 	SwapChainPtr m_swap_chain;
-	VertexBufferPtr m_vb;
-	IndexBufferPtr m_ib;
-	VertexShaderPtr m_vs;
-	PixelShaderPtr m_ps;
 	ConstantBufferPtr m_cb;
-	TexturePtr m_wood_tex;
-	MeshPtr m_mesh;
+private:
+	SceneObjectPtr m_root;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;
 	float m_delta_time=0;
 
-	float m_delta_pos=0;
-	float m_delta_scale=1;
-	float m_delta_rot;
-
 	float m_rot_x=0;
 	float m_rot_y=0;
 
 	float m_light_rot_y = 0.0f;
-
-	float m_scale_cube = 1;
 
 	float m_forward = 0.0f;
 	float m_rightward = 0.0f;

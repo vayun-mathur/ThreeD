@@ -52,6 +52,15 @@
     <Filter Include="Engine\GraphicsEngine\ResourceManager\MeshManager">
       <UniqueIdentifier>{20e6bc3f-1e9f-4aaa-b848-b59f2e29edef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem">
+      <UniqueIdentifier>{de63b8e1-7b0d-4447-8bf3-1f172781363b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\SceneSystem\SceneObject">
+      <UniqueIdentifier>{fbcef247-6b55-4ab3-9683-1660b66420d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\SceneSystem\MeshObject">
+      <UniqueIdentifier>{322f6190-94cc-425e-957a-a8428005425f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -110,6 +119,12 @@
     </ClCompile>
     <ClCompile Include="MeshManager.cpp">
       <Filter>Engine\GraphicsEngine\ResourceManager\MeshManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Engine\SceneSystem\SceneObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject.cpp">
+      <Filter>Engine\SceneSystem\MeshObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +196,12 @@
     </ClInclude>
     <ClInclude Include="VertexMesh.h">
       <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Engine\SceneSystem\SceneObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject.h">
+      <Filter>Engine\SceneSystem\MeshObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
