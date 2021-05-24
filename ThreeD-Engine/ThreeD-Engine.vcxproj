@@ -177,6 +177,7 @@
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshObject.cpp" />
     <ClCompile Include="SceneObject.cpp" />
+    <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="SceneObject.h" />
+    <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
     <ClInclude Include="Window.h" />
@@ -240,6 +242,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="scene.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

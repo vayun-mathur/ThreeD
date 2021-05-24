@@ -25,7 +25,7 @@ AppWindow::AppWindow()
 void AppWindow::update()
 {
 	//light
-	DirectionalLightObjectPtr light = m_root->getChild<DirectionalLightObject>("light");
+	DirectionalLightObjectPtr light = m_scene->getLight();
 
 	mat4 m_light_rot_matrix;
 	m_light_rot_matrix.setIdentity();
@@ -41,7 +41,7 @@ void AppWindow::setConstantBuffer()
 	constant cc;
 
 	//light
-	DirectionalLightObjectPtr light = m_root->getChild<DirectionalLightObject>("light");
+	DirectionalLightObjectPtr light = m_scene->getLight();
 	cc.m_light_direction = light->getDirection();
 
 	//transform
@@ -49,7 +49,7 @@ void AppWindow::setConstantBuffer()
 	cc.m_transform.setScale(vec3(4, 4, 4));
 
 	//camera
-	CameraObjectPtr cam = m_root->getChild<CameraObject>("camera");
+	CameraObjectPtr cam = m_scene->getCamera();
 	cc.m_view = cam->getViewMatrix();
 	cc.m_projection = cam->getProjectionMatrix();
 	cc.m_camera_position = cam->getCameraPosition();
@@ -69,14 +69,7 @@ void AppWindow::onCreate()
 	InputSystem::get()->addListener(this);
 	InputSystem::get()->showCursor(false);
 
-	m_root = std::make_shared<SceneObject>("root");
-	MeshObjectPtr mesh = std::make_shared<MeshObject>("mesh", L"Assets\\Meshes\\statue.obj", L"Assets\\Textures\\brick.png");
-	m_root->addChild(mesh);
-	CameraObjectPtr camera = std::make_shared<CameraObject>("camera");
-	InputSystem::get()->addListener(camera.get());
-	m_root->addChild(camera);
-	DirectionalLightObjectPtr light = std::make_shared<DirectionalLightObject>("light", vec3(1, 1, 1), vec3(0, 0, 1));
-	m_root->addChild(light);
+	m_scene = new SceneSystem(L"scene.txt");
 
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
@@ -91,7 +84,7 @@ void AppWindow::onUpdate()
 
 	InputSystem::get()->update();
 
-	m_root->update(m_delta_time);
+	m_scene->update(m_delta_time);
 
 	update();
 	setConstantBuffer();
@@ -103,7 +96,7 @@ void AppWindow::onUpdate()
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
-	m_root->render(m_cb);
+	m_scene->render(m_cb);
 	m_swap_chain->present(true);
 
 	m_old_delta = m_new_delta;
@@ -120,13 +113,13 @@ void AppWindow::onDestroy()
 void AppWindow::onFocus()
 {
 	InputSystem::get()->addListener(this);
-	InputSystem::get()->addListener(m_root->getChild<CameraObject>("camera").get());
+	InputSystem::get()->addListener(m_scene->getCamera().get());
 }
 
 void AppWindow::onKillFocus()
 {
 	InputSystem::get()->removeListener(this);
-	InputSystem::get()->removeListener(m_root->getChild<CameraObject>("camera").get());
+	InputSystem::get()->removeListener(m_scene->getCamera().get());
 }
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)

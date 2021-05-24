@@ -11,8 +11,7 @@
 #include "InputListener.h"
 #include "Mesh.h"
 #include "Vector.h"
-#include "SceneObject.h"
-#include "MeshObject.h"
+#include "SceneSystem.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -48,7 +47,7 @@ private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 private:
-	SceneObjectPtr m_root;
+	SceneSystem* m_scene;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;

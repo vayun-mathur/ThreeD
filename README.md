@@ -1,30 +1,45 @@
 # ThreeD Game Engine
-This is a 3D game engine for Windows. At the moment, this project is just starting, and not many features are implemented yet.
+This is a 3D game engine for Windows.
 ### Current Features
 1. Creating a window
-2. Basic Rendering
-3. Input System
+2. Rendering
+3. Input 
+4. Scene System
 
 ### Currently Working On
-* 3D Graphics Engine
-#### Completed
+#### 3D Graphics Engine
+##### Completed
 1. Rendering Background Color
 2. Render triangles
 3. Render quads
 4. Shaders
 5. Transformations
 6. Rendering 3D Objects
-#### TODO
-1. Camera
-2. Texturing
-3. Loading Model
+7. Camera
+8. Texturing
+9. Loading Model
+10. Directional Light
+##### TODO
+1. Point Light
+2. Spot Light
+3. Skybox
+4. 3rd Person Camera
+#### Scene System
+##### Completed
+1. SceneSystem class
+2. Scene Objects
+3. Mesh Object
+4. Directional Light Object
+5. Reading from scene file
+##### TODO
+1. Script Object
+
 
 ### Features to come
 
 1. Audio System
 2. GUI System
-3. Entity System
-4. Fonts
+3. Fonts
 
 ## Getting Started
 ### Installation

@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include "prerequisites.h"
-class AppWindow;
+class SceneSystem;
 class SceneObject
 {
 public:
@@ -27,5 +27,5 @@ private:
 	std::string m_name;
 	std::map<std::string, SceneObjectPtr> m_children;
 private:
-	friend class AppWindow;
+	friend class SceneSystem;
 };

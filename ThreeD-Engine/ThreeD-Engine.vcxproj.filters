@@ -138,6 +138,9 @@
     <ClCompile Include="DirectionalLightObject.cpp">
       <Filter>Engine\SceneSystem\DirectionalLightObject</Filter>
     </ClCompile>
+    <ClCompile Include="SceneSystem.cpp">
+      <Filter>Engine\SceneSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -221,6 +224,9 @@
     <ClInclude Include="DirectionalLightObject.h">
       <Filter>Engine\SceneSystem\DirectionalLightObject</Filter>
     </ClInclude>
+    <ClInclude Include="SceneSystem.h">
+      <Filter>Engine\SceneSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -232,5 +238,10 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>App</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="scene.txt">
+      <Filter>App</Filter>
+    </Text>
   </ItemGroup>
 </Project>
