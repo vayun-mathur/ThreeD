@@ -2,7 +2,18 @@
 #include <Windows.h>
 #include "Vector.h"
 #include "CameraObject.h"
+#include "DirectionalLightObject.h"
 #include "InputSystem.h"
+
+__declspec(align(16))
+struct constant
+{
+	mat4 m_transform;
+	mat4 m_view;
+	mat4 m_projection;
+	vec4 m_light_direction;
+	vec4 m_camera_position;
+};
 
 AppWindow* AppWindow::s_main;
 
@@ -13,7 +24,38 @@ AppWindow::AppWindow()
 
 void AppWindow::update()
 {
-	
+	//light
+	DirectionalLightObjectPtr light = m_root->getChild<DirectionalLightObject>("light");
+
+	mat4 m_light_rot_matrix;
+	m_light_rot_matrix.setIdentity();
+	m_light_rot_matrix.setRotationY(m_light_rot_y);
+
+	m_light_rot_y += 0.707f * m_delta_time;
+
+	light->setDirection(m_light_rot_matrix.getZDirection());
+}
+
+void AppWindow::setConstantBuffer()
+{
+	constant cc;
+
+	//light
+	DirectionalLightObjectPtr light = m_root->getChild<DirectionalLightObject>("light");
+	cc.m_light_direction = light->getDirection();
+
+	//transform
+	cc.m_transform.setIdentity();
+	cc.m_transform.setScale(vec3(4, 4, 4));
+
+	//camera
+	CameraObjectPtr cam = m_root->getChild<CameraObject>("camera");
+	cc.m_view = cam->getViewMatrix();
+	cc.m_projection = cam->getProjectionMatrix();
+	cc.m_camera_position = cam->getCameraPosition();
+
+
+	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
 
 AppWindow::~AppWindow()
@@ -33,9 +75,14 @@ void AppWindow::onCreate()
 	CameraObjectPtr camera = std::make_shared<CameraObject>("camera");
 	InputSystem::get()->addListener(camera.get());
 	m_root->addChild(camera);
+	DirectionalLightObjectPtr light = std::make_shared<DirectionalLightObject>("light", vec3(1, 1, 1), vec3(0, 0, 1));
+	m_root->addChild(light);
 
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
+
+	constant cc;
+	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 }
 
 void AppWindow::onUpdate()
@@ -47,6 +94,7 @@ void AppWindow::onUpdate()
 	m_root->update(m_delta_time);
 
 	update();
+	setConstantBuffer();
 
 	//CLEAR THE RENDER TARGET 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
@@ -55,8 +103,7 @@ void AppWindow::onUpdate()
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
-	CameraObjectPtr cam = std::reinterpret_pointer_cast<CameraObject>(m_root->getChild("camera"));
-	m_root->render(cam->getConstantBuffer());
+	m_root->render(m_cb);
 	m_swap_chain->present(true);
 
 	m_old_delta = m_new_delta;
@@ -73,13 +120,13 @@ void AppWindow::onDestroy()
 void AppWindow::onFocus()
 {
 	InputSystem::get()->addListener(this);
-	InputSystem::get()->addListener(std::reinterpret_pointer_cast<CameraObject>(m_root->getChild("camera")).get());
+	InputSystem::get()->addListener(m_root->getChild<CameraObject>("camera").get());
 }
 
 void AppWindow::onKillFocus()
 {
 	InputSystem::get()->removeListener(this);
-	InputSystem::get()->removeListener(std::reinterpret_pointer_cast<CameraObject>(m_root->getChild("camera")).get());
+	InputSystem::get()->removeListener(m_root->getChild<CameraObject>("camera").get());
 }
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)

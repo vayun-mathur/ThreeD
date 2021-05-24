@@ -64,6 +64,9 @@
     <Filter Include="Engine\SceneSystem\CameraObject">
       <UniqueIdentifier>{a199c7ac-c279-4e95-ac86-ebe3a38f43f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\DirectionalLightObject">
+      <UniqueIdentifier>{00000c63-7da0-4856-a113-73f43f4ad9bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -131,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="CameraObject.cpp">
       <Filter>Engine\SceneSystem\CameraObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLightObject.cpp">
+      <Filter>Engine\SceneSystem\DirectionalLightObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="CameraObject.h">
       <Filter>Engine\SceneSystem\CameraObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLightObject.h">
+      <Filter>Engine\SceneSystem\DirectionalLightObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

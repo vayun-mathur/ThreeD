@@ -19,6 +19,7 @@ class MeshManager;
 class SceneObject;
 class MeshObject;
 class CameraObject;
+class DirectionalLightObject;
 
 typedef std::shared_ptr<SwapChain> SwapChainPtr;
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -33,3 +34,4 @@ typedef std::shared_ptr<Mesh> MeshPtr;
 typedef std::shared_ptr<SceneObject> SceneObjectPtr;
 typedef std::shared_ptr<MeshObject> MeshObjectPtr;
 typedef std::shared_ptr<CameraObject> CameraObjectPtr;
+typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;

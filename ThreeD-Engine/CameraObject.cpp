@@ -3,23 +3,10 @@
 #include "GraphicsEngine.h"
 #include "AppWindow.h"
 
-__declspec(align(16))
-struct constant
-{
-	mat4 m_transform;
-	mat4 m_view;
-	mat4 m_projection;
-	vec4 m_light_direction;
-	vec4 m_camera_position;
-};
-
 CameraObject::CameraObject(std::string name)
 	: SceneObject(name)
 {
 	m_world_cam.setTranslation(vec3(0, 0, -1));
-
-	constant cc;
-	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 }
 
 CameraObject::~CameraObject()
@@ -28,28 +15,9 @@ CameraObject::~CameraObject()
 
 void CameraObject::update(double delta_time)
 {
-	constant cc;
-
-	//light
-
-
-	mat4 temp;
-	mat4 m_light_rot_matrix;
-	m_light_rot_matrix.setIdentity();
-	m_light_rot_matrix.setRotationY(m_light_rot_y);
-
-	m_light_rot_y += 0.707f * delta_time;
-
-
-	cc.m_light_direction = m_light_rot_matrix.getZDirection();
-
-	//transform of object
-
-	cc.m_transform.setIdentity();
-	cc.m_transform.setScale(vec3(4, 4, 4));
 
 	//view matrix
-
+	mat4 temp;
 	mat4 world_cam;
 	world_cam.setIdentity();
 
@@ -68,14 +36,14 @@ void CameraObject::update(double delta_time)
 
 	world_cam.setTranslation(new_pos);
 
-	cc.m_camera_position = new_pos;
+	m_camera_position = new_pos;
 
 	m_world_cam = world_cam;
 
 
 	world_cam.inverse();
 
-	cc.m_view = world_cam;
+	m_view = world_cam;
 
 	//projection matrix
 
@@ -83,10 +51,7 @@ void CameraObject::update(double delta_time)
 	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 
 
-	cc.m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
-
-
-	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
 
 	m_delta_time = delta_time;
 }

@@ -9,6 +9,12 @@ public:
 	SceneObject(std::string name);
 
 	void addChild(SceneObjectPtr child);
+
+	template<typename type>
+	inline std::shared_ptr<type> getChild(std::string name) const {
+		return std::reinterpret_pointer_cast<type>(m_children.at(name));
+	}
+
 	SceneObjectPtr getChild(std::string name) const;
 	void removeChild(std::string name);
 
@@ -23,4 +29,3 @@ private:
 private:
 	friend class AppWindow;
 };
-

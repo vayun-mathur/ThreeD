@@ -12,7 +12,9 @@ public:
 
 	~CameraObject();
 
-	inline ConstantBufferPtr getConstantBuffer() { return m_cb; }
+	inline mat4 getViewMatrix() { return m_view; }
+	inline mat4 getProjectionMatrix() { return m_projection; }
+	inline vec4 getCameraPosition() { return m_camera_position; }
 
 private:
 	virtual void update(double delta_time);
@@ -31,12 +33,8 @@ private:
 	virtual void onMouseMove(const Point& delta_mouse_pos);
 
 private:
-	ConstantBufferPtr m_cb;
-private:
 	float m_rot_x = 0;
 	float m_rot_y = 0;
-
-	float m_light_rot_y = 0.0f;
 
 	float m_forward = 0.0f;
 	float m_rightward = 0.0f;
@@ -44,5 +42,9 @@ private:
 	float m_delta_time;
 
 	mat4 m_world_cam;
+
+	mat4 m_view;
+	mat4 m_projection;
+	vec4 m_camera_position;
 };
 

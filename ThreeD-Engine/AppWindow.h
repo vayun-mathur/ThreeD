@@ -22,6 +22,7 @@ public:
 	AppWindow();
 
 	void update();
+	void setConstantBuffer();
 
 	~AppWindow();
 
@@ -52,4 +53,6 @@ private:
 	float m_old_delta=0;
 	float m_new_delta=0;
 	float m_delta_time=0;
+
+	float m_light_rot_y = 0.0f;
 };

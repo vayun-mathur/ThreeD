@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="CameraObject.cpp" />
+    <ClCompile Include="DirectionalLightObject.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
@@ -190,6 +191,7 @@
   <ItemGroup>
     <ClInclude Include="AppWindow.h" />
     <ClInclude Include="CameraObject.h" />
+    <ClInclude Include="DirectionalLightObject.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshObject.h" />

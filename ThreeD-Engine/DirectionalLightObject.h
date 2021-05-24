@@ -6,11 +6,17 @@ class DirectionalLightObject
 	: public SceneObject
 {
 public:
-	DirectionalLightObject(std::string name, vec3 direction);
+	DirectionalLightObject(std::string name, vec3 color, vec3 direction);
 
 	~DirectionalLightObject();
+
+public:
+	inline vec3 getDirection() { return m_direction; }
+	inline void setDirection(vec3 direction) { m_direction = direction; }
+	inline vec3 getColor() { return m_color; }
+	inline void setColor(vec3 color) { m_color = color; }
 	
 private:
 	vec3 m_direction;
+	vec3 m_color;
 };
-
