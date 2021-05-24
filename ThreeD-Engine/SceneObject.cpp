@@ -20,10 +20,10 @@ void SceneObject::removeChild(std::string name)
 	m_children.erase(name);
 }
 
-void SceneObject::update()
+void SceneObject::update(double delta_time)
 {
 	for (auto&& [name, child] : m_children) {
-		child->update();
+		child->update(delta_time);
 	}
 }
 

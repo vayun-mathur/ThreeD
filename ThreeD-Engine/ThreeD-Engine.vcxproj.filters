@@ -61,6 +61,9 @@
     <Filter Include="Engine\SceneSystem\MeshObject">
       <UniqueIdentifier>{322f6190-94cc-425e-957a-a8428005425f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\CameraObject">
+      <UniqueIdentifier>{a199c7ac-c279-4e95-ac86-ebe3a38f43f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -125,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="MeshObject.cpp">
       <Filter>Engine\SceneSystem\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraObject.cpp">
+      <Filter>Engine\SceneSystem\CameraObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="MeshObject.h">
       <Filter>Engine\SceneSystem\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraObject.h">
+      <Filter>Engine\SceneSystem\CameraObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 #include "prerequisites.h"
 #include "SceneObject.h"
 class MeshObject
-	: SceneObject
+	: public SceneObject
 {
 public:
 	MeshObject(std::string name, std::wstring mesh_location, std::wstring tex_location);

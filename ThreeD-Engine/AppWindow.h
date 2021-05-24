@@ -17,6 +17,8 @@
 class AppWindow : public Window, public InputListener
 {
 public:
+	static AppWindow* s_main;
+public:
 	AppWindow();
 
 	void update();
@@ -50,15 +52,4 @@ private:
 	float m_old_delta=0;
 	float m_new_delta=0;
 	float m_delta_time=0;
-
-	float m_rot_x=0;
-	float m_rot_y=0;
-
-	float m_light_rot_y = 0.0f;
-
-	float m_forward = 0.0f;
-	float m_rightward = 0.0f;
-
-	mat4 m_world_cam;
 };
-

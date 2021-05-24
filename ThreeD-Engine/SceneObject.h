@@ -14,7 +14,7 @@ public:
 
 	~SceneObject();
 private:
-	virtual void update();
+	virtual void update(double delta_time);
 	virtual void render(ConstantBufferPtr cb);
 
 private:
