@@ -22,6 +22,26 @@ AppWindow::AppWindow()
 	s_main = this;
 }
 
+void AppWindow::render()
+{
+	setConstantBuffer();
+
+	//CLEAR THE RENDER TARGET 
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
+		0, 0.3f, 0.4f, 1);
+	//SET VIEWPORT OF RENDER TARGET IN WHICH WE HAVE TO DRAW
+	RECT rc = this->getClientWindowRect();
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
+
+	m_scene->render(m_cb);
+	m_swap_chain->present(true);
+
+	m_old_delta = m_new_delta;
+	m_new_delta = ::GetTickCount64();
+
+	m_delta_time = (m_old_delta) ? ((m_new_delta - m_old_delta) / 1000.0f) : 0;
+}
+
 void AppWindow::update()
 {
 	//light
@@ -66,7 +86,6 @@ void AppWindow::onCreate()
 {
 	Window::onCreate();
 
-	InputSystem::get()->addListener(this);
 	InputSystem::get()->showCursor(false);
 
 	m_scene = new SceneSystem(L"scene.txt");
@@ -76,6 +95,8 @@ void AppWindow::onCreate()
 
 	constant cc;
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
+
+	onFocus();
 }
 
 void AppWindow::onUpdate()
@@ -83,31 +104,16 @@ void AppWindow::onUpdate()
 	Window::onUpdate();
 
 	InputSystem::get()->update();
-
 	m_scene->update(m_delta_time);
 
 	update();
-	setConstantBuffer();
-
-	//CLEAR THE RENDER TARGET 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
-		0, 0.3f, 0.4f, 1);
-	//SET VIEWPORT OF RENDER TARGET IN WHICH WE HAVE TO DRAW
-	RECT rc = this->getClientWindowRect();
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
-
-	m_scene->render(m_cb);
-	m_swap_chain->present(true);
-
-	m_old_delta = m_new_delta;
-	m_new_delta = ::GetTickCount64();
-
-	m_delta_time = (m_old_delta) ? ((m_new_delta - m_old_delta) / 1000.0f) : 0;
+	render();
 }
 
 void AppWindow::onDestroy()
 {
 	Window::onDestroy();
+	m_swap_chain->setFullscreen(false, 1, 1);
 }
 
 void AppWindow::onFocus()
@@ -120,6 +126,14 @@ void AppWindow::onKillFocus()
 {
 	InputSystem::get()->removeListener(this);
 	InputSystem::get()->removeListener(m_scene->getCamera().get());
+}
+
+void AppWindow::onSize()
+{
+	RECT rc = this->getClientWindowRect();
+	m_swap_chain->resize(rc.right, rc.bottom);
+	m_scene->getCamera()->updateProjectionMatrix();
+	render();
 }
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)
@@ -144,6 +158,14 @@ void AppWindow::onKeyDown(int key)
 
 void AppWindow::onKeyUp(int key)
 {
+	if (key == 'F') {
+		m_fullscreen = !m_fullscreen;
+		RECT size_screen = this->getScreenSize();
+		m_swap_chain->setFullscreen(m_fullscreen, size_screen.right, size_screen.bottom);
+		int width = AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left;
+		int height = AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top;
+		InputSystem::get()->setCursorPosition(Point(width / 2, height / 2));
+	}
 }
 
 void AppWindow::onMouseMove(const Point& mouse_pos)

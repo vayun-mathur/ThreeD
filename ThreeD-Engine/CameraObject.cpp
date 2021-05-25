@@ -13,6 +13,14 @@ CameraObject::~CameraObject()
 {
 }
 
+void CameraObject::updateProjectionMatrix()
+{
+	int width = (AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left);
+	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
+
+	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
+}
+
 void CameraObject::update(double delta_time)
 {
 
@@ -92,15 +100,27 @@ void CameraObject::onKeyUp(int key)
 {
 	m_forward = 0.0f;
 	m_rightward = 0.0f;
+
+	if (key == 'G') {
+		m_in_play = !m_in_play;
+		InputSystem::get()->showCursor(!m_in_play);
+		if (m_in_play) {
+			int width = AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left;
+			int height = AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top;
+			InputSystem::get()->setCursorPosition(Point(width / 2, height / 2));
+		}
+	}
 }
 
 void CameraObject::onMouseMove(const Point& mouse_pos)
 {
-	int width = AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left;
-	int height = AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top;
+	if (m_in_play) {
+		int width = AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left;
+		int height = AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top;
 
-	m_rot_x += (mouse_pos.y - (height / 2.0f)) * m_delta_time * 0.3f;
-	m_rot_y += (mouse_pos.x - (width / 2.0f)) * m_delta_time * 0.3f;
+		m_rot_x += (mouse_pos.y - (height / 2.0f)) * m_delta_time * 0.3f;
+		m_rot_y += (mouse_pos.x - (width / 2.0f)) * m_delta_time * 0.3f;
 
-	InputSystem::get()->setCursorPosition(Point(width / 2, height / 2));
+		InputSystem::get()->setCursorPosition(Point(width / 2, height / 2));
+	}
 }

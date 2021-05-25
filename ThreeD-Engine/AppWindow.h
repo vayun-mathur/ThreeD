@@ -20,6 +20,7 @@ public:
 public:
 	AppWindow();
 
+	void render();
 	void update();
 	void setConstantBuffer();
 
@@ -31,6 +32,7 @@ public:
 	virtual void onDestroy() override;
 	virtual void onFocus() override;
 	virtual void onKillFocus() override;
+	virtual void onSize() override;
 
 	virtual void onLeftMouseDown(const Point& mouse_pos) override;
 	virtual void onLeftMouseUp(const Point& mouse_pos) override;
@@ -54,4 +56,6 @@ private:
 	float m_delta_time=0;
 
 	float m_light_rot_y = 0.0f;
+
+	bool m_fullscreen = false;
 };
