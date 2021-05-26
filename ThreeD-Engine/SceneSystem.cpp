@@ -5,30 +5,11 @@
 #include "PointLightObject.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
+#include "ResourceManager.h"
 #include <unordered_map>
 
 #include <fstream>
 #include <filesystem>
-
-void readString(std::ifstream& stream, std::wstring& out) {
-	int len;
-	stream >> len;
-	char* str = new char[len];
-	char c;
-	stream.read(&c, 1);
-	stream.read(str, len);
-	std::string s = std::string(str, len);
-	out = std::wstring(s.begin(), s.end());
-}
-void readString(std::ifstream& stream, std::string& out) {
-	int len;
-	stream >> len;
-	char* str = new char[len];
-	char c;
-	stream.read(&c, 1);
-	stream.read(str, len);
-	out = std::string(str, len);
-}
 
 SceneSystem::SceneSystem(std::wstring file_path)
 {
@@ -74,21 +55,15 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		}
 		else if (type == "MESH") {
 			std::wstring obj;
-			std::wstring tex;
+			std::wstring mat;
+			vec3 position;
 			readString(scene_file, obj);
-			readString(scene_file, tex);
-			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, tex, vs, ps, false);
+			readString(scene_file, mat);
+			scene_file >> position.x >> position.y >> position.z;
+			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, mat);
+			mesh->position = position;
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
-		}
-		else if (type == "SKYBOX") {
-			std::wstring obj;
-			std::wstring tex;
-			readString(scene_file, obj);
-			readString(scene_file, tex);
-			MeshObjectPtr skybox = std::make_shared<MeshObject>(name, obj, tex, vs, skybox_ps, true);
-			components[parent]->addChild(skybox);
-			components.insert({ id, skybox });
 		}
 		else if (type == "CAMERA") {
 			CameraObjectPtr camera = std::make_shared<CameraObject>(name);
@@ -106,8 +81,10 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		else if (type == "POINT_LIGHT") {
 			vec3 color;
 			vec3 position;
+			float radius;
 			scene_file >> color.x >> color.y >> color.z >> position.x >> position.y >> position.z;
-			PointLightObjectPtr light = std::make_shared<PointLightObject>(name, color, position);
+			scene_file >> radius;
+			PointLightObjectPtr light = std::make_shared<PointLightObject>(name, color, position, radius);
 			components[parent]->addChild(light);
 			components.insert({ id, light });
 		}

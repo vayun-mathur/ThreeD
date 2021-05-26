@@ -1,0 +1,8 @@
+17 VertexShader.hlsl
+17 SkyboxShader.hlsl
+1
+23 Assets\Textures\sky.jpg
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0

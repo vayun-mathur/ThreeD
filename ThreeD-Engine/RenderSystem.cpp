@@ -162,9 +162,9 @@ void RenderSystem::releaseCompiledShader()
 	if (m_blob)m_blob->Release();
 }
 
-void RenderSystem::setRasterizerState(bool cull_front)
+void RenderSystem::setRasterizerState(CULL_MODE cull_mode)
 {
-	if (cull_front)
+	if (cull_mode == CULL_MODE::FRONT)
 		m_imm_context->RSSetState(m_cull_front);
 	else
 		m_imm_context->RSSetState(m_cull_back);

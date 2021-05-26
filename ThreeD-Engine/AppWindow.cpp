@@ -85,6 +85,7 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	else if (m_scene->getLightType() == 2) {
 		PointLightObjectPtr light = m_scene->getPointLight();
 		cc.m_light_position = light->getPosition();
+		cc.m_light_radius = light->getRadius();
 		cc.m_light_type = 2;
 	}
 

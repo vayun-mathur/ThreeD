@@ -16,6 +16,8 @@ class Texture;
 class TextureManager;
 class Mesh;
 class MeshManager;
+class Material;
+class MaterialManager;
 class SceneObject;
 class MeshObject;
 class CameraObject;
@@ -32,8 +34,12 @@ typedef std::shared_ptr<ConstantBuffer> ConstantBufferPtr;
 typedef std::shared_ptr<Resource> ResourcePtr;
 typedef std::shared_ptr<Texture> TexturePtr;
 typedef std::shared_ptr<Mesh> MeshPtr;
+typedef std::shared_ptr<Material> MaterialPtr;
 typedef std::shared_ptr<SceneObject> SceneObjectPtr;
 typedef std::shared_ptr<MeshObject> MeshObjectPtr;
 typedef std::shared_ptr<CameraObject> CameraObjectPtr;
 typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
+
+
+

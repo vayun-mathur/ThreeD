@@ -22,11 +22,11 @@ public:
 	void setVertexShader(const VertexShaderPtr& vertex_shader);
 	void setPixelShader(const PixelShaderPtr& pixel_shader);
 
-	void setTexture(const VertexShaderPtr& vertex_shader, const TexturePtr& texture);
-	void setTexture(const PixelShaderPtr& pixel_shader, const TexturePtr& texture);
+	void setTexture(const VertexShaderPtr& vertex_shader, const TexturePtr& texture, unsigned int index);
+	void setTexture(const PixelShaderPtr& pixel_shader, const TexturePtr& texture, unsigned int index);
 
-	void setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& buffer);
-	void setConstantBuffer(const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& buffer);
+	void setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index);
+	void setConstantBuffer(const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index);
 private:
 	ID3D11DeviceContext* m_device_context;
 private:

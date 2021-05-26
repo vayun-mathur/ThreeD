@@ -21,6 +21,21 @@ cbuffer constant: register(b0)
 	int m_light_type;
 };
 
+struct MATERIAL
+{
+	float3 ia;
+	float ka;
+	float3 id;
+	float kd;
+	float3 is;
+	float ks;
+};
+
+cbuffer material: register(b1)
+{
+	MATERIAL material;
+};
+
 float3 ambientLight(float ka, float3 ia, float4 tex_color) {
 	return ka * ia * tex_color.rgb;
 }
@@ -36,48 +51,38 @@ float3 specularLight(float ks, float3 is, float4 tex_color, float3 light_dir, fl
 	return (ks * is * amount_specular_light) / attenuation;
 }
 
-float4 calculateDirectional(PS_INPUT input, float4 light_direction)
+float4 calculateDirectional(PS_INPUT input, MATERIAL material, float4 light_direction)
 {
-	float4 tex_color = Texture.Sample(TextureSampler, input.texcoord);
+	float4 tex_color = Texture.Sample(TextureSampler, 1-input.texcoord);
 
 	//AMBIENT LIGHT
-	float ka = 1.5;
-	float3 ia = float3(0.09, 0.082, 0.082);
 
-	float3 ambient_light = ambientLight(ka, ia, tex_color);
+	float3 ambient_light = ambientLight(material.ka, material.ia, tex_color);
 
 	//DIFFUSE LIGHT
-	float kd = 0.7;
 
-	float3 id = float3(1, 1, 1);
-
-	float3 diffuse_light = diffuseLight(kd, id, tex_color, light_direction, input.normal, 1.0);
+	float3 diffuse_light = diffuseLight(material.kd, material.id, tex_color, light_direction, input.normal, 1.0);
 
 	//SPECULAR LIGHT
-	float ks = 1.0;
 	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
-	float3 is = float3(1.0, 1.0, 1.0);
 	float shininess = 30.0;
 
-	float3 specular_light = specularLight(ks, is, tex_color, light_direction, input.normal, direction_to_camera, shininess, 1.0);
+	float3 specular_light = specularLight(material.ks, material.is, tex_color, light_direction, input.normal, direction_to_camera, shininess, 1.0);
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
 	return float4(final_light, 1.0);
 }
 
-float4 calculatePoint(PS_INPUT input, float4 light_position, float light_radius)
+float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, float light_radius)
 {
-	float4 tex_color = Texture.Sample(TextureSampler, input.texcoord);
+	float4 tex_color = Texture.Sample(TextureSampler, 1 - input.texcoord);
 
 	//AMBIENT LIGHT
-	float ka = 1.5;
-	float3 ia = float3(0.09, 0.082, 0.082);
 
-	float3 ambient_light = ambientLight(ka, ia, tex_color);
+	float3 ambient_light = ambientLight(material.ka, material.ia, tex_color);
 
 	//DIFFUSE LIGHT
-	float kd = 0.7;
 	float3 light_dir = normalize(light_position.xyz - input.world_pos.xyz);
 	float distance_light_object = length(light_position.xyz - input.world_pos.xyz);
 
@@ -89,17 +94,13 @@ float4 calculatePoint(PS_INPUT input, float4 light_position, float light_radius)
 
 	float attenuation = constant_func + linear_func * fade_area + quadratic_func * fade_area * fade_area;
 
-	float3 id = float3(1,1,1);
-
-	float3 diffuse_light = diffuseLight(kd, id, tex_color, light_dir, input.normal, attenuation);
+	float3 diffuse_light = diffuseLight(material.kd, material.id, tex_color, light_dir, input.normal, attenuation);
 
 	//SPECULAR LIGHT
-	float ks = 1.0;
 	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
-	float3 is = float3(1.0, 1.0, 1.0);
 	float shininess = 30.0;
 
-	float3 specular_light = specularLight(ks, is, tex_color, light_dir, input.normal, direction_to_camera, shininess, attenuation);
+	float3 specular_light = specularLight(material.ks, material.is, tex_color, light_dir, input.normal, direction_to_camera, shininess, attenuation);
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
@@ -109,17 +110,15 @@ float4 calculatePoint(PS_INPUT input, float4 light_position, float light_radius)
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
 	if (m_light_type == 1) {
-		return calculateDirectional(input, m_light_direction);
+		return calculateDirectional(input, material, m_light_direction);
 	}
 	else if (m_light_type == 2) {
-		return calculatePoint(input, m_light_position, m_light_radius);
+		return calculatePoint(input, material, m_light_position, m_light_radius);
 	}
 	else {
-		float4 tex_color = Texture.Sample(TextureSampler, input.texcoord);
-		float ka = 1.5;
-		float3 ia = float3(0.09, 0.082, 0.082);
+		float4 tex_color = Texture.Sample(TextureSampler, 1 - input.texcoord);
 
-		float3 ambient_light = ambientLight(ka, ia, tex_color);
+		float3 ambient_light = ambientLight(material.ka, material.ia, tex_color);
 		return float4(ambient_light, 1.0);
 	}
 }
