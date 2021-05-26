@@ -22,7 +22,7 @@ public:
 
 	void render();
 	void update();
-	void setConstantBuffer();
+	void setConstantBuffer(MeshObject& mesh);
 
 	~AppWindow();
 

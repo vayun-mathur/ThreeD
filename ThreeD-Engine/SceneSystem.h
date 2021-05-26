@@ -12,6 +12,7 @@ public:
 
 	inline CameraObjectPtr getCamera() { return m_main_camera; }
 	inline DirectionalLightObjectPtr getLight() { return m_main_light; }
+	inline SceneObjectPtr getRoot() { return m_root; }
 private:
 	SceneObjectPtr m_root;
 	CameraObjectPtr m_main_camera;

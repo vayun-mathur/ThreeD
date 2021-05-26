@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include "CameraObject.h"
 #include "DirectionalLightObject.h"
+#include "MeshObject.h"
 #include "InputSystem.h"
 
 __declspec(align(16))
@@ -24,7 +25,6 @@ AppWindow::AppWindow()
 
 void AppWindow::render()
 {
-	setConstantBuffer();
 
 	//CLEAR THE RENDER TARGET 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
@@ -54,9 +54,14 @@ void AppWindow::update()
 	m_light_rot_y += 0.707f * m_delta_time;
 
 	light->setDirection(m_light_rot_matrix.getZDirection());
+
+	CameraObjectPtr cam = m_scene->getCamera();
+	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
+	skybox->position = vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z);
+	skybox->scale = vec3(100, 100, 100);
 }
 
-void AppWindow::setConstantBuffer()
+void AppWindow::setConstantBuffer(MeshObject& mesh)
 {
 	constant cc;
 
@@ -66,7 +71,8 @@ void AppWindow::setConstantBuffer()
 
 	//transform
 	cc.m_transform.setIdentity();
-	cc.m_transform.setScale(vec3(4, 4, 4));
+	cc.m_transform.setTranslation(mesh.position);
+	cc.m_transform.setScale(mesh.scale);
 
 	//camera
 	CameraObjectPtr cam = m_scene->getCamera();

@@ -1,5 +1,6 @@
-3
-1 0 4 mesh 4 MESH 24 Assets\Meshes\statue.obj 25 Assets\Textures\brick.png
+4
+1 0 4 mesh 4 MESH 25 Assets\Meshes\suzanne.obj 25 Assets\Textures\brick.png
 2 0 6 camera 6 CAMERA
 3 0 5 light 17 DIRECTIONAL_LIGHT 1 1 1 1 0 0
+4 0 6 skybox 6 SKYBOX 24 Assets\Meshes\sphere.obj 23 Assets\Textures\sky.jpg
 2 3

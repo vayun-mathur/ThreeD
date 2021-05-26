@@ -1,34 +1,15 @@
 #include "MeshObject.h"
 #include "AppWindow.h"
 
-__declspec(align(16))
-struct constant
-{
-	mat4 m_transform;
-	mat4 m_view;
-	mat4 m_projection;
-	vec4 m_light_direction;
-	vec4 m_camera_position;
-};
-
-MeshObject::MeshObject(std::string name, std::wstring mesh_location, std::wstring tex_location)
-	: SceneObject(name)
+MeshObject::MeshObject(std::string name, std::wstring mesh_location, std::wstring tex_location, VertexShaderPtr vs, PixelShaderPtr ps,
+	bool front_cull)
+	: SceneObject(name), m_front_cull(front_cull)
 {
 	m_tex = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex_location.c_str());
 	m_mesh = GraphicsEngine::get()->getMeshManager()->createMeshFromFile(mesh_location.c_str());
 
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-
-	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-	m_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
-	m_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+	m_vs = vs;
+	m_ps = ps;
 }
 
 MeshObject::~MeshObject()
@@ -37,6 +18,8 @@ MeshObject::~MeshObject()
 
 void MeshObject::render(ConstantBufferPtr cb)
 {
+	AppWindow::s_main->setConstantBuffer(*this);
+	GraphicsEngine::get()->getRenderSystem()->setRasterizerState(m_front_cull);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb);
 

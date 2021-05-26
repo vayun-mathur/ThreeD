@@ -238,6 +238,9 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>App</Filter>
     </FxCompile>
+    <FxCompile Include="SkyboxShader.hlsl">
+      <Filter>App</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="scene.txt">
