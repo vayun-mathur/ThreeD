@@ -67,6 +67,9 @@
     <Filter Include="Engine\SceneSystem\DirectionalLightObject">
       <UniqueIdentifier>{00000c63-7da0-4856-a113-73f43f4ad9bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App\Shaders">
+      <UniqueIdentifier>{80531ffa-ceee-42f8-b419-b9aab3049352}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -232,14 +235,14 @@
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
       <Filter>Engine\GraphicsEngine</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>App</Filter>
+    <FxCompile Include="SkyboxShader.hlsl">
+      <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>App</Filter>
+      <Filter>App\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="SkyboxShader.hlsl">
-      <Filter>App</Filter>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

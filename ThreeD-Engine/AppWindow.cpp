@@ -14,6 +14,8 @@ struct constant
 	mat4 m_projection;
 	vec4 m_light_direction;
 	vec4 m_camera_position;
+	vec4 m_light_position = vec4(0, 1, 0, 0);
+	float m_light_radius = 2.0f;
 };
 
 AppWindow* AppWindow::s_main;
@@ -79,6 +81,11 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	cc.m_view = cam->getViewMatrix();
 	cc.m_projection = cam->getProjectionMatrix();
 	cc.m_camera_position = cam->getCameraPosition();
+
+
+	float dist = 1.0f;
+
+	cc.m_light_position = vec4(dist * cos(m_light_rot_y), 1.0f, dist * sin(m_light_rot_y), 1.0f);
 
 
 	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
