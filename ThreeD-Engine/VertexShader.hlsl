@@ -21,6 +21,7 @@ cbuffer constant: register(b0)
 	float4 m_camera_position;
 	float4 m_light_position;
 	float m_light_radius;
+	int m_light_type;
 };
 
 

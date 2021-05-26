@@ -18,6 +18,7 @@ cbuffer constant: register(b0)
 	float4 m_camera_position;
 	float4 m_light_position;
 	float m_light_radius;
+	int m_light_type;
 };
 
 float3 ambientLight(float ka, float3 ia, float4 tex_color) {
@@ -107,6 +108,18 @@ float4 calculatePoint(PS_INPUT input, float4 light_position, float light_radius)
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
-	return calculatePoint(input, m_light_position, m_light_radius);
-	//return calculateDirectional(input, m_light_direction);
+	if (m_light_type == 1) {
+		return calculateDirectional(input, m_light_direction);
+	}
+	else if (m_light_type == 2) {
+		return calculatePoint(input, m_light_position, m_light_radius);
+	}
+	else {
+		float4 tex_color = Texture.Sample(TextureSampler, input.texcoord);
+		float ka = 1.5;
+		float3 ia = float3(0.09, 0.082, 0.082);
+
+		float3 ambient_light = ambientLight(ka, ia, tex_color);
+		return float4(ambient_light, 1.0);
+	}
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "prerequisites.h"
 #include "SceneObject.h"
+
+
 class SceneSystem
 {
 public:
@@ -11,11 +13,17 @@ public:
 	void render(ConstantBufferPtr cb);
 
 	inline CameraObjectPtr getCamera() { return m_main_camera; }
-	inline DirectionalLightObjectPtr getLight() { return m_main_light; }
+	inline int getLightType() { return m_main_light.type; }
+	inline DirectionalLightObjectPtr getDirectionalLight() { return m_main_light.directional; }
+	inline PointLightObjectPtr getPointLight() { return m_main_light.point; }
 	inline SceneObjectPtr getRoot() { return m_root; }
 private:
 	SceneObjectPtr m_root;
 	CameraObjectPtr m_main_camera;
-	DirectionalLightObjectPtr m_main_light;
+	struct {
+		DirectionalLightObjectPtr directional;
+		PointLightObjectPtr point;
+		int type;
+	} m_main_light;
 };
 

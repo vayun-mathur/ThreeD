@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include "CameraObject.h"
 #include "DirectionalLightObject.h"
+#include "PointLightObject.h"
 #include "MeshObject.h"
 #include "InputSystem.h"
 
@@ -14,8 +15,9 @@ struct constant
 	mat4 m_projection;
 	vec4 m_light_direction;
 	vec4 m_camera_position;
-	vec4 m_light_position = vec4(0, 1, 0, 0);
+	vec4 m_light_position;
 	float m_light_radius = 2.0f;
+	int m_light_type;
 };
 
 AppWindow* AppWindow::s_main;
@@ -47,7 +49,7 @@ void AppWindow::render()
 void AppWindow::update()
 {
 	//light
-	DirectionalLightObjectPtr light = m_scene->getLight();
+	DirectionalLightObjectPtr light = m_scene->getRoot()->getChild<DirectionalLightObject>("dlight");
 
 	mat4 m_light_rot_matrix;
 	m_light_rot_matrix.setIdentity();
@@ -56,6 +58,13 @@ void AppWindow::update()
 	m_light_rot_y += 0.707f * m_delta_time;
 
 	light->setDirection(m_light_rot_matrix.getZDirection());
+
+	PointLightObjectPtr plight = m_scene->getRoot()->getChild<PointLightObject>("plight");
+
+
+	float dist = 3.0f;
+
+	plight->setPosition(vec3(dist * cos(m_light_rot_y), 1.0f, dist * sin(m_light_rot_y)));
 
 	CameraObjectPtr cam = m_scene->getCamera();
 	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
@@ -68,8 +77,16 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	constant cc;
 
 	//light
-	DirectionalLightObjectPtr light = m_scene->getLight();
-	cc.m_light_direction = light->getDirection();
+	if (m_scene->getLightType() == 1) {
+		DirectionalLightObjectPtr light = m_scene->getDirectionalLight();
+		cc.m_light_direction = light->getDirection();
+		cc.m_light_type = 1;
+	}
+	else if (m_scene->getLightType() == 2) {
+		PointLightObjectPtr light = m_scene->getPointLight();
+		cc.m_light_position = light->getPosition();
+		cc.m_light_type = 2;
+	}
 
 	//transform
 	cc.m_transform.setIdentity();
@@ -81,11 +98,6 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	cc.m_view = cam->getViewMatrix();
 	cc.m_projection = cam->getProjectionMatrix();
 	cc.m_camera_position = cam->getCameraPosition();
-
-
-	float dist = 1.0f;
-
-	cc.m_light_position = vec4(dist * cos(m_light_rot_y), 1.0f, dist * sin(m_light_rot_y), 1.0f);
 
 
 	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);

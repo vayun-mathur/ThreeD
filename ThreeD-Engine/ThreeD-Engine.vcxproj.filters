@@ -70,6 +70,9 @@
     <Filter Include="App\Shaders">
       <UniqueIdentifier>{80531ffa-ceee-42f8-b419-b9aab3049352}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\PointLightObject">
+      <UniqueIdentifier>{6490a411-ff2c-46d5-a99e-53b6ef921a0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -143,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="SceneSystem.cpp">
       <Filter>Engine\SceneSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLightObject.cpp">
+      <Filter>Engine\SceneSystem\PointLightObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="SceneSystem.h">
       <Filter>Engine\SceneSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightObject.h">
+      <Filter>Engine\SceneSystem\PointLightObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

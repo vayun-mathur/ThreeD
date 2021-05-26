@@ -2,6 +2,7 @@
 #include "MeshObject.h"
 #include "CameraObject.h"
 #include "DirectionalLightObject.h"
+#include "PointLightObject.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
 #include <unordered_map>
@@ -54,6 +55,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
 	std::unordered_map<int, SceneObjectPtr> components;
+	std::unordered_map<int, std::string> component_type;
 	components.insert({ 0, m_root });
 	int component_count;
 	scene_file >> component_count;
@@ -64,6 +66,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		std::string type;
 		readString(scene_file, name);
 		readString(scene_file, type);
+		component_type.insert({ id, type });
 		if (type == "OBJECT") {
 			SceneObjectPtr obj = std::make_shared<SceneObject>(name);
 			components[parent]->addChild(obj);
@@ -100,12 +103,30 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components[parent]->addChild(light);
 			components.insert({ id, light });
 		}
+		else if (type == "POINT_LIGHT") {
+			vec3 color;
+			vec3 position;
+			scene_file >> color.x >> color.y >> color.z >> position.x >> position.y >> position.z;
+			PointLightObjectPtr light = std::make_shared<PointLightObject>(name, color, position);
+			components[parent]->addChild(light);
+			components.insert({ id, light });
+		}
 	}
 	int main_camera_id, main_light_id;
 	scene_file >> main_camera_id >> main_light_id;
 
 	m_main_camera = std::reinterpret_pointer_cast<CameraObject>(components[main_camera_id]);
-	m_main_light = std::reinterpret_pointer_cast<DirectionalLightObject>(components[main_light_id]);
+	if(main_light_id==-1) {
+		m_main_light.type = 0;
+	}
+	else if (component_type[main_light_id] == "DIRECTIONAL_LIGHT") {
+		m_main_light.directional = std::reinterpret_pointer_cast<DirectionalLightObject>(components[main_light_id]);
+		m_main_light.type = 1;
+	}
+	else if (component_type[main_light_id] == "POINT_LIGHT") {
+		m_main_light.point = std::reinterpret_pointer_cast<PointLightObject>(components[main_light_id]);
+		m_main_light.type = 2;
+	}
 }
 
 SceneSystem::~SceneSystem()
