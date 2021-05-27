@@ -3,33 +3,54 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
-#include <locale>
-#include <codecvt>
+#include <iostream>
 
 #include "GraphicsEngine.h"
 #include "VertexMesh.h"
 
 Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 {
-	tinyobj::attrib_t attribs;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
 
 	std::string warn;
 	std::string err;
 
-	std::ifstream input(full_path);
+	tinyobj::ObjReaderConfig reader_config;
+	std::wstring input = full_path;
+	std::string input_path = std::string(input.begin(), input.end());
+	reader_config.mtl_search_path = input_path.substr(0, input_path.find_last_of('\\')+1); // Path to material files
 
-	bool res = tinyobj::LoadObj(&attribs, &shapes, &materials, &warn, &err, &input);
+	tinyobj::ObjReader reader;
+
+	if (!reader.ParseFromFile(input_path, reader_config)) {
+		if (!reader.Error().empty()) {
+			std::cerr << "TinyObjReader: " << reader.Error();
+		}
+		throw std::exception("Mesh not created successfully");
+	}
+
+	if (!reader.Warning().empty()) {
+		std::cout << "TinyObjReader: " << reader.Warning();
+	}
+
+	auto& attribs = reader.GetAttrib();
+	auto& shapes = reader.GetShapes();
+	auto& materials = reader.GetMaterials();
 
 	if (!err.empty()) throw std::exception("Mesh not created successfully");
 
-	if (!res) throw std::exception("Mesh not created successfully");
-
 	if(shapes.size() > 1) throw std::exception("Mesh not created successfully");
+
+	std::vector<MaterialPtr> materials_lit;
+	for (tinyobj::material_t mat : materials) {
+		materials_lit.push_back(std::make_shared<Material>(&mat));
+	}
 
 	std::vector<VertexMesh> list_vertices;
 	std::vector<unsigned int> list_indices;
+
+	int low = -1;
+
+	int material = -1;
 
 	for (size_t s = 0; s < shapes.size(); s++) {
 		size_t index_offset = 0;
@@ -39,6 +60,13 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
 			unsigned char num_face_verts = shapes[s].mesh.num_face_vertices[f];
+			int mat = shapes[s].mesh.material_ids[f];
+			if (mat != material) {
+				if(material != -1)
+					m_materials.push_back({ low, (int)list_indices.size(), materials_lit[material] });
+				low = list_indices.size();
+				material = mat;
+			}
 
 			for (unsigned char v = 0; v < num_face_verts; v++) {
 				tinyobj::index_t index = shapes[s].mesh.indices[index_offset + v];
@@ -62,6 +90,7 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 			index_offset += num_face_verts;
 		}
 	}
+	m_materials.push_back({ low, (int)list_indices.size(), materials_lit[material] });
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
 	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
@@ -82,4 +111,9 @@ const VertexBufferPtr& Mesh::getVertexBuffer()
 const IndexBufferPtr& Mesh::getIndexBuffer()
 {
 	return m_index_buffer;
+}
+
+const std::vector<MaterialIndexRange> Mesh::getMaterials()
+{
+	return m_materials;
 }

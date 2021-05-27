@@ -3,6 +3,9 @@
 #include "prerequisites.h"
 #include <vector>
 #include "Vector.h"
+namespace tinyobj {
+	struct material_t;
+}
 
 enum class CULL_MODE {
 	FRONT = 0,
@@ -13,12 +16,12 @@ class Material : public Resource
 {
 public:
 	Material(const wchar_t* full_path);
+	Material(tinyobj::material_t* objmat);
 	~Material();
 
 	inline CULL_MODE getCullMode() { return m_cull_mode; }
-	inline VertexShaderPtr getVertexShader() { return m_vs; }
-	inline PixelShaderPtr getPixelShader() { return m_ps; }
-	inline std::vector<TexturePtr> getTextures() { return m_tex; }
+	inline void setCullMode(CULL_MODE cull_mode) { m_cull_mode = cull_mode; }
+	inline std::vector<TexturePtr>& getTextures() { return m_tex; }
 	inline ConstantBufferPtr getConstantBuffer() { return m_cb; }
 	inline float getKA() { return ka; }
 	inline float getKD() { return kd; }
@@ -30,8 +33,6 @@ private:
 	float ka, kd, ks;
 	vec3 ia, id, is;
 private:
-	VertexShaderPtr m_vs;
-	PixelShaderPtr m_ps;
 	std::vector<TexturePtr> m_tex;
 	ConstantBufferPtr m_cb;
 	CULL_MODE m_cull_mode = CULL_MODE::BACK;

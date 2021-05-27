@@ -1,9 +1,9 @@
 7
-1 0 4 mesh 4 MESH 24 Assets\Meshes\sphere.obj 12 matearth.txt -5 0 0
+1 0 4 mesh 4 MESH 24 Assets\Meshes\sphere.obj -5 0 0
 2 0 6 camera 6 CAMERA
 3 0 6 dlight 17 DIRECTIONAL_LIGHT 1 1 1 1 0 0
 5 0 6 plight 11 POINT_LIGHT 1 1 1 0 1 0 4
-4 0 6 skybox 4 MESH 24 Assets\Meshes\sphere.obj 13 skyboxmat.txt 0 0 0
-6 0 5 mesh2 4 MESH 25 Assets\Meshes\suzanne.obj 12 matbrick.txt 5 0 0
-7 0 5 mesh3 4 MESH 23 Assets\Meshes\torus.obj 11 matwall.txt 0 0 0
+4 0 6 skybox 6 SKYBOX 24 Assets\Meshes\sphere.obj 23 Assets\Textures\sky.jpg 0 0 0
+6 0 5 mesh2 4 MESH 25 Assets\Meshes\suzanne.obj 5 0 0
+7 0 5 mesh3 4 MESH 23 Assets\Meshes\torus.obj 0 0 0
 2 5

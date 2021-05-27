@@ -6,6 +6,7 @@
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
 #include "ResourceManager.h"
+#include "Mesh.h"
 #include <unordered_map>
 
 #include <fstream>
@@ -55,12 +56,25 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		}
 		else if (type == "MESH") {
 			std::wstring obj;
-			std::wstring mat;
 			vec3 position;
 			readString(scene_file, obj);
-			readString(scene_file, mat);
 			scene_file >> position.x >> position.y >> position.z;
-			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, mat);
+			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, vs, ps);
+			mesh->position = position;
+			components[parent]->addChild(mesh);
+			components.insert({ id, mesh });
+		}
+		else if (type == "SKYBOX") {
+			std::wstring obj;
+			std::wstring tex;
+			vec3 position;
+			readString(scene_file, obj);
+			readString(scene_file, tex);
+			scene_file >> position.x >> position.y >> position.z;
+			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, vs, skybox_ps);
+			mesh->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::FRONT);
+			mesh->getMesh()->getMaterials()[0].material->getTextures().push_back(
+				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()));
 			mesh->position = position;
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });

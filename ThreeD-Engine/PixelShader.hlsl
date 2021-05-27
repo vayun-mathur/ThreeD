@@ -29,6 +29,7 @@ struct MATERIAL
 	float kd;
 	float3 is;
 	float ks;
+	int has_tex;
 };
 
 cbuffer material: register(b1)
@@ -53,7 +54,7 @@ float3 specularLight(float ks, float3 is, float4 tex_color, float3 light_dir, fl
 
 float4 calculateDirectional(PS_INPUT input, MATERIAL material, float4 light_direction)
 {
-	float4 tex_color = Texture.Sample(TextureSampler, 1-input.texcoord);
+	float4 tex_color = material.has_tex == 0 ? float4(1, 1, 1, 1) : Texture.Sample(TextureSampler, 1 - input.texcoord);
 
 	//AMBIENT LIGHT
 
@@ -76,7 +77,7 @@ float4 calculateDirectional(PS_INPUT input, MATERIAL material, float4 light_dire
 
 float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, float light_radius)
 {
-	float4 tex_color = Texture.Sample(TextureSampler, 1 - input.texcoord);
+	float4 tex_color = material.has_tex == 0 ? float4(1, 1, 1, 1) : Texture.Sample(TextureSampler, 1 - input.texcoord);
 
 	//AMBIENT LIGHT
 
@@ -86,7 +87,7 @@ float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, 
 	float3 light_dir = normalize(light_position.xyz - input.world_pos.xyz);
 	float distance_light_object = length(light_position.xyz - input.world_pos.xyz);
 
-	float fade_area = max(0,distance_light_object - light_radius);
+	float fade_area = max(0, distance_light_object - light_radius);
 
 	float constant_func = 1.0;
 	float linear_func = 1.0;
@@ -104,7 +105,7 @@ float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, 
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
-	return float4(final_light,1.0);
+	return float4(final_light, 1.0);
 }
 
 float4 psmain(PS_INPUT input) : SV_TARGET
@@ -116,7 +117,7 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 		return calculatePoint(input, material, m_light_position, m_light_radius);
 	}
 	else {
-		float4 tex_color = Texture.Sample(TextureSampler, 1 - input.texcoord);
+		float4 tex_color = material.has_tex == 0 ? float4(1, 1, 1, 1) : Texture.Sample(TextureSampler, 1 - input.texcoord);
 
 		float3 ambient_light = ambientLight(material.ka, material.ia, tex_color);
 		return float4(ambient_light, 1.0);
