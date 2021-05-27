@@ -19,18 +19,21 @@ This is a 3D game engine for Windows.
 8. Texturing
 9. Loading Model
 10. Directional Light
+11. Skybox
+12. Point Light
+13. Loading .mtl files
 ##### TODO
-1. Point Light
-2. Spot Light
-3. Skybox
-4. 3rd Person Camera
+1. Spot Light
+2. 3rd Person Camera
 #### Scene System
 ##### Completed
 1. SceneSystem class
 2. Scene Objects
-3. Mesh Object
-4. Directional Light Object
-5. Reading from scene file
+3. Camera Object
+4. Mesh Object
+5. Directional Light Object
+6. Reading from scene file
+7. Point Light Object
 ##### TODO
 1. Script Object
 
@@ -39,7 +42,8 @@ This is a 3D game engine for Windows.
 
 1. Audio System
 2. GUI System
-3. Fonts
+3. Scripting System
+4. Fonts
 
 ## Getting Started
 ### Installation
