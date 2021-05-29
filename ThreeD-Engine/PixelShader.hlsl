@@ -27,13 +27,11 @@ cbuffer constant: register(b0)
 
 struct MATERIAL
 {
-	float3 ia;
-	float ka;
-	float3 id;
-	float kd;
-	float3 is;
-	float ks;
+	float3 ka;
 	int has_tex;
+	float3 kd;
+	float shininess;
+	float3 ks;
 };
 
 cbuffer material: register(b1)
@@ -41,19 +39,19 @@ cbuffer material: register(b1)
 	MATERIAL material;
 };
 
-float3 ambientLight(float ka, float3 ia, float4 tex_color) {
-	return ka * ia * tex_color.rgb;
+float3 ambientLight(float3 ka, float4 tex_color) {
+	return ka * tex_color.rgb;
 }
 
-float3 diffuseLight(float kd, float3 id, float4 tex_color, float3 light_dir, float3 normal, float attenuation) {
+float3 diffuseLight(float3 kd, float4 tex_color, float3 light_dir, float3 normal, float attenuation) {
 	float amount_diffuse_light = max(0, dot(light_dir, normal));
-	return (kd * id * tex_color.rgb * amount_diffuse_light) / attenuation;
+	return (kd * tex_color.rgb * amount_diffuse_light) / attenuation;
 }
 
-float3 specularLight(float ks, float3 is, float4 tex_color, float3 light_dir, float3 normal, float3 direction_to_camera, float shininess, float attenuation) {
+float3 specularLight(float3 ks, float4 tex_color, float3 light_dir, float3 normal, float3 direction_to_camera, float shininess, float attenuation) {
 	float3 reflected_light = reflect(light_dir, normal);
 	float amount_specular_light = pow(max(0.0, dot(reflected_light, direction_to_camera)), shininess);
-	return (ks * is * amount_specular_light) / attenuation;
+	return (ks * amount_specular_light) / attenuation;
 }
 
 float4 calculateDirectional(PS_INPUT input, MATERIAL material, float4 light_direction)
@@ -64,17 +62,16 @@ float4 calculateDirectional(PS_INPUT input, MATERIAL material, float4 light_dire
 
 	//AMBIENT LIGHT
 
-	float3 ambient_light = ambientLight(material.ka, material.ia, a_tex_color);
+	float3 ambient_light = ambientLight(material.ka, a_tex_color);
 
 	//DIFFUSE LIGHT
 
-	float3 diffuse_light = diffuseLight(material.kd, material.id, d_tex_color, light_direction, input.normal, 1.0);
+	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, light_direction, input.normal, 1.0);
 
 	//SPECULAR LIGHT
 	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
-	float shininess = 30.0;
 
-	float3 specular_light = specularLight(material.ks, material.is, s_tex_color, light_direction, input.normal, direction_to_camera, shininess, 1.0);
+	float3 specular_light = specularLight(material.ks, s_tex_color, light_direction, input.normal, direction_to_camera, material.shininess, 1.0);
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
@@ -89,7 +86,7 @@ float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, 
 
 	//AMBIENT LIGHT
 
-	float3 ambient_light = ambientLight(material.ka, material.ia, a_tex_color);
+	float3 ambient_light = ambientLight(material.ka, a_tex_color);
 
 	//DIFFUSE LIGHT
 	float3 light_dir = normalize(light_position.xyz - input.world_pos.xyz);
@@ -103,13 +100,12 @@ float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, 
 
 	float attenuation = constant_func + linear_func * fade_area + quadratic_func * fade_area * fade_area;
 
-	float3 diffuse_light = diffuseLight(material.kd, material.id, d_tex_color, light_dir, input.normal, attenuation);
+	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, light_dir, input.normal, attenuation);
 
 	//SPECULAR LIGHT
 	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
-	float shininess = 30.0;
 
-	float3 specular_light = specularLight(material.ks, material.is, s_tex_color, light_dir, input.normal, direction_to_camera, shininess, attenuation);
+	float3 specular_light = specularLight(material.ks, s_tex_color, light_dir, input.normal, direction_to_camera, material.shininess, attenuation);
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
@@ -127,7 +123,7 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	else {
 		float4 tex_color = (material.has_tex & 1) == 0 ? float4(1, 1, 1, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
 
-		float3 ambient_light = ambientLight(material.ka, material.ia, tex_color);
+		float3 ambient_light = ambientLight(material.ka, tex_color);
 		return float4(ambient_light, 1.0);
 	}
 }

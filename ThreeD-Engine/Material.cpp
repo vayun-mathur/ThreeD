@@ -8,10 +8,11 @@
 __declspec(align(16))
 struct material_buf
 {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
+	vec3 ambient;
 	int has_textures;
+	vec3 diffuse;
+	float shininess;
+	vec3 specular;
 };
 
 std::wstring toWide(const std::string& str) {
@@ -20,10 +21,11 @@ std::wstring toWide(const std::string& str) {
 
 Material::Material(tinyobj::material_t* objmat)
 {
-	ia = vec3(objmat->ambient[0], objmat->ambient[1], objmat->ambient[2]);
-	id = vec3(objmat->diffuse[0], objmat->diffuse[1], objmat->diffuse[2]);
-	is = vec3(objmat->specular[0], objmat->specular[1], objmat->specular[2]);
-	ka = 1, kd = 1, ks = 1;
+	ka = vec3(objmat->ambient[0], objmat->ambient[1], objmat->ambient[2]);
+	kd = vec3(objmat->diffuse[0], objmat->diffuse[1], objmat->diffuse[2]);
+	ks = vec3(objmat->specular[0], objmat->specular[1], objmat->specular[2]);
+
+	shininess = objmat->shininess;
 
 	std::string map_ka_str = objmat->ambient_texname;
 	std::string map_kd_str = objmat->diffuse_texname;
@@ -35,9 +37,11 @@ Material::Material(tinyobj::material_t* objmat)
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
 	material_buf cc;
-	cc.ambient = vec4(ia.x, ia.y, ia.z, ka);
-	cc.diffuse = vec4(id.x, id.y, id.z, kd);
-	cc.specular = vec4(is.x, is.y, is.z, ks);
+	cc.ambient = ka;
+	cc.diffuse = kd;
+	cc.specular = ks;
+
+	cc.shininess = shininess;
 
 	cc.has_textures = 0;
 

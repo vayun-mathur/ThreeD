@@ -22,15 +22,12 @@ public:
 	inline void setCullMode(CULL_MODE cull_mode) { m_cull_mode = cull_mode; }
 	inline std::map<unsigned int, TexturePtr>& getTextures() { return m_tex; }
 	inline ConstantBufferPtr getConstantBuffer() { return m_cb; }
-	inline float getKA() { return ka; }
-	inline float getKD() { return kd; }
-	inline float getKS() { return ks; }
-	inline vec3 getIA() { return ia; }
-	inline vec3 getID() { return id; }
-	inline vec3 getIS() { return is; }
+	inline vec3 getKA() { return ka; }
+	inline vec3 getKD() { return kd; }
+	inline vec3 getKS() { return ks; }
 private:
-	float ka, kd, ks;
-	vec3 ia, id, is;
+	vec3 ka, kd, ks;
+	float shininess;
 private:
 	TexturePtr map_ka, map_kd, map_ks;
 	std::map<unsigned int, TexturePtr> m_tex;
