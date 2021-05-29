@@ -17,7 +17,6 @@ class TextureManager;
 class Mesh;
 class MeshManager;
 class Material;
-class MaterialManager;
 class SceneObject;
 class MeshObject;
 class CameraObject;
@@ -40,6 +39,3 @@ typedef std::shared_ptr<MeshObject> MeshObjectPtr;
 typedef std::shared_ptr<CameraObject> CameraObjectPtr;
 typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
-
-
-

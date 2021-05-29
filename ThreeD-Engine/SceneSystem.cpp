@@ -73,8 +73,10 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			scene_file >> position.x >> position.y >> position.z;
 			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, vs, skybox_ps);
 			mesh->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::FRONT);
-			mesh->getMesh()->getMaterials()[0].material->getTextures().push_back(
-				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()));
+			mesh->getMesh()->getMaterials()[0].material->getTextures().insert({0,
+				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });
+			mesh->getMesh()->getMaterials()[0].material->getTextures().insert({ 1,
+				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });
 			mesh->position = position;
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });

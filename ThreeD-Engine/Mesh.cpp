@@ -70,16 +70,27 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 			for (unsigned char v = 0; v < num_face_verts; v++) {
 				tinyobj::index_t index = shapes[s].mesh.indices[index_offset + v];
-				tinyobj::real_t vx = attribs.vertices[index.vertex_index * 3 + 0];
-				tinyobj::real_t vy = attribs.vertices[index.vertex_index * 3 + 1];
-				tinyobj::real_t vz = attribs.vertices[index.vertex_index * 3 + 2];
 
-				tinyobj::real_t tx = attribs.texcoords[index.texcoord_index * 2 + 0];
-				tinyobj::real_t ty = attribs.texcoords[index.texcoord_index * 2 + 1];
+				tinyobj::real_t vx, vy, vz;
+				tinyobj::real_t tx, ty;
+				tinyobj::real_t nx, ny, nz;
 
-				tinyobj::real_t nx = attribs.normals[index.normal_index * 3 + 0];
-				tinyobj::real_t ny = attribs.normals[index.normal_index * 3 + 1];
-				tinyobj::real_t nz = attribs.normals[index.normal_index * 3 + 2];
+				vx = attribs.vertices[index.vertex_index * 3 + 0];
+				vy = attribs.vertices[index.vertex_index * 3 + 1];
+				vz = attribs.vertices[index.vertex_index * 3 + 2];
+				
+				if (index.texcoord_index != -1) {
+					tx = attribs.texcoords[index.texcoord_index * 2 + 0];
+					ty = attribs.texcoords[index.texcoord_index * 2 + 1];
+				}
+				else {
+					tx = 0;
+					ty = 0;
+				}
+
+				nx = attribs.normals[index.normal_index * 3 + 0];
+				ny = attribs.normals[index.normal_index * 3 + 1];
+				nz = attribs.normals[index.normal_index * 3 + 2];
 
 				VertexMesh vertex(vec3(vx, vy, vz), vec2(tx, ty), vec3(nx, ny, nz));
 

@@ -73,7 +73,7 @@
     <Filter Include="Engine\SceneSystem\PointLightObject">
       <UniqueIdentifier>{6490a411-ff2c-46d5-a99e-53b6ef921a0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\GraphicsEngine\ResourceManager\MaterialManager">
+    <Filter Include="Engine\GraphicsEngine\ResourceManager\Material">
       <UniqueIdentifier>{e4eb69d6-dbc1-446c-88d9-209cb4660bb6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -153,11 +153,8 @@
     <ClCompile Include="PointLightObject.cpp">
       <Filter>Engine\SceneSystem\PointLightObject</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialManager.cpp">
-      <Filter>Engine\GraphicsEngine\ResourceManager\MaterialManager</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Engine\GraphicsEngine\ResourceManager\MaterialManager</Filter>
+      <Filter>Engine\GraphicsEngine\ResourceManager\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,11 +245,8 @@
     <ClInclude Include="PointLightObject.h">
       <Filter>Engine\SceneSystem\PointLightObject</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialManager.h">
-      <Filter>Engine\GraphicsEngine\ResourceManager\MaterialManager</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Engine\GraphicsEngine\ResourceManager\MaterialManager</Filter>
+      <Filter>Engine\GraphicsEngine\ResourceManager\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -174,7 +174,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshObject.cpp" />
@@ -197,7 +196,6 @@
     <ClInclude Include="CameraObject.h" />
     <ClInclude Include="DirectionalLightObject.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshObject.h" />

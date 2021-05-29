@@ -15,26 +15,31 @@ MeshObject::~MeshObject()
 void MeshObject::render(ConstantBufferPtr cb)
 {
 	AppWindow::s_main->setConstantBuffer(*this);
+
+	//SET DEFAULT SHADER IN THE GRAPHICS PIPELINE TO BE ABLE TO DRAW
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
+
+	//SET CONSTANT BUFFER
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
+
+	//SET THE VERTICES OF THE TRIANGLE TO DRAW
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_mesh->getVertexBuffer());
+	//SET THE INDICES OF THE TRIANGLE TO DRAW
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_mesh->getIndexBuffer());
+
 	for (MaterialIndexRange mir : m_mesh->getMaterials()) {
 		MaterialPtr material = mir.material;
+
+		//SET MATERIAL
 		GraphicsEngine::get()->getRenderSystem()->setRasterizerState(material->getCullMode());
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, material->getConstantBuffer(), 1);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, material->getConstantBuffer(), 1);
 
-		//SET DEFAULT SHADER IN THE GRAPHICS PIPELINE TO BE ABLE TO DRAW
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-
-		for (int i = 0; i < material->getTextures().size(); i++) {
-			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, material->getTextures()[i], i);
+		for (auto&&[index, texture] : material->getTextures()) {
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, texture, index);
 		}
-
-		//SET THE VERTICES OF THE TRIANGLE TO DRAW
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_mesh->getVertexBuffer());
-		//SET THE INDICES OF THE TRIANGLE TO DRAW
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_mesh->getIndexBuffer());
 
 
 		// FINALLY DRAW THE TRIANGLE

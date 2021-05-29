@@ -20,10 +20,6 @@ GraphicsEngine::GraphicsEngine()
 		m_mesh_manager = new MeshManager();
 	}
 	catch (...) { throw std::exception("MeshManager not created successfully"); }
-	try {
-		m_material_manager = new MaterialManager();
-	}
-	catch (...) { throw std::exception("MaterialManager not created successfully"); }
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -47,11 +43,6 @@ TextureManager* GraphicsEngine::getTextureManager()
 MeshManager* GraphicsEngine::getMeshManager()
 {
 	return m_mesh_manager;
-}
-
-MaterialManager* GraphicsEngine::getMaterialManager()
-{
-	return m_material_manager;
 }
 
 void GraphicsEngine::getVertexMeshLayoutShaderByteCodeAndSize(void** byte_code, size_t* size)
