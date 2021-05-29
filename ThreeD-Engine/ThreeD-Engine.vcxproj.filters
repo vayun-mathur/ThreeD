@@ -273,17 +273,5 @@
     <Text Include="scene.txt">
       <Filter>App</Filter>
     </Text>
-    <Text Include="skyboxmat.txt">
-      <Filter>App</Filter>
-    </Text>
-    <Text Include="matwall.txt">
-      <Filter>App</Filter>
-    </Text>
-    <Text Include="matearth.txt">
-      <Filter>App</Filter>
-    </Text>
-    <Text Include="matbrick.txt">
-      <Filter>App</Filter>
-    </Text>
   </ItemGroup>
 </Project>

@@ -260,11 +260,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="matbrick.txt" />
-    <Text Include="matearth.txt" />
-    <Text Include="matwall.txt" />
     <Text Include="scene.txt" />
-    <Text Include="skyboxmat.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,0 @@
-17 VertexShader.hlsl
-16 PixelShader.hlsl
-1
-31 Assets\Textures\earth_color.jpg
-1.5 0.09 0.082 0.082
-0.7 1 1 1
-1.0 1 1 1
-1
