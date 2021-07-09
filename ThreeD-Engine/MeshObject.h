@@ -10,6 +10,10 @@ public:
 
 	~MeshObject();
 
+	virtual SceneObjectType getType() const {
+		return SceneObjectType::MeshObject;
+	}
+
 	inline VertexShaderPtr getVertexShader() { return m_vs; }
 	inline PixelShaderPtr getPixelShader() { return m_ps; }
 	inline MeshPtr getMesh() { return m_mesh; }

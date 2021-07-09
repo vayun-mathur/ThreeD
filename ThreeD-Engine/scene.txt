@@ -1,7 +1,7 @@
 5
 2 0 6 camera 6 CAMERA
 3 0 6 dlight 17 DIRECTIONAL_LIGHT 1 1 1 1 0 0
-5 0 6 plight 11 POINT_LIGHT 1 1 1 0 3 0 8
+5 0 6 plight 11 POINT_LIGHT 1 1 1 0 3 0 8 1 1 1
 4 0 6 skybox 6 SKYBOX 24 Assets\Meshes\sphere.obj 23 Assets\Textures\sky.jpg 0 0 0
 6 0 5 mesh2 4 MESH 30 Assets\Meshes\LibertStatue.obj 0 0 0
-2 3
+2 5

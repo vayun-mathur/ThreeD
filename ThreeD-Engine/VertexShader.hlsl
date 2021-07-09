@@ -17,11 +17,7 @@ cbuffer constant: register(b0)
 	row_major float4x4 m_transform;
 	row_major float4x4 m_view;
 	row_major float4x4 m_projection;
-	float4 m_light_direction;
 	float4 m_camera_position;
-	float4 m_light_position;
-	float m_light_radius;
-	int m_light_type;
 };
 
 

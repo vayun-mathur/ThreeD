@@ -12,6 +12,10 @@ public:
 
 	~CameraObject();
 
+	virtual SceneObjectType getType() const {
+		return SceneObjectType::CameraObject;
+	}
+
 	inline mat4 getViewMatrix() { return m_view; }
 	inline mat4 getProjectionMatrix() { return m_projection; }
 	inline vec4 getCameraPosition() { return m_camera_position; }

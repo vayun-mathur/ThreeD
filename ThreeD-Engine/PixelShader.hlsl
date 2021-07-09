@@ -13,16 +13,30 @@ struct PS_INPUT
 	float3 world_pos: TEXCOORD1;
 };
 
+//Directional Light
+struct DLIGHT {
+	float4 light_direction;
+};
+
+//Point Light
+struct PLIGHT {
+	float4 light_position;
+	float light_radius;
+	float3 attenuation;
+};
+
 cbuffer constant: register(b0)
 {
 	row_major float4x4 m_transform;
 	row_major float4x4 m_view;
 	row_major float4x4 m_projection;
-	float4 m_light_direction;
 	float4 m_camera_position;
-	float4 m_light_position;
-	float m_light_radius;
-	int m_light_type;
+	int m_dlight_count;
+	int m_plight_count;
+	int v;
+	int x;
+	DLIGHT dlight[5];
+	PLIGHT plight[5];
 };
 
 struct MATERIAL
@@ -54,49 +68,39 @@ float3 specularLight(float3 ks, float4 tex_color, float3 light_dir, float3 norma
 	return (ks * amount_specular_light) / attenuation;
 }
 
-float4 calculateDirectional(PS_INPUT input, MATERIAL material, float4 light_direction)
+float3 calculateDirectional(PS_INPUT input, MATERIAL material, DLIGHT dlight)
 {
-	float4 a_tex_color = (material.has_tex & 1) == 0 ? float4(1, 1, 1, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
 	float4 d_tex_color = (material.has_tex & 2) == 0 ? float4(1, 1, 1, 1) : map_kd.Sample(map_kd_sampler, 1 - input.texcoord);
 	float4 s_tex_color = (material.has_tex & 4) == 0 ? float4(1, 1, 1, 1) : map_ks.Sample(map_ks_sampler, 1 - input.texcoord);
 
-	//AMBIENT LIGHT
-
-	float3 ambient_light = ambientLight(material.ka, a_tex_color);
-
 	//DIFFUSE LIGHT
 
-	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, light_direction, input.normal, 1.0);
+	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, dlight.light_direction, input.normal, 1.0);
 
 	//SPECULAR LIGHT
 	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
 
-	float3 specular_light = specularLight(material.ks, s_tex_color, light_direction, input.normal, direction_to_camera, material.shininess, 1.0);
+	float3 specular_light = specularLight(material.ks, s_tex_color, dlight.light_direction, input.normal, direction_to_camera, material.shininess, 1.0);
 
-	float3 final_light = ambient_light + diffuse_light + specular_light;
+	float3 final_light = diffuse_light + specular_light;
 
-	return float4(final_light, 1.0);
+	return final_light;
 }
 
-float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, float light_radius)
+float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
 {
-	float4 a_tex_color = (material.has_tex & 1) == 0 ? float4(1, 1, 1, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
 	float4 d_tex_color = (material.has_tex & 2) == 0 ? float4(1, 1, 1, 1) : map_kd.Sample(map_kd_sampler, 1 - input.texcoord);
 	float4 s_tex_color = (material.has_tex & 4) == 0 ? float4(1, 1, 1, 1) : map_ks.Sample(map_ks_sampler, 1 - input.texcoord);
 
-	//AMBIENT LIGHT
-
-	float3 ambient_light = ambientLight(material.ka, a_tex_color);
-
 	//DIFFUSE LIGHT
-	float3 light_dir = normalize(light_position.xyz - input.world_pos.xyz);
-	float distance_light_object = length(light_position.xyz - input.world_pos.xyz);
+	float3 light_dir = normalize(plight.light_position.xyz - input.world_pos.xyz);
+	float distance_light_object = length(plight.light_position.xyz - input.world_pos.xyz);
 
-	float fade_area = max(0, distance_light_object - light_radius);
+	float fade_area = max(0, distance_light_object - plight.light_radius);
 
-	float constant_func = 1.0;
-	float linear_func = 1.0;
-	float quadratic_func = 1.0;
+	float constant_func = plight.attenuation.x;
+	float linear_func = plight.attenuation.y;
+	float quadratic_func = plight.attenuation.z;
 
 	float attenuation = constant_func + linear_func * fade_area + quadratic_func * fade_area * fade_area;
 
@@ -107,23 +111,25 @@ float4 calculatePoint(PS_INPUT input, MATERIAL material, float4 light_position, 
 
 	float3 specular_light = specularLight(material.ks, s_tex_color, light_dir, input.normal, direction_to_camera, material.shininess, attenuation);
 
-	float3 final_light = ambient_light + diffuse_light + specular_light;
+	float3 final_light = diffuse_light + specular_light;
 
-	return float4(final_light, 1.0);
+	return final_light;
 }
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
-	if (m_light_type == 1) {
-		return calculateDirectional(input, material, m_light_direction);
-	}
-	else if (m_light_type == 2) {
-		return calculatePoint(input, material, m_light_position, m_light_radius);
-	}
-	else {
-		float4 tex_color = (material.has_tex & 1) == 0 ? float4(1, 1, 1, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
+	float4 tex_color = (material.has_tex & 1) == 0 ? float4(1, 1, 1, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
 
-		float3 ambient_light = ambientLight(material.ka, tex_color);
-		return float4(ambient_light, 1.0);
-	}
+	float3 ambient_light = ambientLight(material.ka, tex_color);
+
+	float3 light = ambient_light;
+
+	//for (int i = 0; i < m_dlight_count;i++) {
+		light += calculateDirectional(input, material, dlight[0]);
+	//}
+	//for (int i = 0; i < m_plight_count; i++) {
+	//	light += calculatePoint(input, material, plight[i]);
+	//}
+
+	return float4(light, 1.0);
 }

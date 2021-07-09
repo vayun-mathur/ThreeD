@@ -97,10 +97,12 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		else if (type == "POINT_LIGHT") {
 			vec3 color;
 			vec3 position;
+			vec3 attenuation;
 			float radius;
 			scene_file >> color.x >> color.y >> color.z >> position.x >> position.y >> position.z;
 			scene_file >> radius;
-			PointLightObjectPtr light = std::make_shared<PointLightObject>(name, color, position, radius);
+			scene_file >> attenuation.x >> attenuation.y >> attenuation.z;
+			PointLightObjectPtr light = std::make_shared<PointLightObject>(name, color, position, radius, attenuation);
 			components[parent]->addChild(light);
 			components.insert({ id, light });
 		}

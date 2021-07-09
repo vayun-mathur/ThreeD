@@ -7,17 +7,29 @@
 #include "MeshObject.h"
 #include "InputSystem.h"
 
+struct dlight {
+	vec4 light_direction;
+};
+
+struct plight {
+	vec4 light_position;
+	float light_radius;
+	vec3 attenuation;
+};
+
 __declspec(align(16))
 struct constant
 {
 	mat4 m_transform;
 	mat4 m_view;
 	mat4 m_projection;
-	vec4 m_light_direction;
 	vec4 m_camera_position;
-	vec4 m_light_position;
-	float m_light_radius = 2.0f;
-	int m_light_type;
+	int m_dlight_count;
+	int m_plight_count;
+	int v;
+	int x;
+	dlight dlight[5];
+	plight plight[5];
 };
 
 AppWindow* AppWindow::s_main;
@@ -72,22 +84,42 @@ void AppWindow::update()
 	skybox->scale = vec3(100, 100, 100);
 }
 
+void findLights(SceneObjectPtr obj, std::vector<DirectionalLightObjectPtr>& dlights, std::vector<PointLightObjectPtr>& plights) {
+	if (obj->getType()==SceneObjectType::DirectionalLightObject) {
+		dlights.push_back(std::dynamic_pointer_cast<DirectionalLightObject>(obj));
+	}
+	if (obj->getType() == SceneObjectType::PointLightObject) {
+		plights.push_back(std::dynamic_pointer_cast<PointLightObject>(obj));
+	}
+	for (auto&&[_, child] : obj->getChildren()) {
+		findLights(child, dlights, plights);
+	}
+
+}
+
 void AppWindow::setConstantBuffer(MeshObject& mesh)
 {
 	constant cc;
 
+	std::vector<DirectionalLightObjectPtr> dlights;
+	std::vector<PointLightObjectPtr> plights;
+
+	findLights(m_scene->getRoot(), dlights, plights);
+
 	//light
-	if (m_scene->getLightType() == 1) {
-		DirectionalLightObjectPtr light = m_scene->getDirectionalLight();
-		cc.m_light_direction = light->getDirection();
-		cc.m_light_type = 1;
+	DirectionalLightObjectPtr dlight = m_scene->getRoot()->getChild<DirectionalLightObject>("dlight");
+	for (int i = 0; i < dlights.size(); i++) {
+		cc.dlight[i].light_direction = dlight->getDirection();
 	}
-	else if (m_scene->getLightType() == 2) {
-		PointLightObjectPtr light = m_scene->getPointLight();
-		cc.m_light_position = light->getPosition();
-		cc.m_light_radius = light->getRadius();
-		cc.m_light_type = 2;
+	cc.m_dlight_count = dlights.size();
+
+	PointLightObjectPtr plight = m_scene->getRoot()->getChild<PointLightObject>("plight");
+	for (int i = 0; i < plights.size(); i++) {
+		cc.plight[i].light_position = plight->getPosition();
+		cc.plight[i].light_radius = plight->getRadius();
+		cc.plight[i].attenuation = plight->getAttenuation();
 	}
+	cc.m_plight_count = plights.size();
 
 	//transform
 	cc.m_transform.setIdentity();
