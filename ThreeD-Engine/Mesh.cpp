@@ -38,7 +38,7 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 	if (!err.empty()) throw std::exception("Mesh not created successfully");
 
-	if(shapes.size() > 1) throw std::exception("Mesh not created successfully");
+	//if(shapes.size() > 1) throw std::exception("Mesh not created successfully");
 
 	std::vector<MaterialPtr> materials_lit;
 	for (tinyobj::material_t mat : materials) {
