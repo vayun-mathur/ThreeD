@@ -106,18 +106,15 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 
 	findLights(m_scene->getRoot(), dlights, plights);
 
-	//light
-	DirectionalLightObjectPtr dlight = m_scene->getRoot()->getChild<DirectionalLightObject>("dlight");
 	for (int i = 0; i < dlights.size(); i++) {
-		cc.dlight[i].light_direction = dlight->getDirection();
+		cc.dlight[i].light_direction = dlights[i]->getDirection();
 	}
 	cc.m_dlight_count = dlights.size();
 
-	PointLightObjectPtr plight = m_scene->getRoot()->getChild<PointLightObject>("plight");
 	for (int i = 0; i < plights.size(); i++) {
-		cc.plight[i].light_position = plight->getPosition();
-		cc.plight[i].light_radius = plight->getRadius();
-		cc.plight[i].attenuation = plight->getAttenuation();
+		cc.plight[i].light_position = plights[i]->getPosition();
+		cc.plight[i].light_radius = plights[i]->getRadius();
+		cc.plight[i].attenuation = plights[i]->getAttenuation();
 	}
 	cc.m_plight_count = plights.size();
 

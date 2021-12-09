@@ -107,21 +107,10 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components.insert({ id, light });
 		}
 	}
-	int main_camera_id, main_light_id;
-	scene_file >> main_camera_id >> main_light_id;
+	int main_camera_id;
+	scene_file >> main_camera_id;
 
 	m_main_camera = std::reinterpret_pointer_cast<CameraObject>(components[main_camera_id]);
-	if(main_light_id==-1) {
-		m_main_light.type = 0;
-	}
-	else if (component_type[main_light_id] == "DIRECTIONAL_LIGHT") {
-		m_main_light.directional = std::reinterpret_pointer_cast<DirectionalLightObject>(components[main_light_id]);
-		m_main_light.type = 1;
-	}
-	else if (component_type[main_light_id] == "POINT_LIGHT") {
-		m_main_light.point = std::reinterpret_pointer_cast<PointLightObject>(components[main_light_id]);
-		m_main_light.type = 2;
-	}
 }
 
 SceneSystem::~SceneSystem()

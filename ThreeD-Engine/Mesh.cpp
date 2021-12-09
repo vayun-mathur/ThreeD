@@ -42,6 +42,7 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 	std::vector<MaterialPtr> materials_lit;
 	for (tinyobj::material_t mat : materials) {
+		std::cout << mat.ambient[0] << " " << mat.ambient[1] << " " << mat.ambient[2] << std::endl;
 		materials_lit.push_back(std::make_shared<Material>(&mat));
 	}
 

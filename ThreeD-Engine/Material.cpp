@@ -19,6 +19,8 @@ std::wstring toWide(const std::string& str) {
 	return std::wstring(str.begin(), str.end());
 }
 
+#include <iostream>
+
 Material::Material(tinyobj::material_t* objmat)
 {
 	ka = vec3(objmat->ambient[0], objmat->ambient[1], objmat->ambient[2]);

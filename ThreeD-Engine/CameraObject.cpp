@@ -18,7 +18,7 @@ void CameraObject::updateProjectionMatrix()
 	int width = (AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left);
 	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 
-	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
+	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 10000.0f);
 }
 
 void CameraObject::update(double delta_time)
@@ -82,17 +82,18 @@ void CameraObject::onRightMouseUp(const Point& mouse_pos)
 
 void CameraObject::onKeyDown(int key)
 {
+	const float speed = 10.0f;
 	if (key == 'W') {
-		m_forward = 1.0f;
+		m_forward = speed;
 	}
 	else if (key == 'S') {
-		m_forward = -1.0f;
+		m_forward = -speed;
 	}
 	if (key == 'A') {
-		m_rightward = -1.0f;
+		m_rightward = -speed;
 	}
 	else if (key == 'D') {
-		m_rightward = 1.0f;
+		m_rightward = speed;
 	}
 }
 

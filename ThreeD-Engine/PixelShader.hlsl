@@ -118,15 +118,15 @@ float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
-	float4 tex_color = (material.has_tex & 1) == 0 ? float4(1, 1, 1, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
+	float4 tex_color = (material.has_tex & 1) == 0 ? float4(0.2, 0.2, 0.2, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
 
 	float3 ambient_light = ambientLight(material.ka, tex_color);
 
 	float3 light = ambient_light;
 
-	//for (int i = 0; i < m_dlight_count;i++) {
-		light += calculateDirectional(input, material, dlight[0]);
-	//}
+	for (int i = 0; i < m_dlight_count;i++) {
+		light += calculateDirectional(input, material, dlight[i]);
+	}
 	//for (int i = 0; i < m_plight_count; i++) {
 	//	light += calculatePoint(input, material, plight[i]);
 	//}
