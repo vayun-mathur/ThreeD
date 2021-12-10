@@ -14,10 +14,12 @@ ScriptSystem::~ScriptSystem()
 }
 
 int precedence(char op) {
-	if (op == '+' || op == '-')
+	if (op == '=')
 		return 1;
-	if (op == '*' || op == '/')
+	if (op == '+' || op == '-')
 		return 2;
+	if (op == '*' || op == '/')
+		return 3;
 	return 0;
 }
 
@@ -28,11 +30,12 @@ ScriptValue* applyOp(ScriptValue* a, ScriptValue* b, char op) {
 	case '-': return a->sub(b);
 	case '*': return a->mul(b);
 	case '/': return a->div(b);
+	case '=': return a->assign(b);
 	}
 }
 
 bool isOperator(char c) {
-	return c == '+' || c == '-' || c == '*' || c == '/';
+	return c == '+' || c == '-' || c == '*' || c == '/' || c == '=';
 }
 
 float evaluate(std::string tokens, SceneObjectPtr object) {

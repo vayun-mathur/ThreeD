@@ -172,7 +172,7 @@ void AppWindow::onUpdate()
 	InputSystem::get()->update();
 	m_scene->update(m_delta_time);
 
-	ScriptSystem::get()->exec("this.camera.position.z", m_scene->getRoot());
+	ScriptSystem::get()->exec("this.mesh2.position.z = this.mesh2.position.z+1/50", m_scene->getRoot());
 	/*
 	auto audio = m_scene->getRoot()->getChild<AudioSourceObject>("audio");
 	vec3 v = audio->getPosition();

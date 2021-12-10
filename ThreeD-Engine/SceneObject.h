@@ -43,6 +43,7 @@ public:
 	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* assign(ScriptValue* o) { return nullptr; }
 
 public:
 	inline const std::map<std::string, SceneObjectPtr>& getChildren() { return m_children; }

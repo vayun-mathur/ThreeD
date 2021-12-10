@@ -10,6 +10,7 @@ public:
 	virtual ScriptValue* sub(ScriptValue*) = 0;
 	virtual ScriptValue* mul(ScriptValue*) = 0;
 	virtual ScriptValue* div(ScriptValue*) = 0;
+	virtual ScriptValue* assign(ScriptValue*) = 0;
 };
 
 class NumberScriptValue : public ScriptValue {
@@ -38,6 +39,13 @@ public:
 	virtual ScriptValue* div(ScriptValue* o) {
 		if (instanceof<NumberScriptValue>(o)) {
 			return new NumberScriptValue(new float(*v / *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* assign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v = *((NumberScriptValue*)o)->v;
+			return this;
 		}
 		return nullptr;
 	}
@@ -74,6 +82,13 @@ public:
 	virtual ScriptValue* div(ScriptValue* o) {
 		if (instanceof<NumberScriptValue>(o)) {
 			return new Vec3ScriptValue(new vec3(*v * (1/ *((NumberScriptValue*)o)->v)));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* assign(ScriptValue* o) {
+		if (instanceof<Vec3ScriptValue>(o)) {
+			*v = *((Vec3ScriptValue*)o)->v;
+			return this;
 		}
 		return nullptr;
 	}
