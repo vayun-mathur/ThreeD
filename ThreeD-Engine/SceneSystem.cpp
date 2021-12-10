@@ -56,11 +56,12 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		}
 		else if (type == "MESH") {
 			std::wstring obj;
-			vec3 position;
+			vec3 position, scale;
 			readString(scene_file, obj);
-			scene_file >> position.x >> position.y >> position.z;
+			scene_file >> position.x >> position.y >> position.z >> scale.x >> scale.y >> scale.z;
 			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, vs, ps);
 			mesh->position = position;
+			mesh->scale = scale;
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
 		}

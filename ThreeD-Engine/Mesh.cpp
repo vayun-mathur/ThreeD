@@ -31,7 +31,6 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 	if (!reader.Warning().empty()) {
 		std::cout << "TinyObjReader: " << reader.Warning();
 	}
-
 	auto& attribs = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
@@ -42,7 +41,6 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 	std::vector<MaterialPtr> materials_lit;
 	for (tinyobj::material_t mat : materials) {
-		std::cout << mat.ambient[0] << " " << mat.ambient[1] << " " << mat.ambient[2] << std::endl;
 		materials_lit.push_back(std::make_shared<Material>(&mat));
 	}
 
@@ -53,11 +51,11 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 	int material = -1;
 
+	size_t index_offset_overall = 0;
 	for (size_t s = 0; s < shapes.size(); s++) {
 		size_t index_offset = 0;
 
-		list_vertices.reserve(shapes[s].mesh.indices.size());
-		list_indices.reserve(shapes[s].mesh.indices.size());
+		std::cout << shapes[s].name << std::endl;
 
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
 			unsigned char num_face_verts = shapes[s].mesh.num_face_vertices[f];
@@ -71,11 +69,9 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 
 			for (unsigned char v = 0; v < num_face_verts; v++) {
 				tinyobj::index_t index = shapes[s].mesh.indices[index_offset + v];
-
 				tinyobj::real_t vx, vy, vz;
 				tinyobj::real_t tx, ty;
 				tinyobj::real_t nx, ny, nz;
-
 				vx = attribs.vertices[index.vertex_index * 3 + 0];
 				vy = attribs.vertices[index.vertex_index * 3 + 1];
 				vz = attribs.vertices[index.vertex_index * 3 + 2];
@@ -96,11 +92,12 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 				VertexMesh vertex(vec3(vx, vy, vz), vec2(tx, ty), vec3(nx, ny, nz));
 
 				list_vertices.push_back(vertex);
-				list_indices.push_back(index_offset + v);
+				list_indices.push_back(index_offset_overall + index_offset + v);
 			}
 
 			index_offset += num_face_verts;
 		}
+		index_offset_overall += index_offset;
 	}
 	m_materials.push_back({ low, (int)list_indices.size(), materials_lit[material] });
 	void* shader_byte_code = nullptr;

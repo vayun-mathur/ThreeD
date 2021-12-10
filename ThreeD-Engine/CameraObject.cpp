@@ -59,7 +59,7 @@ void CameraObject::update(double delta_time)
 	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 
 
-	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
+	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 1000.0f);
 
 	m_delta_time = delta_time;
 }

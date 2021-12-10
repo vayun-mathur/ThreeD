@@ -125,7 +125,7 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	float3 light = ambient_light;
 
 	for (int i = 0; i < m_dlight_count;i++) {
-		light += calculateDirectional(input, material, dlight[i]);
+		light += calculateDirectional(input, material, dlight[i]) * 0.5;
 	}
 	//for (int i = 0; i < m_plight_count; i++) {
 	//	light += calculatePoint(input, material, plight[i]);
