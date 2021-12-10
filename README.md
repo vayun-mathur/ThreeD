@@ -45,11 +45,11 @@ This is a 3D game engine for Windows.
 4. Move audio sources
 5. Edit pitch and gain
 6. Loop sounds
+7. Moving sounds: Doppler effect
 ##### TODO
-1. Moving sounds: Doppler effect
+Nothing for now
 
 ### Features to come
-
 1. GUI System
 2. Scripting System
 
