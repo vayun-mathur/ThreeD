@@ -4,6 +4,7 @@
 #include "DirectionalLightObject.h"
 #include "PointLightObject.h"
 #include "AudioSourceObject.h"
+#include "ScriptObject.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
 #include "ResourceManager.h"
@@ -116,6 +117,21 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			AudioSourceObjectPtr audiosource = std::make_shared<AudioSourceObject>(name, this, position);
 			components[parent]->addChild(audiosource);
 			components.insert({ id, audiosource });
+		}
+		else if (type == "SCRIPT") {
+			std::wstring file;
+			readString(scene_file, file);
+			std::ifstream in(file.c_str());
+			std::vector<std::string> vec;
+			std::string str;
+			while (std::getline(in, str))
+			{
+				if (str.size() > 0)
+					vec.push_back(str);
+			}
+			ScriptObjectPtr script = std::make_shared<ScriptObject>(name, this, vec);
+			components[parent]->addChild(script);
+			components.insert({ id, script });
 		}
 	}
 	int main_camera_id;

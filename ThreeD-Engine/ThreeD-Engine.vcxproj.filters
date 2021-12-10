@@ -85,6 +85,9 @@
     <Filter Include="Engine\ScriptingSystem">
       <UniqueIdentifier>{d108d2de-4733-4e42-9fbb-1483018b9a4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\ScriptObject">
+      <UniqueIdentifier>{86a5db21-2e2d-4d61-9e99-835101f4745b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -179,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="ScriptSystem.cpp">
       <Filter>Engine\ScriptingSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptObject.cpp">
+      <Filter>Engine\SceneSystem\ScriptObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="ScriptSystem.h">
       <Filter>Engine\ScriptingSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptObject.h">
+      <Filter>Engine\SceneSystem\ScriptObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

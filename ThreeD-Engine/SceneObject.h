@@ -7,7 +7,7 @@
 
 enum class SceneObjectType {
 	SceneObject, CameraObject, MeshObject, DirectionalLightObject,
-	PointLightObject, AudioSourceObject
+	PointLightObject, AudioSourceObject, ScriptObject
 };
 
 class SceneSystem;
@@ -55,6 +55,7 @@ private:
 	std::string m_name;
 	std::map<std::string, SceneObjectPtr> m_children;
 protected:
+	SceneObjectPtr m_parent;
 	SceneSystem* m_system;
 private:
 	friend class SceneSystem;

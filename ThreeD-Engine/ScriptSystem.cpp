@@ -38,7 +38,7 @@ bool isOperator(char c) {
 	return c == '+' || c == '-' || c == '*' || c == '/' || c == '=';
 }
 
-float evaluate(std::string tokens, SceneObjectPtr object) {
+float evaluate(std::string tokens, SceneObject* object) {
 	int i;
 	std::stack <ScriptValue*> values;
 	std::stack <char> ops;
@@ -104,7 +104,7 @@ float evaluate(std::string tokens, SceneObjectPtr object) {
 			}
 			if (s != "this") throw std::exception("Invalid script");
 
-			ScriptValue* val = object.get();
+			ScriptValue* val = object;
 			while (i < tokens.length() && tokens[i] == '.') {
 				i++;
 				std::string s = "";
@@ -134,7 +134,7 @@ float evaluate(std::string tokens, SceneObjectPtr object) {
 	return *((NumberScriptValue*)values.top())->v;
 }
 
-void ScriptSystem::exec(std::string cmd, SceneObjectPtr object)
+void ScriptSystem::exec(std::string cmd, SceneObject* object)
 {
 	std::cout << evaluate(cmd, object) << std::endl;
 }

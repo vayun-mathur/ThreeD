@@ -14,6 +14,7 @@ MeshObject::~MeshObject()
 
 ScriptValue* MeshObject::dot(std::string s)
 {
+	if (s == "parent") return m_parent.get();
 	if (s == "position") return new Vec3ScriptValue(&m_position);
 	if (s == "scale") return new Vec3ScriptValue(&m_scale);
 	return nullptr;

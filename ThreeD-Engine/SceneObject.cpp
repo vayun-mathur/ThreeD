@@ -9,6 +9,7 @@ SceneObject::SceneObject(std::string name, SceneSystem* system)
 void SceneObject::addChild(SceneObjectPtr child)
 {
 	m_children.insert({ child->m_name, child });
+	child->m_parent = std::shared_ptr<SceneObject>(this);
 }
 
 SceneObjectPtr SceneObject::getChild(std::string name) const
@@ -41,6 +42,7 @@ SceneObject::~SceneObject()
 
 ScriptValue* SceneObject::dot(std::string s)
 {
+	if (s == "parent") return m_parent.get();
 	if (m_children.find(s) != m_children.end()) {
 		return m_children[s].get();
 	}

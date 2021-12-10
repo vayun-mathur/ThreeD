@@ -25,6 +25,7 @@ class CameraObject;
 class DirectionalLightObject;
 class PointLightObject;
 class AudioSourceObject;
+class ScriptObject;
 
 typedef std::shared_ptr<SwapChain> SwapChainPtr;
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -44,6 +45,7 @@ typedef std::shared_ptr<CameraObject> CameraObjectPtr;
 typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
 typedef std::shared_ptr<AudioSourceObject> AudioSourceObjectPtr;
+typedef std::shared_ptr<ScriptObject> ScriptObjectPtr;
 
 template<typename Base, typename T>
 inline bool instanceof(const T* ptr) {

@@ -23,6 +23,7 @@ void CameraObject::updateProjectionMatrix()
 
 ScriptValue* CameraObject::dot(std::string s)
 {
+	if (s == "parent") return m_parent.get();
 	if (s == "position") return new Vec3ScriptValue(&m_camera_position);
 	return nullptr;
 }

@@ -12,6 +12,7 @@ DirectionalLightObject::~DirectionalLightObject()
 
 ScriptValue* DirectionalLightObject::dot(std::string s)
 {
+	if (s == "parent") return m_parent.get();
 	if (s == "direction") return new Vec3ScriptValue(&m_direction);
 	if (s == "color") return new Vec3ScriptValue(&m_color);
 	return nullptr;

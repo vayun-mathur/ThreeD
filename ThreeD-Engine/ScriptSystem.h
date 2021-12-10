@@ -100,7 +100,7 @@ public:
 	ScriptSystem();
 	~ScriptSystem();
 
-	void exec(std::string cmd, SceneObjectPtr object);
+	void exec(std::string cmd, SceneObject* object);
 public:
 	static ScriptSystem* get();
 	static void create();

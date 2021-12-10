@@ -11,6 +11,7 @@ PointLightObject::~PointLightObject()
 
 ScriptValue* PointLightObject::dot(std::string s)
 {
+	if (s == "parent") return m_parent.get();
 	if (s == "position") return new Vec3ScriptValue(&m_position);
 	if (s == "color") return new Vec3ScriptValue(&m_color);
 	if (s == "attenuation") return new Vec3ScriptValue(&m_attenuation);

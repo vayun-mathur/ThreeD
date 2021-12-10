@@ -24,6 +24,7 @@ AudioSourceObject::~AudioSourceObject()
 
 ScriptValue* AudioSourceObject::dot(std::string s)
 {
+	if (s == "parent") return m_parent.get();
 	if (s == "position") return new Vec3ScriptValue(&m_position);
 	if (s == "gain") return new NumberScriptValue(&m_gain);
 	if (s == "pitch") return new NumberScriptValue(&m_pitch);
