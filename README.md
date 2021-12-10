@@ -35,8 +35,9 @@ This is a 3D game engine for Windows.
 6. Reading from scene file
 7. Point Light Object
 8. Audio Source Object
+9. Script Object
 ##### TODO
-1. Script Object
+Nothing for now
 #### Audio System
 ##### Completed
 1. Load audio from files
@@ -49,9 +50,20 @@ This is a 3D game engine for Windows.
 ##### TODO
 Nothing for now
 
+#### Scripting System
+##### Completed
+1. Print values in scene
+2. Edit values in scene
+3. Write code in seperate file
+##### TODO
+1. If/Else statements
+2. More Operators
+3. Loops
+4. Functions
+5. Event listeners
+
 ### Features to come
 1. GUI System
-2. Scripting System
 
 ## Getting Started
 ### Installation
