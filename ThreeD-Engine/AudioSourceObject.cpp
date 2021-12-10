@@ -28,4 +28,5 @@ void AudioSourceObject::play(AudioSoundPtr sound)
 void AudioSourceObject::update(double delta_time)
 {
 	alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);
+	alCall(alSource3f, source, AL_POSITION, m_position.x, m_position.y, m_position.z);
 }

@@ -61,8 +61,8 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			readString(scene_file, obj);
 			scene_file >> position.x >> position.y >> position.z >> scale.x >> scale.y >> scale.z;
 			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, obj, vs, ps);
-			mesh->position = position;
-			mesh->scale = scale;
+			mesh->setPosition(position);
+			mesh->setScale(scale);
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
 		}
@@ -79,7 +79,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });
 			mesh->getMesh()->getMaterials()[0].material->getTextures().insert({ 1,
 				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });
-			mesh->position = position;
+			mesh->setPosition(position);
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
 		}

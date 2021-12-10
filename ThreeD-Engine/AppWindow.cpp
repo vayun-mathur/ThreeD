@@ -83,8 +83,8 @@ void AppWindow::update()
 
 	CameraObjectPtr cam = m_scene->getCamera();
 	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
-	skybox->position = vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z);
-	skybox->scale = vec3(100, 100, 100);
+	skybox->setPosition(vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z));
+	skybox->setScale(vec3(100, 100, 100));
 }
 
 void findLights(SceneObjectPtr obj, std::vector<DirectionalLightObjectPtr>& dlights, std::vector<PointLightObjectPtr>& plights) {
@@ -123,8 +123,8 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 
 	//transform
 	cc.m_transform.setIdentity();
-	cc.m_transform.setTranslation(mesh.position);
-	cc.m_transform.setScale(mesh.scale);
+	cc.m_transform.setTranslation(mesh.getPosition());
+	cc.m_transform.setScale(mesh.getScale());
 
 	//camera
 	CameraObjectPtr cam = m_scene->getCamera();
@@ -167,6 +167,11 @@ void AppWindow::onUpdate()
 
 	InputSystem::get()->update();
 	m_scene->update(m_delta_time);
+
+	auto audio = m_scene->getRoot()->getChild<AudioSourceObject>("audio");
+	vec3 v = audio->getPosition();
+	v.x += 0.1f;
+	audio->setPosition(v);
 
 	update();
 	render();

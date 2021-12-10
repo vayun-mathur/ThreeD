@@ -17,14 +17,20 @@ public:
 	inline VertexShaderPtr getVertexShader() { return m_vs; }
 	inline PixelShaderPtr getPixelShader() { return m_ps; }
 	inline MeshPtr getMesh() { return m_mesh; }
+
+public:
+	inline vec3 getPosition() { return m_position; }
+	inline void setPosition(vec3 position) { m_position = position; }
+	inline vec3 getScale() { return m_scale; }
+	inline void setScale(vec3 scale) { m_scale = scale; }
 private:
 	virtual void render(ConstantBufferPtr cb);
 private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
 	MeshPtr m_mesh;
-public:
-	vec3 position = vec3(0, 0, 0);
-	vec3 scale = vec3(1, 1, 1);
+private:
+	vec3 m_position = vec3(0, 0, 0);
+	vec3 m_scale = vec3(1, 1, 1);
 };
 

@@ -16,6 +16,9 @@ public:
 	}
 public:
 	void play(AudioSoundPtr sound);
+public:
+	inline vec3 getPosition() { return m_position; }
+	inline void setPosition(vec3 position) { m_position = position; }
 private:
 	virtual void update(double delta_time);
 private:
