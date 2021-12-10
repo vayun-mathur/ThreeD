@@ -8,7 +8,7 @@ class CameraObject
 	: public SceneObject, public InputListener
 {
 public:
-	CameraObject(std::string name);
+	CameraObject(std::string name, float clip_dist, float speed);
 
 	~CameraObject();
 
@@ -38,6 +38,9 @@ private:
 	virtual void onMouseMove(const Point& delta_mouse_pos);
 
 private:
+	float m_clip_dist;
+	float m_speed;
+
 	float m_rot_x = 0;
 	float m_rot_y = 0;
 

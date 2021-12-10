@@ -3,8 +3,8 @@
 #include "GraphicsEngine.h"
 #include "AppWindow.h"
 
-CameraObject::CameraObject(std::string name)
-	: SceneObject(name)
+CameraObject::CameraObject(std::string name, float clip_dist, float speed)
+	: SceneObject(name), m_clip_dist(clip_dist), m_speed(speed)
 {
 	m_world_cam.setTranslation(vec3(0, 0, -1));
 }
@@ -18,7 +18,7 @@ void CameraObject::updateProjectionMatrix()
 	int width = (AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left);
 	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 
-	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 10000.0f);
+	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, m_clip_dist);
 }
 
 void CameraObject::update(double delta_time)
@@ -59,7 +59,7 @@ void CameraObject::update(double delta_time)
 	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 
 
-	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, 1000.0f);
+	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, m_clip_dist);
 
 	m_delta_time = delta_time;
 }
@@ -82,18 +82,17 @@ void CameraObject::onRightMouseUp(const Point& mouse_pos)
 
 void CameraObject::onKeyDown(int key)
 {
-	const float speed = 10.0f;
 	if (key == 'W') {
-		m_forward = speed;
+		m_forward = m_speed;
 	}
 	else if (key == 'S') {
-		m_forward = -speed;
+		m_forward = -m_speed;
 	}
 	if (key == 'A') {
-		m_rightward = -speed;
+		m_rightward = -m_speed;
 	}
 	else if (key == 'D') {
-		m_rightward = speed;
+		m_rightward = m_speed;
 	}
 }
 

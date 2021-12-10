@@ -83,7 +83,9 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components.insert({ id, mesh });
 		}
 		else if (type == "CAMERA") {
-			CameraObjectPtr camera = std::make_shared<CameraObject>(name);
+			float clip_dist, speed;
+			scene_file >> clip_dist >> speed;
+			CameraObjectPtr camera = std::make_shared<CameraObject>(name, clip_dist, speed);
 			components[parent]->addChild(camera);
 			components.insert({ id, camera });
 		}
