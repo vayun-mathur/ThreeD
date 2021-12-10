@@ -39,12 +39,14 @@ This is a 3D game engine for Windows.
 1. Script Object
 #### Audio System
 ##### Completed
-##### TODO
 1. Load audio from files
 2. Play audio
 3. Create multiple audio sources
-4. Move audio sources
-5. Doppler effect
+##### TODO
+1. Move audio sources
+2. Edit pitch and gain
+3. Loop sounds
+4. Moving sounds: Doppler effect
 
 
 ### Features to come
