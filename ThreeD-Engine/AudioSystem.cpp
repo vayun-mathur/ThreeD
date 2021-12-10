@@ -88,10 +88,6 @@ AudioSystem::AudioSystem()
 		m_audiosound_manager = new AudioSoundManager();
 	}
 	catch (...) { throw std::exception("AudioSoundManager not created successfully"); }
-
-	AudioSoundPtr audio = m_audiosound_manager->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
-
-	audio->play();
 }
 
 AudioSystem::~AudioSystem()

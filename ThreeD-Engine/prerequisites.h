@@ -24,6 +24,7 @@ class MeshObject;
 class CameraObject;
 class DirectionalLightObject;
 class PointLightObject;
+class AudioSourceObject;
 
 typedef std::shared_ptr<SwapChain> SwapChainPtr;
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -42,3 +43,4 @@ typedef std::shared_ptr<MeshObject> MeshObjectPtr;
 typedef std::shared_ptr<CameraObject> CameraObjectPtr;
 typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
+typedef std::shared_ptr<AudioSourceObject> AudioSourceObjectPtr;

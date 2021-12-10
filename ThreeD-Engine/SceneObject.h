@@ -6,7 +6,7 @@
 
 enum class SceneObjectType{
 	SceneObject, CameraObject, MeshObject, DirectionalLightObject,
-	PointLightObject
+	PointLightObject, AudioSourceObject
 };
 
 class SceneSystem;

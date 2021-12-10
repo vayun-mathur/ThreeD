@@ -8,7 +8,7 @@ public:
 	AudioSystem();
 	~AudioSystem();
 public:
-	AudioSoundManager* getTextureManager();
+	AudioSoundManager* getAudioSoundManager() { return m_audiosound_manager; }
 public:
 	static AudioSystem* get();
 	static void create();

@@ -6,6 +6,9 @@
 #include "PointLightObject.h"
 #include "MeshObject.h"
 #include "InputSystem.h"
+#include "AudioSystem.h"
+#include "AudioSoundManager.h"
+#include "AudioSourceObject.h"
 
 struct dlight {
 	vec4 light_direction;
@@ -150,6 +153,10 @@ void AppWindow::onCreate()
 
 	constant cc;
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
+
+	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
+
+	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
 
 	onFocus();
 }

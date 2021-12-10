@@ -3,6 +3,7 @@
 #include "CameraObject.h"
 #include "DirectionalLightObject.h"
 #include "PointLightObject.h"
+#include "AudioSourceObject.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
 #include "ResourceManager.h"
@@ -108,6 +109,13 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			PointLightObjectPtr light = std::make_shared<PointLightObject>(name, color, position, radius, attenuation);
 			components[parent]->addChild(light);
 			components.insert({ id, light });
+		}
+		else if (type == "AUDIO_SOURCE") {
+			vec3 position;
+			scene_file >> position.x >> position.y >> position.z;
+			AudioSourceObjectPtr audiosource = std::make_shared<AudioSourceObject>(name, position);
+			components[parent]->addChild(audiosource);
+			components.insert({ id, audiosource });
 		}
 	}
 	int main_camera_id;

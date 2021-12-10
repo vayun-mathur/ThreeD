@@ -162,6 +162,7 @@
     <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="AudioSound.cpp" />
     <ClCompile Include="AudioSoundManager.cpp" />
+    <ClCompile Include="AudioSourceObject.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="DirectionalLightObject.cpp" />
@@ -195,9 +196,11 @@
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="alhelper.h" />
     <ClInclude Include="AppWindow.h" />
     <ClInclude Include="AudioSound.h" />
     <ClInclude Include="AudioSoundManager.h" />
+    <ClInclude Include="AudioSourceObject.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="CameraObject.h" />
     <ClInclude Include="DirectionalLightObject.h" />

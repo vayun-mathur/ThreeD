@@ -79,6 +79,9 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{88c26e9c-669f-4a5e-b283-52c66d9bc89a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\AudioSourceObject">
+      <UniqueIdentifier>{68d95eb3-2798-4c5b-b81f-befe5463a2da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="AudioSoundManager.cpp">
       <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSourceObject.cpp">
+      <Filter>Engine\SceneSystem\AudioSourceObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +274,12 @@
     </ClInclude>
     <ClInclude Include="AudioSoundManager.h">
       <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="alhelper.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSourceObject.h">
+      <Filter>Engine\SceneSystem\AudioSourceObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
