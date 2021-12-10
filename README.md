@@ -49,9 +49,8 @@ This is a 3D game engine for Windows.
 
 ### Features to come
 
-1. Audio System
-2. GUI System
-3. Scripting System
+1. GUI System
+2. Scripting System
 
 ## Getting Started
 ### Installation
