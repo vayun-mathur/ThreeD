@@ -18,7 +18,7 @@ public:
 
 	inline mat4 getViewMatrix() { return m_view; }
 	inline mat4 getProjectionMatrix() { return m_projection; }
-	inline vec4 getCameraPosition() { return m_camera_position; }
+	inline vec3 getCameraPosition() { return m_camera_position; }
 
 	void updateProjectionMatrix();
 private:
@@ -53,7 +53,7 @@ private:
 
 	mat4 m_view;
 	mat4 m_projection;
-	vec4 m_camera_position;
+	vec3 m_camera_position;
 
 	bool m_in_play = true;
 };

@@ -36,8 +36,13 @@ void AudioSourceObject::loop(bool looping)
 void AudioSourceObject::update(double delta_time)
 {
 	alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);
-	vec4 pos = m_system->getCamera()->getCameraPosition();
-	alCall(alSource3f, source, AL_POSITION, m_position.x - pos.x, m_position.y - pos.y, m_position.z - pos.z);
+	vec3 campos = m_system->getCamera()->getCameraPosition();
+	vec3 curr_relpos = m_position - campos;
+	vec3 prev_relpos;
+	alCall(alGetSource3f, source, AL_POSITION, &prev_relpos.x, &prev_relpos.y, &prev_relpos.z);
+	alCall(alSource3f, source, AL_POSITION, curr_relpos.x, curr_relpos.y, curr_relpos.z);
+	vec3 velocity = (curr_relpos - prev_relpos) * (1/delta_time);
+	alCall(alSource3f, source, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 	alCall(alSourcef, source, AL_PITCH, m_pitch);
 	alCall(alSourcef, source, AL_GAIN, m_gain);
 }

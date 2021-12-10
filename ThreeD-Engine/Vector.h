@@ -55,6 +55,11 @@ public:
 		return vec3(x + other.x, y + other.y, z + other.z);
 	}
 
+	vec3 operator-(const vec3& other)
+	{
+		return vec3(x - other.x, y - other.y, z - other.z);
+	}
+
 	vec3 norm() const {
 		float mag = sqrt(x * x + y * y + z * z);
 		return vec3(x / mag, y / mag, z / mag);
