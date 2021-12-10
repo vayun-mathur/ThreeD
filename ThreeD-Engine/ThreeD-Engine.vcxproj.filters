@@ -76,6 +76,9 @@
     <Filter Include="Engine\GraphicsEngine\ResourceManager\Material">
       <UniqueIdentifier>{e4eb69d6-dbc1-446c-88d9-209cb4660bb6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Audio">
+      <UniqueIdentifier>{88c26e9c-669f-4a5e-b283-52c66d9bc89a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Engine\GraphicsEngine\ResourceManager\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Engine\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Engine\GraphicsEngine\ResourceManager\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSystem.h">
+      <Filter>Engine\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

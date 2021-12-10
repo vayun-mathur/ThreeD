@@ -1,10 +1,12 @@
 #include "AppWindow.h"
 #include "InputSystem.h"
+#include "AudioSystem.h"
 
 int main() {
 	try {
 		GraphicsEngine::create();
 		InputSystem::create();
+		AudioSystem::create();
 	}
 	catch (...) { return -1; }
 	{
