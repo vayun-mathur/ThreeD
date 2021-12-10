@@ -28,6 +28,11 @@ void AudioSourceObject::play(AudioSoundPtr sound)
 	alCall(alSourcePlay, source);
 }
 
+void AudioSourceObject::loop(bool looping)
+{
+	alCall(alSourcei, source, AL_LOOPING, looping?AL_TRUE:AL_FALSE);
+}
+
 void AudioSourceObject::update(double delta_time)
 {
 	alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);

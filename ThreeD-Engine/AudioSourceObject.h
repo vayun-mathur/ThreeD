@@ -16,6 +16,7 @@ public:
 	}
 public:
 	void play(AudioSoundPtr sound);
+	void loop(bool looping);
 public:
 	inline vec3 getPosition() { return m_position; }
 	inline void setPosition(vec3 position) { m_position = position; }
