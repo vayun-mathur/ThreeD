@@ -162,6 +162,12 @@
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="AudioSound.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSoundManager.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -255,6 +261,12 @@
       <Filter>Engine\GraphicsEngine\ResourceManager\Material</Filter>
     </ClInclude>
     <ClInclude Include="AudioSystem.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSound.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSoundManager.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
   </ItemGroup>

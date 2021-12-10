@@ -160,6 +160,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp" />
+    <ClCompile Include="AudioSound.cpp" />
+    <ClCompile Include="AudioSoundManager.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="DirectionalLightObject.cpp" />
@@ -194,6 +196,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h" />
+    <ClInclude Include="AudioSound.h" />
+    <ClInclude Include="AudioSoundManager.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="CameraObject.h" />
     <ClInclude Include="DirectionalLightObject.h" />
