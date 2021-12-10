@@ -34,20 +34,19 @@ This is a 3D game engine for Windows.
 5. Directional Light Object
 6. Reading from scene file
 7. Point Light Object
+8. Audio Source Object
 ##### TODO
-1. Audio Source Object
 1. Script Object
 #### Audio System
 ##### Completed
 1. Load audio from files
 2. Play audio
 3. Create multiple audio sources
+4. Move audio sources
+5. Edit pitch and gain
+6. Loop sounds
 ##### TODO
-1. Move audio sources
-2. Edit pitch and gain
-3. Loop sounds
-4. Moving sounds: Doppler effect
-
+1. Moving sounds: Doppler effect
 
 ### Features to come
 
