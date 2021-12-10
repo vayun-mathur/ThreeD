@@ -157,6 +157,8 @@ void AppWindow::onCreate()
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 
 	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
+	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
+	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
 
 	onFocus();
 }
@@ -168,10 +170,12 @@ void AppWindow::onUpdate()
 	InputSystem::get()->update();
 	m_scene->update(m_delta_time);
 
+	/*
 	auto audio = m_scene->getRoot()->getChild<AudioSourceObject>("audio");
 	vec3 v = audio->getPosition();
 	v.x += 0.1f;
 	audio->setPosition(v);
+	*/
 
 	update();
 	render();

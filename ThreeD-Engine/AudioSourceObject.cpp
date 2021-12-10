@@ -33,4 +33,6 @@ void AudioSourceObject::update(double delta_time)
 	alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);
 	vec4 pos = m_system->getCamera()->getCameraPosition();
 	alCall(alSource3f, source, AL_POSITION, m_position.x - pos.x, m_position.y - pos.y, m_position.z - pos.z);
+	alCall(alSourcef, source, AL_PITCH, m_pitch);
+	alCall(alSourcef, source, AL_GAIN, m_gain);
 }
