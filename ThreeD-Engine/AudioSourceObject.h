@@ -14,6 +14,8 @@ public:
 	virtual SceneObjectType getType() const {
 		return SceneObjectType::AudioSourceObject;
 	}
+
+	virtual ScriptValue* dot(std::string);
 public:
 	void play(AudioSoundPtr sound);
 	void loop(bool looping);
@@ -28,8 +30,8 @@ private:
 	virtual void update(double delta_time);
 private:
 	vec3 m_position;
-	float m_pitch;
-	float m_gain;
+	float m_pitch = 1;
+	float m_gain = 1;
 private:
 	ALuint source;
 	ALint state;

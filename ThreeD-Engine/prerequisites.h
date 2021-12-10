@@ -44,3 +44,8 @@ typedef std::shared_ptr<CameraObject> CameraObjectPtr;
 typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
 typedef std::shared_ptr<AudioSourceObject> AudioSourceObjectPtr;
+
+template<typename Base, typename T>
+inline bool instanceof(const T* ptr) {
+	return dynamic_cast<const Base*>(ptr) != nullptr;
+}

@@ -1,12 +1,14 @@
 #include "AppWindow.h"
 #include "InputSystem.h"
 #include "AudioSystem.h"
+#include "ScriptSystem.h"
 
 int main() {
 	try {
 		GraphicsEngine::create();
 		InputSystem::create();
 		AudioSystem::create();
+		ScriptSystem::create();
 	}
 	catch (...) { return -1; }
 	{
@@ -21,6 +23,8 @@ int main() {
 		}
 	}
 
+	ScriptSystem::release();
+	AudioSystem::release();
 	InputSystem::release();
 	GraphicsEngine::release();
 

@@ -8,3 +8,12 @@ PointLightObject::PointLightObject(std::string name, SceneSystem* system, vec3 c
 PointLightObject::~PointLightObject()
 {
 }
+
+ScriptValue* PointLightObject::dot(std::string s)
+{
+	if (s == "position") return new Vec3ScriptValue(&m_position);
+	if (s == "color") return new Vec3ScriptValue(&m_color);
+	if (s == "attenuation") return new Vec3ScriptValue(&m_attenuation);
+	if (s == "radius") return new NumberScriptValue(&m_radius);
+	return nullptr;
+}

@@ -9,3 +9,10 @@ DirectionalLightObject::DirectionalLightObject(std::string name, SceneSystem* sy
 DirectionalLightObject::~DirectionalLightObject()
 {
 }
+
+ScriptValue* DirectionalLightObject::dot(std::string s)
+{
+	if (s == "direction") return new Vec3ScriptValue(&m_direction);
+	if (s == "color") return new Vec3ScriptValue(&m_color);
+	return nullptr;
+}

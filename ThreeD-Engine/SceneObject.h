@@ -3,14 +3,15 @@
 #include <map>
 #include <type_traits>
 #include "prerequisites.h"
+#include "ScriptSystem.h"
 
-enum class SceneObjectType{
+enum class SceneObjectType {
 	SceneObject, CameraObject, MeshObject, DirectionalLightObject,
 	PointLightObject, AudioSourceObject
 };
 
 class SceneSystem;
-class SceneObject
+class SceneObject : public ScriptValue
 {
 public:
 	SceneObject(std::string name, SceneSystem* system);
@@ -35,6 +36,13 @@ public:
 	void removeChild(std::string name);
 
 	~SceneObject();
+
+
+	virtual ScriptValue* dot(std::string);
+	virtual ScriptValue* add(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
 
 public:
 	inline const std::map<std::string, SceneObjectPtr>& getChildren() { return m_children; }

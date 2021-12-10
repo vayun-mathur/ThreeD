@@ -21,6 +21,12 @@ void CameraObject::updateProjectionMatrix()
 	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, m_clip_dist);
 }
 
+ScriptValue* CameraObject::dot(std::string s)
+{
+	if (s == "position") return new Vec3ScriptValue(&m_camera_position);
+	return nullptr;
+}
+
 void CameraObject::update(double delta_time)
 {
 

@@ -22,6 +22,14 @@ AudioSourceObject::~AudioSourceObject()
 	alCall(alDeleteSources, 1, &source);
 }
 
+ScriptValue* AudioSourceObject::dot(std::string s)
+{
+	if (s == "position") return new Vec3ScriptValue(&m_position);
+	if (s == "gain") return new NumberScriptValue(&m_gain);
+	if (s == "pitch") return new NumberScriptValue(&m_pitch);
+	return nullptr;
+}
+
 void AudioSourceObject::play(AudioSoundPtr sound)
 {
 	alCall(alSourcei, source, AL_BUFFER, sound->buffer);

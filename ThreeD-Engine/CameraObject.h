@@ -21,6 +21,8 @@ public:
 	inline vec3 getCameraPosition() { return m_camera_position; }
 
 	void updateProjectionMatrix();
+
+	virtual ScriptValue* dot(std::string);
 private:
 	virtual void update(double delta_time);
 

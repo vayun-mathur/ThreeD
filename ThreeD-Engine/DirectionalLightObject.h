@@ -14,6 +14,7 @@ public:
 		return SceneObjectType::DirectionalLightObject;
 	}
 
+	virtual ScriptValue* dot(std::string);
 public:
 	inline vec3 getDirection() { return m_direction; }
 	inline void setDirection(vec3 direction) { m_direction = direction; }

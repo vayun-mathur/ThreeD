@@ -38,3 +38,11 @@ void SceneObject::render(ConstantBufferPtr cb)
 SceneObject::~SceneObject()
 {
 }
+
+ScriptValue* SceneObject::dot(std::string s)
+{
+	if (m_children.find(s) != m_children.end()) {
+		return m_children[s].get();
+	}
+	return nullptr;
+}

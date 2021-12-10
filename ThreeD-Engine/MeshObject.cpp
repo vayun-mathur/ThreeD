@@ -12,6 +12,13 @@ MeshObject::~MeshObject()
 {
 }
 
+ScriptValue* MeshObject::dot(std::string s)
+{
+	if (s == "position") return new Vec3ScriptValue(&m_position);
+	if (s == "scale") return new Vec3ScriptValue(&m_scale);
+	return nullptr;
+}
+
 void MeshObject::render(ConstantBufferPtr cb)
 {
 	AppWindow::s_main->setConstantBuffer(*this);

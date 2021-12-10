@@ -184,6 +184,7 @@
     <ClCompile Include="PointLightObject.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
+    <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SceneSystem.h" />
+    <ClInclude Include="ScriptSystem.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
     <ClInclude Include="Window.h" />

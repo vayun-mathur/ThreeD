@@ -9,6 +9,7 @@
 #include "AudioSystem.h"
 #include "AudioSoundManager.h"
 #include "AudioSourceObject.h"
+#include "ScriptSystem.h"
 
 struct dlight {
 	vec4 light_direction;
@@ -156,9 +157,10 @@ void AppWindow::onCreate()
 
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 
-	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
-	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
-	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
+
+	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
+	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
+	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
 
 	onFocus();
 }
@@ -170,6 +172,7 @@ void AppWindow::onUpdate()
 	InputSystem::get()->update();
 	m_scene->update(m_delta_time);
 
+	ScriptSystem::get()->exec("this.camera.position.z", m_scene->getRoot());
 	/*
 	auto audio = m_scene->getRoot()->getChild<AudioSourceObject>("audio");
 	vec3 v = audio->getPosition();

@@ -82,6 +82,9 @@
     <Filter Include="Engine\SceneSystem\AudioSourceObject">
       <UniqueIdentifier>{68d95eb3-2798-4c5b-b81f-befe5463a2da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ScriptingSystem">
+      <UniqueIdentifier>{d108d2de-4733-4e42-9fbb-1483018b9a4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -173,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="AudioSourceObject.cpp">
       <Filter>Engine\SceneSystem\AudioSourceObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptSystem.cpp">
+      <Filter>Engine\ScriptingSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,6 +286,9 @@
     </ClInclude>
     <ClInclude Include="AudioSourceObject.h">
       <Filter>Engine\SceneSystem\AudioSourceObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptSystem.h">
+      <Filter>Engine\ScriptingSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,7 @@ public:
 	inline PixelShaderPtr getPixelShader() { return m_ps; }
 	inline MeshPtr getMesh() { return m_mesh; }
 
+	virtual ScriptValue* dot(std::string);
 public:
 	inline vec3 getPosition() { return m_position; }
 	inline void setPosition(vec3 position) { m_position = position; }

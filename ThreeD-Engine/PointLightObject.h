@@ -14,6 +14,7 @@ public:
 		return SceneObjectType::PointLightObject;
 	}
 
+	virtual ScriptValue* dot(std::string);
 public:
 	inline vec3 getPosition() { return m_position; }
 	inline void setPosition(vec3 position) { m_position = position; }

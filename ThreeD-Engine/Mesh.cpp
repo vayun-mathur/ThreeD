@@ -55,8 +55,6 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 	for (size_t s = 0; s < shapes.size(); s++) {
 		size_t index_offset = 0;
 
-		std::cout << shapes[s].name << std::endl;
-
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
 			unsigned char num_face_verts = shapes[s].mesh.num_face_vertices[f];
 			int mat = shapes[s].mesh.material_ids[f];
