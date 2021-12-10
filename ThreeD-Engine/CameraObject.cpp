@@ -3,8 +3,8 @@
 #include "GraphicsEngine.h"
 #include "AppWindow.h"
 
-CameraObject::CameraObject(std::string name, float clip_dist, float speed)
-	: SceneObject(name), m_clip_dist(clip_dist), m_speed(speed)
+CameraObject::CameraObject(std::string name, SceneSystem* system, float clip_dist, float speed)
+	: SceneObject(name, system), m_clip_dist(clip_dist), m_speed(speed)
 {
 	m_world_cam.setTranslation(vec3(0, 0, -1));
 }

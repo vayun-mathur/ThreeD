@@ -6,7 +6,7 @@ class PointLightObject
 	: public SceneObject
 {
 public:
-	PointLightObject(std::string name, vec3 color, vec3 position, float radius, vec3 attenuation);
+	PointLightObject(std::string name, SceneSystem* system, vec3 color, vec3 position, float radius, vec3 attenuation);
 
 	~PointLightObject();
 

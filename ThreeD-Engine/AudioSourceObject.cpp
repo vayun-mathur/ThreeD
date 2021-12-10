@@ -2,8 +2,11 @@
 #include <iostream>
 #include "AudioSound.h"
 #include "alhelper.h"
+#include "SceneSystem.h"
+#include "CameraObject.h"
 
-AudioSourceObject::AudioSourceObject(std::string name, vec3 position) : SceneObject(name), m_position(position)
+AudioSourceObject::AudioSourceObject(std::string name, SceneSystem* system, vec3 position) 
+	: SceneObject(name, system), m_position(position)
 {
 	alCall(alGenSources, 1, &source);
 	alCall(alSourcef, source, AL_PITCH, 1);
@@ -28,5 +31,6 @@ void AudioSourceObject::play(AudioSoundPtr sound)
 void AudioSourceObject::update(double delta_time)
 {
 	alCall(alGetSourcei, source, AL_SOURCE_STATE, &state);
-	alCall(alSource3f, source, AL_POSITION, m_position.x, m_position.y, m_position.z);
+	vec4 pos = m_system->getCamera()->getCameraPosition();
+	alCall(alSource3f, source, AL_POSITION, m_position.x - pos.x, m_position.y - pos.y, m_position.z - pos.z);
 }

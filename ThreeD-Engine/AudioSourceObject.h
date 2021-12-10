@@ -8,7 +8,7 @@ class AudioSourceObject
 	: public SceneObject
 {
 public:
-	AudioSourceObject(std::string name, vec3 position);
+	AudioSourceObject(std::string name, SceneSystem* system, vec3 position);
 	~AudioSourceObject();
 
 	virtual SceneObjectType getType() const {

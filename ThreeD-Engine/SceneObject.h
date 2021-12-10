@@ -13,7 +13,7 @@ class SceneSystem;
 class SceneObject
 {
 public:
-	SceneObject(std::string name);
+	SceneObject(std::string name, SceneSystem* system);
 
 	void addChild(SceneObjectPtr child);
 
@@ -45,6 +45,8 @@ private:
 private:
 	std::string m_name;
 	std::map<std::string, SceneObjectPtr> m_children;
+protected:
+	SceneSystem* m_system;
 private:
 	friend class SceneSystem;
 };

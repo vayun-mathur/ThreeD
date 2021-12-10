@@ -8,7 +8,7 @@ class CameraObject
 	: public SceneObject, public InputListener
 {
 public:
-	CameraObject(std::string name, float clip_dist, float speed);
+	CameraObject(std::string name, SceneSystem* system, float clip_dist, float speed);
 
 	~CameraObject();
 

@@ -6,7 +6,7 @@ class MeshObject
 	: public SceneObject
 {
 public:
-	MeshObject(std::string name, std::wstring mesh_location, VertexShaderPtr vs, PixelShaderPtr ps);
+	MeshObject(std::string name, SceneSystem* system, std::wstring mesh_location, VertexShaderPtr vs, PixelShaderPtr ps);
 
 	~MeshObject();
 

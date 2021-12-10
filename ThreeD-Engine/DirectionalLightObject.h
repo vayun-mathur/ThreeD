@@ -6,7 +6,7 @@ class DirectionalLightObject
 	: public SceneObject
 {
 public:
-	DirectionalLightObject(std::string name, vec3 color, vec3 direction);
+	DirectionalLightObject(std::string name, SceneSystem* system, vec3 color, vec3 direction);
 
 	~DirectionalLightObject();
 

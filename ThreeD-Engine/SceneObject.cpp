@@ -1,7 +1,8 @@
 #include "SceneObject.h"
+#include "SceneSystem.h"
 
-SceneObject::SceneObject(std::string name)
-	:m_name(name)
+SceneObject::SceneObject(std::string name, SceneSystem* system)
+	:m_name(name), m_system(system)
 {
 }
 
