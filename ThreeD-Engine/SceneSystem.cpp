@@ -4,6 +4,8 @@
 #include "DirectionalLightObject.h"
 #include "PointLightObject.h"
 #include "AudioSourceObject.h"
+#include "NumberObject.h"
+#include "Vec3Object.h"
 #include "ScriptObject.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
@@ -117,6 +119,20 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			AudioSourceObjectPtr audiosource = std::make_shared<AudioSourceObject>(name, this, position);
 			components[parent]->addChild(audiosource);
 			components.insert({ id, audiosource });
+		}
+		else if (type == "NUMBER_VALUE") {
+			float val;
+			scene_file >> val;
+			NumberObjectPtr num = std::make_shared<NumberObject>(name, this, val);
+			components[parent]->addChild(num);
+			components.insert({ id, num });
+		}
+		else if (type == "VECTOR_VALUE") {
+			vec3 val;
+			scene_file >> val.x >> val.y >> val.z;
+			Vec3ObjectPtr vec = std::make_shared<Vec3Object>(name, this, val);
+			components[parent]->addChild(vec);
+			components.insert({ id, vec });
 		}
 		else if (type == "SCRIPT") {
 			std::wstring file;

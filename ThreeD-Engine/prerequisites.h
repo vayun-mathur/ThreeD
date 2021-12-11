@@ -26,6 +26,8 @@ class DirectionalLightObject;
 class PointLightObject;
 class AudioSourceObject;
 class ScriptObject;
+class NumberObject;
+class Vec3Object;
 
 typedef std::shared_ptr<SwapChain> SwapChainPtr;
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -46,6 +48,8 @@ typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
 typedef std::shared_ptr<AudioSourceObject> AudioSourceObjectPtr;
 typedef std::shared_ptr<ScriptObject> ScriptObjectPtr;
+typedef std::shared_ptr<NumberObject> NumberObjectPtr;
+typedef std::shared_ptr<Vec3Object> Vec3ObjectPtr;
 
 template<typename Base, typename T>
 inline bool instanceof(const T* ptr) {

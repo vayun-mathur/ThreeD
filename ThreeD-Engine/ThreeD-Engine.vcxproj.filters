@@ -88,6 +88,12 @@
     <Filter Include="Engine\SceneSystem\ScriptObject">
       <UniqueIdentifier>{86a5db21-2e2d-4d61-9e99-835101f4745b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\NumberObject">
+      <UniqueIdentifier>{dd111198-56e7-425a-bcac-0e3b1ac3926b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\SceneSystem\Vec3Object">
+      <UniqueIdentifier>{268629ed-16c0-463e-a5b6-9a3e0900427c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -185,6 +191,12 @@
     </ClCompile>
     <ClCompile Include="ScriptObject.cpp">
       <Filter>Engine\SceneSystem\ScriptObject</Filter>
+    </ClCompile>
+    <ClCompile Include="NumberObject.cpp">
+      <Filter>Engine\SceneSystem\NumberObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec3Object.cpp">
+      <Filter>Engine\SceneSystem\Vec3Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +310,12 @@
     </ClInclude>
     <ClInclude Include="ScriptObject.h">
       <Filter>Engine\SceneSystem\ScriptObject</Filter>
+    </ClInclude>
+    <ClInclude Include="NumberObject.h">
+      <Filter>Engine\SceneSystem\NumberObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3Object.h">
+      <Filter>Engine\SceneSystem\Vec3Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

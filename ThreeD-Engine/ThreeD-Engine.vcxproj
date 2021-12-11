@@ -181,11 +181,13 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshObject.cpp" />
+    <ClCompile Include="NumberObject.cpp" />
     <ClCompile Include="PointLightObject.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
+    <ClCompile Include="Vec3Object.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -210,6 +212,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshObject.h" />
+    <ClInclude Include="NumberObject.h" />
     <ClInclude Include="PointLightObject.h" />
     <ClInclude Include="prerequisites.h" />
     <ClInclude Include="InputListener.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="ScriptSystem.h" />
+    <ClInclude Include="Vec3Object.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
     <ClInclude Include="Window.h" />
