@@ -16,7 +16,7 @@ ScriptSystem::~ScriptSystem()
 }
 
 int precedence(std::string op) {
-	if (op == "=")
+	if (op == "=" || op == "+=" || op == "-=" || op == "*=" || op == "/=")
 		return 1;
 	if (op == "+" || op == "-")
 		return 2;
@@ -32,10 +32,15 @@ ScriptValue* applyOp(ScriptValue* a, ScriptValue* b, std::string op) {
 	if (op == "*") return a->mul(b);
 	if (op == "/") return a->div(b);
 	if (op == "=") return a->assign(b);
+	if (op == "+=") return a->addassign(b);
+	if (op == "-=") return a->subassign(b);
+	if (op == "*=") return a->mulassign(b);
+	if (op == "/=") return a->divassign(b);
 }
 
 bool isOperator(std::string c) {
-	return c == "+" || c == "-" || c == "*" || c == "/" || c == "=";
+	return c == "+" || c == "-" || c == "*" || c == "/" || c == "=" ||
+		c == "+=" || c == "-=" || c == "*=" || c == "/=";
 }
 
 std::string trim(const std::string& str,
@@ -72,6 +77,10 @@ float evaluate(std::string str, SceneObject* object) {
 		}
 		else if (str[i] == ')') {
 			tokens.push_back(")");
+		}
+		else if (i+1 < str.length() && (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') && str[i+1] == '=') {
+			tokens.push_back(std::string() + str[i] + str[i+1]);
+			i++;
 		}
 		else if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' || str[i] == '=') {
 			tokens.push_back(std::string()+str[i]);

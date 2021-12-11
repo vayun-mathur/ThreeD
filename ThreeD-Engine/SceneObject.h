@@ -43,6 +43,10 @@ public:
 	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* addassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* subassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mulassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* divassign(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* assign(ScriptValue* o) { return nullptr; }
 
 public:

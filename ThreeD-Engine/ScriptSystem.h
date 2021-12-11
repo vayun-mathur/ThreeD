@@ -10,6 +10,10 @@ public:
 	virtual ScriptValue* sub(ScriptValue*) = 0;
 	virtual ScriptValue* mul(ScriptValue*) = 0;
 	virtual ScriptValue* div(ScriptValue*) = 0;
+	virtual ScriptValue* addassign(ScriptValue*) = 0;
+	virtual ScriptValue* subassign(ScriptValue*) = 0;
+	virtual ScriptValue* mulassign(ScriptValue*) = 0;
+	virtual ScriptValue* divassign(ScriptValue*) = 0;
 	virtual ScriptValue* assign(ScriptValue*) = 0;
 };
 
@@ -39,6 +43,34 @@ public:
 	virtual ScriptValue* div(ScriptValue* o) {
 		if (instanceof<NumberScriptValue>(o)) {
 			return new NumberScriptValue(new float(*v / *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* addassign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v += *((NumberScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* subassign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v -= *((NumberScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* mulassign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v *= *((NumberScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* divassign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v /= *((NumberScriptValue*)o)->v;
+			return this;
 		}
 		return nullptr;
 	}
@@ -82,6 +114,34 @@ public:
 	virtual ScriptValue* div(ScriptValue* o) {
 		if (instanceof<NumberScriptValue>(o)) {
 			return new Vec3ScriptValue(new vec3(*v * (1/ *((NumberScriptValue*)o)->v)));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* addassign(ScriptValue* o) {
+		if (instanceof<Vec3ScriptValue>(o)) {
+			*v = *v + *((Vec3ScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* subassign(ScriptValue* o) {
+		if (instanceof<Vec3ScriptValue>(o)) {
+			*v = *v - *((Vec3ScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* mulassign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v = *v * *((NumberScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* divassign(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			*v = *v * (1 / *((NumberScriptValue*)o)->v);
+			return this;
 		}
 		return nullptr;
 	}
