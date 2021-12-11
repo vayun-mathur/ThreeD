@@ -5,6 +5,8 @@ This is a 3D game engine for Windows.
 2. Rendering
 3. Input 
 4. Scene System
+5. 3D Audio
+6. Basic Scripting System
 
 ### Currently Working On
 #### 3D Graphics Engine
