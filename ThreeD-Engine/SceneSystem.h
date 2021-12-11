@@ -9,6 +9,7 @@ public:
 	SceneSystem(std::wstring filepath);
 	~SceneSystem();
 public:
+	void init();
 	void update(double delta_time);
 	void render(ConstantBufferPtr cb);
 

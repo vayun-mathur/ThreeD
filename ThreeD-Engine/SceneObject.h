@@ -53,6 +53,7 @@ public:
 public:
 	inline const std::map<std::string, SceneObjectPtr>& getChildren() { return m_children; }
 private:
+	virtual void init();
 	virtual void update(double delta_time);
 	virtual void render(ConstantBufferPtr cb);
 

@@ -17,7 +17,10 @@ public:
 
 	virtual ScriptValue* dot(std::string);
 
-	virtual void update(double delta_time);
+	void call();
+
+	virtual void init() { call(); }
+	virtual void update(double delta_time) {}
 private:
 	std::vector<std::string> m_commands;
 };

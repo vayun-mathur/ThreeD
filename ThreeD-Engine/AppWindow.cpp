@@ -148,6 +148,7 @@ void AppWindow::onCreate()
 	InputSystem::get()->showCursor(false);
 
 	m_scene = new SceneSystem(L"scene.txt");
+	m_scene->init();
 
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);

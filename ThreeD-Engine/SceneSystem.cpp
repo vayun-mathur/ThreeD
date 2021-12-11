@@ -159,6 +159,10 @@ SceneSystem::SceneSystem(std::wstring file_path)
 SceneSystem::~SceneSystem()
 {
 }
+void SceneSystem::init()
+{
+	m_root->init();
+}
 
 void SceneSystem::update(double delta_time)
 {

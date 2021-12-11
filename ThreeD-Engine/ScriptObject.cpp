@@ -15,7 +15,7 @@ ScriptValue* ScriptObject::dot(std::string s)
 	return nullptr;
 }
 
-void ScriptObject::update(double delta_time)
+void ScriptObject::call()
 {
 	for (std::string command : m_commands) {
 		ScriptSystem::get()->exec(command, this);
