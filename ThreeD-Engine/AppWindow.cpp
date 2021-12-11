@@ -18,7 +18,7 @@ struct dlight {
 
 struct plight {
 	vec4 light_position;
-	float light_radius;
+	float light_radius = 0;
 	vec3 attenuation;
 };
 
@@ -29,10 +29,10 @@ struct constant
 	mat4 m_view;
 	mat4 m_projection;
 	vec4 m_camera_position;
-	int m_dlight_count;
-	int m_plight_count;
-	int v;
-	int x;
+	int m_dlight_count = 0;
+	int m_plight_count = 0;
+	int v = 0;
+	int x = 0;
 	dlight dlight[5];
 	plight plight[5];
 };
@@ -58,7 +58,7 @@ void AppWindow::render()
 	m_swap_chain->present(true);
 
 	m_old_delta = m_new_delta;
-	m_new_delta = ::GetTickCount64();
+	m_new_delta = (float)::GetTickCount64();
 
 	m_delta_time = (m_old_delta) ? ((m_new_delta - m_old_delta) / 1000.0f) : 0;
 }
@@ -114,14 +114,14 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	for (int i = 0; i < dlights.size(); i++) {
 		cc.dlight[i].light_direction = dlights[i]->getDirection();
 	}
-	cc.m_dlight_count = dlights.size();
+	cc.m_dlight_count = (int)dlights.size();
 
 	for (int i = 0; i < plights.size(); i++) {
 		cc.plight[i].light_position = plights[i]->getPosition();
 		cc.plight[i].light_radius = plights[i]->getRadius();
 		cc.plight[i].attenuation = plights[i]->getAttenuation();
 	}
-	cc.m_plight_count = plights.size();
+	cc.m_plight_count = (int)plights.size();
 
 	//transform
 	cc.m_transform.setIdentity();

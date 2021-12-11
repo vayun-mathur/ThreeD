@@ -36,6 +36,7 @@ ScriptValue* applyOp(ScriptValue* a, ScriptValue* b, std::string op) {
 	if (op == "-=") return a->subassign(b);
 	if (op == "*=") return a->mulassign(b);
 	if (op == "/=") return a->divassign(b);
+	return nullptr;
 }
 
 bool isOperator(std::string c) {
@@ -70,7 +71,7 @@ float evaluate(std::string str, SceneObject* object) {
 
 	std::vector<std::string> tokens;
 
-	for (int i = 0; i < str.length(); i++) {
+	for (size_t i = 0; i < str.length(); i++) {
 		if (str[i] == ' ') continue;
 		else if (str[i] == '(') {
 			tokens.push_back("(");
@@ -86,7 +87,7 @@ float evaluate(std::string str, SceneObject* object) {
 			tokens.push_back(std::string()+str[i]);
 		}
 		else if (isdigit(str[i])) {
-			int initial = i;
+			size_t initial = i;
 			while (i < str.length() && isdigit(str[i])) {
 				i++;
 			}

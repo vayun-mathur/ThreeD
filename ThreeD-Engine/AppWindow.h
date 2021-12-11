@@ -49,7 +49,7 @@ private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 private:
-	SceneSystem* m_scene;
+	SceneSystem* m_scene = nullptr;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;

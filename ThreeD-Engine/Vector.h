@@ -61,7 +61,7 @@ public:
 	}
 
 	vec3 norm() const {
-		float mag = sqrt(x * x + y * y + z * z);
+		float mag = sqrtf(x * x + y * y + z * z);
 		return vec3(x / mag, y / mag, z / mag);
 	}
 
