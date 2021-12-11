@@ -81,6 +81,12 @@ float evaluate(std::string str, SceneObject* object) {
 			while (i < str.length() && isdigit(str[i])) {
 				i++;
 			}
+			if (i < str.length() && str[i] == '.') {
+				i++;
+				while (i < str.length() && isdigit(str[i])) {
+					i++;
+				}
+			}
 			tokens.push_back(str.substr(initial, i - initial));
 			i--;
 		}
