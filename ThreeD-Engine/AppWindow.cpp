@@ -159,7 +159,7 @@ void AppWindow::onCreate()
 
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 
-	m_scene->getRoot()->m_click = m_scene->getRoot()->getChild<ScriptObject>("script")->getScript();
+	//m_scene->getRoot()->m_click = m_scene->getRoot()->getChild<ScriptObject>("script")->getScript();
 
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);

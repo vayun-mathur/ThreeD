@@ -1,7 +1,10 @@
 #include "Script.h"
 #include "ScriptSystem.h"
 
-Script::Script(std::vector<std::string> commands) : m_commands(commands)
+Script::Script(std::string commands) : m_commands(commands)
+{
+}
+Script::Script() : m_commands("")
 {
 }
 
@@ -11,7 +14,6 @@ Script::~Script()
 
 void Script::call(SceneObject* origin)
 {
-	for (std::string command : m_commands) {
-		ScriptSystem::get()->exec(command, origin);
-	}
+	if (m_commands == "") return;
+	ScriptSystem::get()->exec(m_commands, origin);
 }

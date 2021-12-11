@@ -138,14 +138,9 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			std::wstring file;
 			readString(scene_file, file);
 			std::ifstream in(file.c_str());
-			std::vector<std::string> vec;
-			std::string str;
-			while (std::getline(in, str))
-			{
-				if (str.size() > 0)
-					vec.push_back(str);
-			}
-			ScriptObjectPtr script = std::make_shared<ScriptObject>(name, this, Script(vec));
+			std::stringstream buffer;
+			buffer << in.rdbuf();
+			ScriptObjectPtr script = std::make_shared<ScriptObject>(name, this, Script(buffer.str()));
 			components[parent]->addChild(script);
 			components.insert({ id, script });
 		}

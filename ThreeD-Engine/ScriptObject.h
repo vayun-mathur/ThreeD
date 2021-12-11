@@ -22,7 +22,7 @@ public:
 
 	Script* getScript() { return &m_script; }
 
-	virtual void init() { }
+	virtual void init() { call(); }
 	virtual void update(double delta_time) {}
 private:
 	Script m_script;

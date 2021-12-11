@@ -1,1 +1,1 @@
-this.mesh2.position.z += this.speed.value
+this.parent.click = {this.mesh2.position.z += this.speed.value}

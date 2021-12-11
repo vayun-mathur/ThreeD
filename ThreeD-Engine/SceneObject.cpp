@@ -14,9 +14,7 @@ public:
 	virtual void onMouseMove(const Point& mouse_pos) {}
 
 	virtual void onLeftMouseDown(const Point& mouse_pos) {
-		if (obj->m_click) {
-			obj->m_click->call(obj);
-		}
+		obj->m_click.call(obj);
 	}
 	virtual void onLeftMouseUp(const Point& mouse_pos) {}
 
@@ -76,6 +74,7 @@ SceneObject::~SceneObject()
 ScriptValue* SceneObject::dot(std::string s)
 {
 	if (s == "parent") return m_parent.get();
+	if (s == "click") return new CodeValue(&m_click);
 	if (m_children.find(s) != m_children.end()) {
 		return m_children[s].get();
 	}

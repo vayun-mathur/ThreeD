@@ -65,7 +65,7 @@ protected:
 	SceneObjectPtr m_parent;
 	SceneSystem* m_system;
 public:
-	Script* m_click = nullptr;
+	Script m_click;
 private:
 	friend class SceneSystem;
 	friend class SceneObjectInputListener;
