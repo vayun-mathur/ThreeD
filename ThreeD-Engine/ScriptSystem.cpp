@@ -1,6 +1,8 @@
 #include "ScriptSystem.h"
 #include <stack>
 #include <iostream>
+#include <vector>
+#include <sstream>
 #include "SceneObject.h"
 
 ScriptSystem* ScriptSystem::m_system = nullptr;
@@ -13,45 +15,93 @@ ScriptSystem::~ScriptSystem()
 {
 }
 
-int precedence(char op) {
-	if (op == '=')
+int precedence(std::string op) {
+	if (op == "=")
 		return 1;
-	if (op == '+' || op == '-')
+	if (op == "+" || op == "-")
 		return 2;
-	if (op == '*' || op == '/')
+	if (op == "*" || op == "/")
 		return 3;
 	return 0;
 }
 
 // Function to perform arithmetic operations.
-ScriptValue* applyOp(ScriptValue* a, ScriptValue* b, char op) {
-	switch (op) {
-	case '+': return a->add(b);
-	case '-': return a->sub(b);
-	case '*': return a->mul(b);
-	case '/': return a->div(b);
-	case '=': return a->assign(b);
-	}
+ScriptValue* applyOp(ScriptValue* a, ScriptValue* b, std::string op) {
+	if (op == "+") return a->add(b);
+	if (op == "-") return a->sub(b);
+	if (op == "*") return a->mul(b);
+	if (op == "/") return a->div(b);
+	if (op == "=") return a->assign(b);
 }
 
-bool isOperator(char c) {
-	return c == '+' || c == '-' || c == '*' || c == '/' || c == '=';
+bool isOperator(std::string c) {
+	return c == "+" || c == "-" || c == "*" || c == "/" || c == "=";
 }
 
-float evaluate(std::string tokens, SceneObject* object) {
-	int i;
+std::string trim(const std::string& str,
+	const std::string& whitespace = " \t")
+{
+	const auto strBegin = str.find_first_not_of(whitespace);
+	if (strBegin == std::string::npos)
+		return ""; // no content
+
+	const auto strEnd = str.find_last_not_of(whitespace);
+	const auto strRange = strEnd - strBegin + 1;
+
+	return str.substr(strBegin, strRange);
+}
+
+bool isFloat(std::string myString) {
+	std::istringstream iss(myString);
+	float f;
+	iss >> std::noskipws >> f; // noskipws considers leading whitespace invalid
+	// Check the entire string was consumed and if either failbit or badbit is set
+	return iss.eof() && !iss.fail();
+}
+
+float evaluate(std::string str, SceneObject* object) {
 	std::stack <ScriptValue*> values;
-	std::stack <char> ops;
+	std::stack <std::string> ops;
 
-	for (i = 0; i < tokens.length(); i++) {
-		if (tokens[i] == ' ')
-			continue;
-		else if (tokens[i] == '(') {
+	std::vector<std::string> tokens;
+
+	for (int i = 0; i < str.length(); i++) {
+		if (str[i] == ' ') continue;
+		else if (str[i] == '(') {
+			tokens.push_back("(");
+		}
+		else if (str[i] == ')') {
+			tokens.push_back(")");
+		}
+		else if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' || str[i] == '=') {
+			tokens.push_back(std::string()+str[i]);
+		}
+		else if (isdigit(str[i])) {
+			int initial = i;
+			while (i < str.length() && isdigit(str[i])) {
+				i++;
+			}
+			tokens.push_back(str.substr(initial, i - initial));
+			i--;
+		}
+		else {
+			std::string s = "";
+			while (i < str.length() && (isalnum(str[i]) || str[i] == '.')) {
+				s += str[i];
+				i++;
+			}
+			i--;
+			tokens.push_back(s);
+		}
+	}
+
+	for (int i = 0; i < tokens.size(); i++) {
+		if (tokens[i] == "(") {
 			ops.push(tokens[i]);
 		}
-		else if (tokens[i] == ')')
+		else if (tokens[i] == ")")
 		{
-			while (!ops.empty() && ops.top() != '(')
+			while (!ops.empty() && ops.top() != "(")
 			{
 				ScriptValue* val2 = values.top();
 				values.pop();
@@ -59,7 +109,7 @@ float evaluate(std::string tokens, SceneObject* object) {
 				ScriptValue* val1 = values.top();
 				values.pop();
 
-				char op = ops.top();
+				std::string op = ops.top();
 				ops.pop();
 
 				values.push(applyOp(val1, val2, op));
@@ -77,39 +127,33 @@ float evaluate(std::string tokens, SceneObject* object) {
 				ScriptValue* val1 = values.top();
 				values.pop();
 
-				char op = ops.top();
+				std::string op = ops.top();
 				ops.pop();
 
 				values.push(applyOp(val1, val2, op));
 			}
 			ops.push(tokens[i]);
 		}
-		else if (isdigit(tokens[i])) {
-			int val = 0;
-			while (i < tokens.length() &&
-				isdigit(tokens[i]))
-			{
-				val = (val * 10) + (tokens[i] - '0');
-				i++;
-			}
+		else if (isFloat(tokens[i])) {
 
-			values.push(new NumberScriptValue(new float(val)));
-			i--;
+			values.push(new NumberScriptValue(new float(std::stof(tokens[i]))));
 		}
 		else {
+			std::string x = tokens[i];
 			std::string s = "";
-			while (i < tokens.length() && isalnum(tokens[i])) {
-				s += tokens[i];
+			int i = 0;
+			while (i < x.size() && isalnum(x[i])) {
+				s += x[i];
 				i++;
 			}
 			if (s != "this") throw std::exception("Invalid script");
 
 			ScriptValue* val = object;
-			while (i < tokens.length() && tokens[i] == '.') {
+			while (i < x.length() && x[i] == '.') {
 				i++;
 				std::string s = "";
-				while (i < tokens.length() && isalnum(tokens[i])) {
-					s += tokens[i];
+				while (i < x.length() && isalnum(x[i])) {
+					s += x[i];
 					i++;
 				}
 				val = val->dot(s);
@@ -126,7 +170,7 @@ float evaluate(std::string tokens, SceneObject* object) {
 		ScriptValue* val1 = values.top();
 		values.pop();
 
-		char op = ops.top();
+		std::string op = ops.top();
 		ops.pop();
 
 		values.push(applyOp(val1, val2, op));
