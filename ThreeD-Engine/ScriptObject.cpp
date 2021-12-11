@@ -1,7 +1,7 @@
 #include "ScriptObject.h"
 
-ScriptObject::ScriptObject(std::string name, SceneSystem* system, std::vector<std::string> commands)
-	: SceneObject(name, system), m_commands(commands)
+ScriptObject::ScriptObject(std::string name, SceneSystem* system, Script script)
+	: SceneObject(name, system), m_script(script)
 {
 }
 
@@ -17,7 +17,5 @@ ScriptValue* ScriptObject::dot(std::string s)
 
 void ScriptObject::call()
 {
-	for (std::string command : m_commands) {
-		ScriptSystem::get()->exec(command, this);
-	}
+	m_script.call(this);
 }

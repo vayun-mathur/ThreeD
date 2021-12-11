@@ -185,6 +185,7 @@
     <ClCompile Include="PointLightObject.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
+    <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SceneSystem.h" />
+    <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="ScriptSystem.h" />
     <ClInclude Include="Vec3Object.h" />

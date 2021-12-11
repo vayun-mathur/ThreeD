@@ -94,7 +94,7 @@
     <Filter Include="Engine\SceneSystem\Vec3Object">
       <UniqueIdentifier>{268629ed-16c0-463e-a5b6-9a3e0900427c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\ScriptingSystem\Event">
+    <Filter Include="Engine\ScriptingSystem\Script">
       <UniqueIdentifier>{c22ee686-43c5-4a2f-be89-04c2a615134c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -200,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="Vec3Object.cpp">
       <Filter>Engine\SceneSystem\Vec3Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>Engine\ScriptingSystem\Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="Vec3Object.h">
       <Filter>Engine\SceneSystem\Vec3Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Engine\ScriptingSystem\Script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

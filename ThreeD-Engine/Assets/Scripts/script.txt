@@ -1,1 +1,1 @@
-this.parent.mesh2.position.z += this.parent.speed.value
+this.mesh2.position.z += this.speed.value

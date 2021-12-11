@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "prerequisites.h"
 #include "ScriptSystem.h"
+#include "Script.h"
 
 enum class SceneObjectType {
 	SceneObject, CameraObject, MeshObject, DirectionalLightObject,
@@ -63,6 +64,9 @@ private:
 protected:
 	SceneObjectPtr m_parent;
 	SceneSystem* m_system;
+public:
+	Script* m_click = nullptr;
 private:
 	friend class SceneSystem;
+	friend class SceneObjectInputListener;
 };

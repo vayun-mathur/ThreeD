@@ -1,13 +1,14 @@
 #pragma once
 #include "prerequisites.h"
 #include "SceneObject.h"
+#include "Script.h"
 #include <vector>
 
 class ScriptObject
 	: public SceneObject
 {
 public:
-	ScriptObject(std::string name, SceneSystem* system, std::vector<std::string> commands);
+	ScriptObject(std::string name, SceneSystem* system, Script commands);
 
 	~ScriptObject();
 
@@ -19,9 +20,11 @@ public:
 
 	void call();
 
-	virtual void init() { call(); }
+	Script* getScript() { return &m_script; }
+
+	virtual void init() { }
 	virtual void update(double delta_time) {}
 private:
-	std::vector<std::string> m_commands;
+	Script m_script;
 };
 

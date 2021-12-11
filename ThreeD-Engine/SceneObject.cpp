@@ -1,9 +1,35 @@
 #include "SceneObject.h"
 #include "SceneSystem.h"
+#include "InputSystem.h"
+
+class SceneObjectInputListener : public InputListener {
+public:
+	SceneObjectInputListener(SceneObject* obj) : obj(obj) {}
+public:
+	//KEYBOARD callback functions
+	virtual void onKeyDown(int key) {}
+	virtual void onKeyUp(int key) {}
+
+	//MOUSE callback functions
+	virtual void onMouseMove(const Point& mouse_pos) {}
+
+	virtual void onLeftMouseDown(const Point& mouse_pos) {
+		if (obj->m_click) {
+			obj->m_click->call(obj);
+		}
+	}
+	virtual void onLeftMouseUp(const Point& mouse_pos) {}
+
+	virtual void onRightMouseDown(const Point& mouse_pos) {}
+	virtual void onRightMouseUp(const Point& mouse_pos) {}
+private:
+	SceneObject* obj;
+};
 
 SceneObject::SceneObject(std::string name, SceneSystem* system)
 	:m_name(name), m_system(system)
 {
+	InputSystem::get()->addListener(new SceneObjectInputListener(this));
 }
 
 void SceneObject::addChild(SceneObjectPtr child)

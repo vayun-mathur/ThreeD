@@ -145,7 +145,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 				if (str.size() > 0)
 					vec.push_back(str);
 			}
-			ScriptObjectPtr script = std::make_shared<ScriptObject>(name, this, vec);
+			ScriptObjectPtr script = std::make_shared<ScriptObject>(name, this, Script(vec));
 			components[parent]->addChild(script);
 			components.insert({ id, script });
 		}
