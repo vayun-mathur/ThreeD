@@ -156,6 +156,42 @@ void check(std::list<std::string>& tokens, std::string against) {
 	tokens.pop_front();
 }
 
+void skip_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars);
+
+void skip_obj(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	std::string t = tokens.front();
+	tokens.pop_front();
+	if (t == "(") {
+		skip_assign(tokens, vars);
+		check(tokens, ")");
+		tokens.pop_front();
+	}
+}
+
+void skip_mul(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	skip_obj(tokens, vars);
+	while (tokens.front() == "*" || tokens.front() == "/") {
+		tokens.pop_front();
+		skip_obj(tokens, vars);
+	}
+}
+
+void skip_add(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	skip_mul(tokens, vars);
+	while (tokens.front() == "+" || tokens.front() == "-") {
+		tokens.pop_front();
+		skip_mul(tokens, vars);
+	}
+}
+
+void skip_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	skip_add(tokens, vars);
+	while (tokens.front() == "+=" || tokens.front() == "-=" || tokens.front() == "*=" || tokens.front() == "/=" || tokens.front() == "=") {
+		tokens.pop_front();
+		skip_add(tokens, vars);
+	}
+}
+
 ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars);
 
 ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
@@ -255,56 +291,114 @@ ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::strin
 	return o1;
 }
 
-void evaluate(std::string str, SceneObject* object, std::map<std::string, ScriptValue*> var_in){
+void skip(std::string str, std::map<std::string, ScriptValue*> vars);
+
+void skip_line(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	if (tokens.front() == "if") {
+		tokens.pop_front();
+		check(tokens, "(");
+		skip_assign(tokens, vars);
+		check(tokens, ")");
+		skip_line(tokens, vars);
+		if (!tokens.empty() && tokens.front() == "else") {
+			tokens.pop_front();
+			skip_line(tokens, vars);
+		}
+	}
+	else if (tokens.front() == "number") {
+		tokens.pop_front();
+		tokens.pop_front();
+		check(tokens, ";");
+	}
+	else if (tokens.front() == "vec3") {
+		tokens.pop_front();
+		tokens.pop_front();
+		check(tokens, ";");
+	}
+	else if (tokens.front()[0] == '{') {
+		skip(tokens.front().substr(1, tokens.front().length() - 2), vars);
+		tokens.pop_front();
+	}
+	else {
+		skip_assign(tokens, vars);
+		check(tokens, ";");
+	}
+}
+
+void evaluate(std::string str, std::map<std::string, ScriptValue*> vars);
+
+void evaluate_line(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	if (tokens.front() == "if") {
+		tokens.pop_front();
+		check(tokens, "(");
+		bool cond = evaluate_assign(tokens, vars)->bool_value();
+		check(tokens, ")");
+		if (cond) {
+			evaluate_line(tokens, vars);
+		}
+		else {
+			skip_line(tokens, vars);
+		}
+		if (!tokens.empty() && tokens.front() == "else") {
+			tokens.pop_front();
+			if (!cond) {
+				evaluate_line(tokens, vars);
+			}
+			else {
+				skip_line(tokens, vars);
+			}
+		}
+	}
+	else if (tokens.front() == "number") {
+		tokens.pop_front();
+		vars[tokens.front()] = new NumberScriptValue(new float());
+		tokens.pop_front();
+		check(tokens, ";");
+	}
+	else if (tokens.front() == "vec3") {
+		tokens.pop_front();
+		vars[tokens.front()] = new Vec3ScriptValue(new vec3());
+		tokens.pop_front();
+		check(tokens, ";");
+	}
+	else if (tokens.front()[0] == '{') {
+		evaluate(tokens.front().substr(1, tokens.front().length()-2), vars);
+		tokens.pop_front();
+	} else {
+		evaluate_assign(tokens, vars);
+		check(tokens, ";");
+	}
+}
+
+void evaluate(std::string str, std::map<std::string, ScriptValue*> vars) {
 	std::stack <ScriptValue*> values;
 	std::stack <std::string> ops;
 
 	std::list<std::string> tokens = tokenize(str);
 
-	std::map<std::string, ScriptValue*> vars;
-	vars = var_in;
-	vars["this"] = object;
-
 	while(!tokens.empty()) {
-		if (tokens.front() == "if") {
-			tokens.pop_front();
-			check(tokens, "(");
-			bool cond = evaluate_assign(tokens, var_in)->bool_value();
-			check(tokens, ")");
-			if(cond) {
-				evaluate(tokens.front().substr(1, tokens.front().length() - 2), object, vars);
-			}
-			tokens.pop_front();
-			if (tokens.front() == "else") {
-				tokens.pop_front();
-				if (!cond) {
-					evaluate(tokens.front().substr(1, tokens.front().length() - 2), object, vars);
-				}
-				tokens.pop_front();
-			}
-		}
-		else if (tokens.front() == "number") {
-			tokens.pop_front();
-			vars[tokens.front()] = new NumberScriptValue(new float());
-			tokens.pop_front();
-			check(tokens, ";");
-		}
-		else if (tokens.front() == "vec3") {
-			tokens.pop_front();
-			vars[tokens.front()] = new Vec3ScriptValue(new vec3());
-			tokens.pop_front();
-			check(tokens, ";");
-		}
-		else {
-			evaluate_assign(tokens, vars);
-			check(tokens, ";");
-		}
+		evaluate_line(tokens, vars);
+	}
+}
+
+void skip(std::string str, std::map<std::string, ScriptValue*> vars) {
+	std::stack <ScriptValue*> values;
+	std::stack <std::string> ops;
+
+	std::list<std::string> tokens = tokenize(str);
+
+	while (!tokens.empty()) {
+		skip_line(tokens, vars);
 	}
 }
 
 void ScriptSystem::exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in)
 {
-	evaluate(cmd, object, var_in);
+
+	std::map<std::string, ScriptValue*> vars;
+	vars = var_in;
+	vars["this"] = object;
+	evaluate(cmd, vars);
 }
 
 ScriptSystem* ScriptSystem::get()
