@@ -15,7 +15,7 @@ ScriptValue* ScriptObject::dot(std::string s)
 	return nullptr;
 }
 
-void ScriptObject::call()
+void ScriptObject::call(std::map<std::string, ScriptValue*> var_in)
 {
-	m_script.call(this);
+	m_script.call(this, var_in);
 }

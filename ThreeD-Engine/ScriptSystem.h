@@ -1,6 +1,7 @@
 #pragma once
 #include "prerequisites.h"
 #include <string>
+#include <map>
 #include "Vector.h"
 
 class ScriptValue {
@@ -160,7 +161,7 @@ public:
 	ScriptSystem();
 	~ScriptSystem();
 
-	void exec(std::string cmd, SceneObject* object);
+	void exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in);
 public:
 	static ScriptSystem* get();
 	static void create();

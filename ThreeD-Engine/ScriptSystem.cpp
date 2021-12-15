@@ -2,6 +2,7 @@
 #include <stack>
 #include <iostream>
 #include <vector>
+#include <list>
 #include <sstream>
 #include "SceneObject.h"
 
@@ -65,11 +66,17 @@ bool isFloat(std::string myString) {
 	return iss.eof() && !iss.fail();
 }
 
-ScriptValue* evaluate(std::string str, SceneObject* object) {
-	std::stack <ScriptValue*> values;
-	std::stack <std::string> ops;
+bool at_index(std::string& str, std::string toFind, int index) {
+	if (str.find(toFind.c_str(), index) == index) {
+		return true;
+	}
+	return false;
+}
 
-	std::vector<std::string> tokens;
+std::list<std::string> tokenize(std::string str) {
+
+
+	std::list<std::string> tokens;
 
 	for (size_t i = 0; i < str.length(); i++) {
 		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r') continue;
@@ -79,6 +86,17 @@ ScriptValue* evaluate(std::string str, SceneObject* object) {
 		else if (str[i] == ')') {
 			tokens.push_back(")");
 		}
+		else if (str[i] == ';') {
+			tokens.push_back(";");
+		}
+		else if (at_index(str, "number", i)) {
+			tokens.push_back("number");
+			i += 5;
+		}
+		else if (at_index(str, "vec3", i)) {
+			tokens.push_back("vec3");
+			i += 3;
+		}
 		else if (str[i] == '{') {
 			int cnt = 1;
 			int initial = i;
@@ -87,14 +105,14 @@ ScriptValue* evaluate(std::string str, SceneObject* object) {
 				if (str[i] == '{') cnt++;
 				if (str[i] == '}') cnt--;
 			}
-			tokens.push_back(str.substr(initial, i+1-initial));
+			tokens.push_back(str.substr(initial, i + 1 - initial));
 		}
-		else if (i+1 < str.length() && (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') && str[i+1] == '=') {
-			tokens.push_back(std::string() + str[i] + str[i+1]);
+		else if (i + 1 < str.length() && (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') && str[i + 1] == '=') {
+			tokens.push_back(std::string() + str[i] + str[i + 1]);
 			i++;
 		}
 		else if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' || str[i] == '=') {
-			tokens.push_back(std::string()+str[i]);
+			tokens.push_back(std::string() + str[i]);
 		}
 		else if (isdigit(str[i])) {
 			size_t initial = i;
@@ -120,12 +138,24 @@ ScriptValue* evaluate(std::string str, SceneObject* object) {
 			tokens.push_back(s);
 		}
 	}
+	return tokens;
+}
 
-	for (int i = 0; i < tokens.size(); i++) {
-		if (tokens[i] == "(") {
-			ops.push(tokens[i]);
+void evaluate(std::string str, SceneObject* object, std::map<std::string, ScriptValue*> var_in){
+	std::stack <ScriptValue*> values;
+	std::stack <std::string> ops;
+
+	std::list<std::string> tokens = tokenize(str);
+
+	std::map<std::string, ScriptValue*> vars;
+	vars = var_in;
+	vars["this"] = object;
+
+	while(!tokens.empty()) {
+		if (tokens.front() == "(") {
+			ops.push(tokens.front());
 		}
-		else if (tokens[i] == ")")
+		else if (tokens.front() == ")")
 		{
 			while (!ops.empty() && ops.top() != "(")
 			{
@@ -143,10 +173,20 @@ ScriptValue* evaluate(std::string str, SceneObject* object) {
 			if (!ops.empty())
 				ops.pop();
 		}
-		else if (isOperator(tokens[i]))
+		else if (tokens.front() == "number")
+		{
+			tokens.pop_front();
+			vars[tokens.front()] = new NumberScriptValue(new float());
+		}
+		else if (tokens.front() == "vec3")
+		{
+			tokens.pop_front();
+			vars[tokens.front()] = new Vec3ScriptValue(new vec3());
+		}
+		else if (isOperator(tokens.front()))
 		{
 			while (!ops.empty() && precedence(ops.top())
-				>= precedence(tokens[i])) {
+				>= precedence(tokens.front())) {
 				ScriptValue* val2 = values.top();
 				values.pop();
 
@@ -158,26 +198,42 @@ ScriptValue* evaluate(std::string str, SceneObject* object) {
 
 				values.push(applyOp(val1, val2, op));
 			}
-			ops.push(tokens[i]);
+			ops.push(tokens.front());
 		}
-		else if (tokens[i][0] == '{') {
-			values.push(new CodeValue(new Script(tokens[i].substr(1, tokens[i].length() - 2))));
+		else if (tokens.front()[0] == '{') {
+			values.push(new CodeValue(new Script(tokens.front().substr(1, tokens.front().length() - 2))));
 		}
-		else if (isFloat(tokens[i])) {
+		else if (isFloat(tokens.front())) {
 
-			values.push(new NumberScriptValue(new float(std::stof(tokens[i]))));
+			values.push(new NumberScriptValue(new float(std::stof(tokens.front()))));
+		}
+		else if (tokens.front()==";") {
+			while (!ops.empty()) {
+				ScriptValue* val2 = values.top();
+				values.pop();
+
+				ScriptValue* val1 = values.top();
+				values.pop();
+
+				std::string op = ops.top();
+				ops.pop();
+
+				values.push(applyOp(val1, val2, op));
+			}
+			while (!values.empty()) values.pop();
+			while (!ops.empty()) ops.pop();
 		}
 		else {
-			std::string x = tokens[i];
+			std::string x = tokens.front();
 			std::string s = "";
 			int i = 0;
 			while (i < x.size() && isalnum(x[i])) {
 				s += x[i];
 				i++;
 			}
-			if (s != "this") throw std::exception("Invalid script");
+			if (vars.find(s) == vars.end()) throw std::exception("Invalid script");
 
-			ScriptValue* val = object;
+			ScriptValue* val = vars[s];
 			while (i < x.length() && x[i] == '.') {
 				i++;
 				std::string s = "";
@@ -189,27 +245,14 @@ ScriptValue* evaluate(std::string str, SceneObject* object) {
 			}
 			i--;
 			values.push(val);
-
 		}
+		tokens.pop_front();
 	}
-	while (!ops.empty()) {
-		ScriptValue* val2 = values.top();
-		values.pop();
-
-		ScriptValue* val1 = values.top();
-		values.pop();
-
-		std::string op = ops.top();
-		ops.pop();
-
-		values.push(applyOp(val1, val2, op));
-	}
-	return values.top();
 }
 
-void ScriptSystem::exec(std::string cmd, SceneObject* object)
+void ScriptSystem::exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in)
 {
-	evaluate(cmd, object);
+	evaluate(cmd, object, var_in);
 }
 
 ScriptSystem* ScriptSystem::get()

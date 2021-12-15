@@ -1,1 +1,8 @@
-this.parent.click = {this.mesh2.position.z += this.speed.value}
+vec3 value;
+value.x = 0.2;
+value.y = 0.2;
+this.parent.speed.value = value;
+
+this.parent.click = {
+	this.mesh2.position += this.speed.value * button;
+};

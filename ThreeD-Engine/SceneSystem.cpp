@@ -14,6 +14,7 @@
 #include <unordered_map>
 
 #include <fstream>
+#include <sstream>
 #include <filesystem>
 
 SceneSystem::SceneSystem(std::wstring file_path)

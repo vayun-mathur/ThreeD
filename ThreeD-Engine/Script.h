@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <map>
 #include "ScriptSystem.h"
 
 class SceneObject;
@@ -12,7 +13,7 @@ public:
 	Script();
 	~Script();
 
-	void call(SceneObject* origin);
+	void call(SceneObject* origin, std::map<std::string, ScriptValue*> var_in);
 
 	std::string getCommands() { return m_commands; }
 private:

@@ -14,11 +14,17 @@ public:
 	virtual void onMouseMove(const Point& mouse_pos) {}
 
 	virtual void onLeftMouseDown(const Point& mouse_pos) {
-		obj->m_click.call(obj);
+		std::map<std::string, ScriptValue*> var_in;
+		var_in["button"] = new NumberScriptValue(new float(0));
+		obj->m_click.call(obj, var_in);
 	}
 	virtual void onLeftMouseUp(const Point& mouse_pos) {}
 
-	virtual void onRightMouseDown(const Point& mouse_pos) {}
+	virtual void onRightMouseDown(const Point& mouse_pos) {
+		std::map<std::string, ScriptValue*> var_in;
+		var_in["button"] = new NumberScriptValue(new float(1));
+		obj->m_click.call(obj, var_in);
+	}
 	virtual void onRightMouseUp(const Point& mouse_pos) {}
 private:
 	SceneObject* obj;

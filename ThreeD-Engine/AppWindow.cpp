@@ -11,6 +11,7 @@
 #include "AudioSoundManager.h"
 #include "AudioSourceObject.h"
 #include "ScriptSystem.h"
+#include <iostream>
 
 struct dlight {
 	vec4 light_direction;
@@ -159,9 +160,8 @@ void AppWindow::onCreate()
 
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 
-	//m_scene->getRoot()->m_click = m_scene->getRoot()->getChild<ScriptObject>("script")->getScript();
-
-	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
+	//m_scene->getRoot()->m_click = *m_scene->getRoot()->getChild<ScriptObject>("script")->getScript();
+	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
 
@@ -180,6 +180,8 @@ void AppWindow::onUpdate()
 	v.x += 0.1f;
 	audio->setPosition(v);
 	*/
+	vec3 v = m_scene->getCamera()->getCameraPosition();
+	std::cout << v.x << " " << v.y << " " << v.z << std::endl;
 
 	update();
 	render();

@@ -18,11 +18,11 @@ public:
 
 	virtual ScriptValue* dot(std::string);
 
-	void call();
+	void call(std::map<std::string, ScriptValue*> var_in);
 
 	Script* getScript() { return &m_script; }
 
-	virtual void init() { call(); }
+	virtual void init() { call({}); }
 	virtual void update(double delta_time) {}
 private:
 	Script m_script;
