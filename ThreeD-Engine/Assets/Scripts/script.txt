@@ -4,8 +4,8 @@ value.y = 0.2;
 this.parent.speed.value = value;
 
 this.parent.click = {
-	if(button)
+	if(button == 1)
 		this.mesh2.position += this.speed.value;
-	else if(true)
+	else if(( button == 0 ) == true)
 		this.mesh2.position -= this.speed.value;
 };

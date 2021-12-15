@@ -17,6 +17,72 @@ public:
 	virtual ScriptValue* mulassign(ScriptValue*) = 0;
 	virtual ScriptValue* divassign(ScriptValue*) = 0;
 	virtual ScriptValue* assign(ScriptValue*) = 0;
+	virtual ScriptValue* equal_to(ScriptValue*) = 0;
+	virtual ScriptValue* not_equal_to(ScriptValue*) = 0;
+	virtual ScriptValue* greater_than(ScriptValue*) = 0;
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue*) = 0;
+	virtual ScriptValue* less_than(ScriptValue*) = 0;
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue*) = 0;
+};
+
+class BoolScriptValue : public ScriptValue {
+public:
+	bool* v;
+	BoolScriptValue(bool* v) : v(v) {}
+	virtual bool bool_value() { return *v; }
+	virtual ScriptValue* dot(std::string) { return nullptr; }
+	virtual ScriptValue* add(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* addassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* subassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mulassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* divassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* assign(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			*v = *((BoolScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+
+	virtual ScriptValue* equal_to(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v == *((BoolScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* not_equal_to(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v != *((BoolScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v > *((BoolScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v >= *((BoolScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* less_than(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v < *((BoolScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v <= *((BoolScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
 };
 
 class NumberScriptValue : public ScriptValue {
@@ -84,25 +150,40 @@ public:
 		}
 		return nullptr;
 	}
-};
-class BoolScriptValue : public ScriptValue {
-public:
-	bool* v;
-	BoolScriptValue(bool* v) : v(v) {}
-	virtual bool bool_value() { return *v; }
-	virtual ScriptValue* dot(std::string) { return nullptr; }
-	virtual ScriptValue* add(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* addassign(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* subassign(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* mulassign(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* divassign(ScriptValue* o) { return nullptr; }
-	virtual ScriptValue* assign(ScriptValue* o) {
-		if (instanceof<BoolScriptValue>(o)) {
-			*v = *((BoolScriptValue*)o)->v;
-			return this;
+
+	virtual ScriptValue* equal_to(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v == *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* not_equal_to(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v != *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v > *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v >= *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* less_than(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v < *((NumberScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) {
+		if (instanceof<NumberScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v <= *((NumberScriptValue*)o)->v));
 		}
 		return nullptr;
 	}
@@ -176,6 +257,31 @@ public:
 			*v = *((Vec3ScriptValue*)o)->v;
 			return this;
 		}
+		return nullptr;
+	}
+	
+	virtual ScriptValue* equal_to(ScriptValue* o) {
+		if (instanceof<Vec3ScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v == *((Vec3ScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* not_equal_to(ScriptValue* o) {
+		if (instanceof<Vec3ScriptValue>(o)) {
+			return new BoolScriptValue(new bool(!(*v == *((Vec3ScriptValue*)o)->v)));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than(ScriptValue* o) {
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) {
+		return nullptr;
+	}
+	virtual ScriptValue* less_than(ScriptValue* o) {
+		return nullptr;
+	}
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) {
 		return nullptr;
 	}
 };

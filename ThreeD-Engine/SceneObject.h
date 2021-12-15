@@ -50,6 +50,12 @@ public:
 	virtual ScriptValue* mulassign(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* divassign(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* assign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* equal_to(ScriptValue* o) { return new BoolScriptValue(new bool(this == o)); }
+	virtual ScriptValue* not_equal_to(ScriptValue* o) { return new BoolScriptValue(new bool(this != o)); }
+	virtual ScriptValue* greater_than(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* less_than(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) { return nullptr; }
 
 public:
 	inline const std::map<std::string, SceneObjectPtr>& getChildren() { return m_children; }

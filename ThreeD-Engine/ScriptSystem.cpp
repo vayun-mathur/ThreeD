@@ -16,48 +16,6 @@ ScriptSystem::~ScriptSystem()
 {
 }
 
-int precedence(std::string op) {
-	if (op == "=" || op == "+=" || op == "-=" || op == "*=" || op == "/=")
-		return 1;
-	if (op == "+" || op == "-")
-		return 2;
-	if (op == "*" || op == "/")
-		return 3;
-	return 0;
-}
-
-// Function to perform arithmetic operations.
-ScriptValue* applyOp(ScriptValue* a, ScriptValue* b, std::string op) {
-	if (op == "+") return a->add(b);
-	if (op == "-") return a->sub(b);
-	if (op == "*") return a->mul(b);
-	if (op == "/") return a->div(b);
-	if (op == "=") return a->assign(b);
-	if (op == "+=") return a->addassign(b);
-	if (op == "-=") return a->subassign(b);
-	if (op == "*=") return a->mulassign(b);
-	if (op == "/=") return a->divassign(b);
-	return nullptr;
-}
-
-bool isOperator(std::string c) {
-	return c == "+" || c == "-" || c == "*" || c == "/" || c == "=" ||
-		c == "+=" || c == "-=" || c == "*=" || c == "/=";
-}
-
-std::string trim(const std::string& str,
-	const std::string& whitespace = " \t")
-{
-	const auto strBegin = str.find_first_not_of(whitespace);
-	if (strBegin == std::string::npos)
-		return ""; // no content
-
-	const auto strEnd = str.find_last_not_of(whitespace);
-	const auto strRange = strEnd - strBegin + 1;
-
-	return str.substr(strBegin, strRange);
-}
-
 bool isFloat(std::string myString) {
 	std::istringstream iss(myString);
 	float f;
@@ -67,10 +25,7 @@ bool isFloat(std::string myString) {
 }
 
 bool at_index(std::string& str, std::string toFind, int index) {
-	if (str.find(toFind.c_str(), index) == index) {
-		return true;
-	}
-	return false;
+	return (str.find(toFind.c_str(), index) == index);
 }
 
 std::list<std::string> tokenize(std::string str) {
@@ -123,11 +78,12 @@ std::list<std::string> tokenize(std::string str) {
 			}
 			tokens.push_back(str.substr(initial, i + 1 - initial));
 		}
-		else if (i + 1 < str.length() && (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') && str[i + 1] == '=') {
+		else if (i + 1 < str.length() && (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/'
+			|| str[i] == '<' || str[i] == '>' || str[i] == '=' || str[i] == '!') && str[i + 1] == '=') {
 			tokens.push_back(std::string() + str[i] + str[i + 1]);
 			i++;
 		}
-		else if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' || str[i] == '=') {
+		else if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' || str[i] == '=' || str[i] == '<' || str[i] == '>') {
 			tokens.push_back(std::string() + str[i]);
 		}
 		else if (isdigit(str[i])) {
@@ -172,7 +128,6 @@ void skip_obj(std::list<std::string>& tokens, std::map<std::string, ScriptValue*
 	if (t == "(") {
 		skip_assign(tokens, vars);
 		check(tokens, ")");
-		tokens.pop_front();
 	}
 }
 
@@ -192,11 +147,27 @@ void skip_add(std::list<std::string>& tokens, std::map<std::string, ScriptValue*
 	}
 }
 
-void skip_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+void skip_relational(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
 	skip_add(tokens, vars);
-	while (tokens.front() == "+=" || tokens.front() == "-=" || tokens.front() == "*=" || tokens.front() == "/=" || tokens.front() == "=") {
+	while (tokens.front() == ">" || tokens.front() == "<" || tokens.front() == ">=" || tokens.front() == "<=") {
 		tokens.pop_front();
 		skip_add(tokens, vars);
+	}
+}
+
+void skip_equality(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	skip_relational(tokens, vars);
+	while (tokens.front() == "==" || tokens.front() == "!=") {
+		tokens.pop_front();
+		skip_relational(tokens, vars);
+	}
+}
+
+void skip_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	skip_equality(tokens, vars);
+	while (tokens.front() == "+=" || tokens.front() == "-=" || tokens.front() == "*=" || tokens.front() == "/=" || tokens.front() == "=") {
+		tokens.pop_front();
+		skip_equality(tokens, vars);
 	}
 }
 
@@ -208,7 +179,6 @@ ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, 
 	if (t == "(") {
 		ScriptValue* val = evaluate_assign(tokens, vars);
 		check(tokens, ")");
-		tokens.pop_front();
 		return val;
 	}
 	else if (isFloat(t)) {
@@ -280,12 +250,50 @@ ScriptValue* evaluate_add(std::list<std::string>& tokens, std::map<std::string, 
 	return o1;
 }
 
-ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+ScriptValue* evaluate_relational(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
 	ScriptValue* o1 = evaluate_add(tokens, vars);
-	while (tokens.front() == "+=" || tokens.front() == "-=" || tokens.front() == "*=" || tokens.front() == "/=" || tokens.front() == "=") {
+	while (tokens.front() == ">" || tokens.front() == "<" || tokens.front() == ">=" || tokens.front() == "<=") {
 		std::string op = tokens.front();
 		tokens.pop_front();
 		ScriptValue* o2 = evaluate_add(tokens, vars);
+		if (op == ">") {
+			o1 = o1->greater_than(o2);
+		}
+		else if (op == "<") {
+			o1 = o1->less_than(o2);
+		}
+		else if (op == ">=") {
+			o1 = o1->greater_than_or_equal_to(o2);
+		}
+		else {
+			o1 = o1->less_than_or_equal_to(o2);
+		}
+	}
+	return o1;
+}
+
+ScriptValue* evaluate_equality(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	ScriptValue* o1 = evaluate_relational(tokens, vars);
+	while (tokens.front() == "==" || tokens.front() == "!=") {
+		std::string op = tokens.front();
+		tokens.pop_front();
+		ScriptValue* o2 = evaluate_relational(tokens, vars);
+		if (op == "==") {
+			o1 = o1->equal_to(o2);
+		}
+		else {
+			o1 = o1->not_equal_to(o2);
+		}
+	}
+	return o1;
+}
+
+ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	ScriptValue* o1 = evaluate_equality(tokens, vars);
+	while (tokens.front() == "+=" || tokens.front() == "-=" || tokens.front() == "*=" || tokens.front() == "/=" || tokens.front() == "=") {
+		std::string op = tokens.front();
+		tokens.pop_front();
+		ScriptValue* o2 = evaluate_equality(tokens, vars);
 		if (op == "+=") {
 			o1 = o1->addassign(o2);
 		}

@@ -40,4 +40,10 @@ public:
 		}
 		return nullptr;
 	}
+	virtual ScriptValue* equal_to(ScriptValue* o) { return new BoolScriptValue(new bool(this == o)); }
+	virtual ScriptValue* not_equal_to(ScriptValue* o) { return new BoolScriptValue(new bool(this != o)); }
+	virtual ScriptValue* greater_than(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* less_than(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) { return nullptr; }
 };
