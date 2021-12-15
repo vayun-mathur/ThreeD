@@ -101,6 +101,10 @@ std::list<std::string> tokenize(std::string str) {
 			tokens.push_back("if");
 			i += 1;
 		}
+		else if (at_index(str, "else", i)) {
+			tokens.push_back("else");
+			i += 3;
+		}
 		else if (str[i] == '{') {
 			int cnt = 1;
 			int initial = i;
@@ -265,12 +269,19 @@ void evaluate(std::string str, SceneObject* object, std::map<std::string, Script
 		if (tokens.front() == "if") {
 			tokens.pop_front();
 			check(tokens, "(");
-			ScriptValue* cond = evaluate_assign(tokens, var_in);
+			bool cond = evaluate_assign(tokens, var_in)->bool_value();
 			check(tokens, ")");
-			if(cond->bool_value()) {
+			if(cond) {
 				evaluate(tokens.front().substr(1, tokens.front().length() - 2), object, vars);
 			}
 			tokens.pop_front();
+			if (tokens.front() == "else") {
+				tokens.pop_front();
+				if (!cond) {
+					evaluate(tokens.front().substr(1, tokens.front().length() - 2), object, vars);
+				}
+				tokens.pop_front();
+			}
 		}
 		else if (tokens.front() == "number") {
 			tokens.pop_front();
