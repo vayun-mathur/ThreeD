@@ -38,6 +38,7 @@ This is a 3D game engine for Windows.
 7. Point Light Object
 8. Audio Source Object
 9. Script Object
+10. Number/Vec3 Objects
 ##### TODO
 Nothing for now
 #### Audio System
@@ -57,12 +58,22 @@ Nothing for now
 1. Print values in scene
 2. Edit values in scene
 3. Write code in seperate file
+4. Mouse Click event listener
+5. Variables
+6. Operators
+    - Arithmetic ``+ - * /``
+    - Assignment ``= += -= *= /=``
+    - Relational ``== != > < >= <=``
+7. If/Else statements
 ##### TODO
-1. If/Else statements
-2. More Operators
-3. Loops
-4. Functions
-5. Event listeners
+1. More Operators
+    - Boolean ``! && ||``
+    - Modulus ``%``
+2. Loops (For, While, Do-While)
+3. Functions
+4. More event listeners
+    - Key listener
+    - Click listener for meshes
 
 ### Features to come
 1. GUI System
