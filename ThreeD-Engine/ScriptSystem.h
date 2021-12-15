@@ -6,6 +6,7 @@
 
 class ScriptValue {
 public:
+	virtual bool bool_value() { return false; };
 	virtual ScriptValue* dot(std::string) = 0;
 	virtual ScriptValue* add(ScriptValue*) = 0;
 	virtual ScriptValue* sub(ScriptValue*) = 0;
@@ -22,6 +23,7 @@ class NumberScriptValue : public ScriptValue {
 public:
 	float* v;
 	NumberScriptValue(float* v) : v(v) {}
+	virtual bool bool_value() { return *v != 0; }
 	virtual ScriptValue* dot(std::string) { return nullptr; }
 	virtual ScriptValue* add(ScriptValue* o) {
 		if (instanceof<NumberScriptValue>(o)) {
@@ -88,6 +90,7 @@ class Vec3ScriptValue : public ScriptValue {
 public:
 	vec3* v;
 	Vec3ScriptValue(vec3* v) : v(v) {}
+	virtual bool bool_value() { return !(v->x==0 && v->y==0 && v->z==0); }
 	virtual ScriptValue* dot(std::string s) {
 		if (s == "x") return new NumberScriptValue(&v->x);
 		if (s == "y") return new NumberScriptValue(&v->y);

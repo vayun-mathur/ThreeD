@@ -97,6 +97,10 @@ std::list<std::string> tokenize(std::string str) {
 			tokens.push_back("vec3");
 			i += 3;
 		}
+		else if (at_index(str, "if", i)) {
+			tokens.push_back("if");
+			i += 1;
+		}
 		else if (str[i] == '{') {
 			int cnt = 1;
 			int initial = i;
@@ -141,6 +145,112 @@ std::list<std::string> tokenize(std::string str) {
 	return tokens;
 }
 
+void check(std::list<std::string>& tokens, std::string against) {
+	if (tokens.front() != against) {
+		throw std::exception("invalid script");
+	}
+	tokens.pop_front();
+}
+
+ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars);
+
+ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	std::string t = tokens.front();
+	tokens.pop_front();
+	if (t == "(") {
+		ScriptValue* val = evaluate_assign(tokens, vars);
+		check(tokens, ")");
+		tokens.pop_front();
+		return val;
+	}
+	else if (isFloat(t)) {
+		return new NumberScriptValue(new float(std::stof(t)));
+	}
+	else if (t[0] == '{') {
+		return new CodeValue(new Script(t.substr(1, t.length() - 2)));
+	}
+	else {
+		std::string x = t;
+		std::string s = "";
+		int i = 0;
+		while (i < x.size() && isalnum(x[i])) {
+			s += x[i];
+			i++;
+		}
+		if (vars.find(s) == vars.end()) throw std::exception("Invalid script");
+
+		ScriptValue* val = vars[s];
+		while (i < x.length() && x[i] == '.') {
+			i++;
+			std::string s = "";
+			while (i < x.length() && isalnum(x[i])) {
+				s += x[i];
+				i++;
+			}
+			val = val->dot(s);
+		}
+		i--;
+		return val;
+	}
+}
+
+ScriptValue* evaluate_mul(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	ScriptValue* o1 = evaluate_obj(tokens, vars);
+	while (tokens.front() == "*" || tokens.front() == "/") {
+		std::string op = tokens.front();
+		tokens.pop_front();
+		ScriptValue* o2 = evaluate_obj(tokens, vars);
+		if (op == "*") {
+			o1 = o1->mul(o2);
+		}
+		else {
+			o1 = o1->div(o2);
+		}
+	}
+	return o1;
+}
+
+ScriptValue* evaluate_add(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	ScriptValue* o1 = evaluate_mul(tokens, vars);
+	while (tokens.front() == "+" || tokens.front() == "-") {
+		std::string op = tokens.front();
+		tokens.pop_front();
+		ScriptValue* o2 = evaluate_mul(tokens, vars);
+		if (op == "+") {
+			o1 = o1->add(o2);
+		}
+		else {
+			o1 = o1->sub(o2);
+		}
+	}
+	return o1;
+}
+
+ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
+	ScriptValue* o1 = evaluate_add(tokens, vars);
+	while (tokens.front() == "+=" || tokens.front() == "-=" || tokens.front() == "*=" || tokens.front() == "/=" || tokens.front() == "=") {
+		std::string op = tokens.front();
+		tokens.pop_front();
+		ScriptValue* o2 = evaluate_add(tokens, vars);
+		if (op == "+=") {
+			o1 = o1->addassign(o2);
+		}
+		else if (op == "-=") {
+			o1 = o1->subassign(o2);
+		}
+		else if (op == "*=") {
+			o1 = o1->mulassign(o2);
+		}
+		else if (op == "/=") {
+			o1 = o1->divassign(o2);
+		}
+		else {
+			o1 = o1->assign(o2);
+		}
+	}
+	return o1;
+}
+
 void evaluate(std::string str, SceneObject* object, std::map<std::string, ScriptValue*> var_in){
 	std::stack <ScriptValue*> values;
 	std::stack <std::string> ops;
@@ -152,101 +262,32 @@ void evaluate(std::string str, SceneObject* object, std::map<std::string, Script
 	vars["this"] = object;
 
 	while(!tokens.empty()) {
-		if (tokens.front() == "(") {
-			ops.push(tokens.front());
-		}
-		else if (tokens.front() == ")")
-		{
-			while (!ops.empty() && ops.top() != "(")
-			{
-				ScriptValue* val2 = values.top();
-				values.pop();
-
-				ScriptValue* val1 = values.top();
-				values.pop();
-
-				std::string op = ops.top();
-				ops.pop();
-
-				values.push(applyOp(val1, val2, op));
+		if (tokens.front() == "if") {
+			tokens.pop_front();
+			check(tokens, "(");
+			ScriptValue* cond = evaluate_assign(tokens, var_in);
+			check(tokens, ")");
+			if(cond->bool_value()) {
+				evaluate(tokens.front().substr(1, tokens.front().length() - 2), object, vars);
 			}
-			if (!ops.empty())
-				ops.pop();
+			tokens.pop_front();
 		}
-		else if (tokens.front() == "number")
-		{
+		else if (tokens.front() == "number") {
 			tokens.pop_front();
 			vars[tokens.front()] = new NumberScriptValue(new float());
+			tokens.pop_front();
+			check(tokens, ";");
 		}
-		else if (tokens.front() == "vec3")
-		{
+		else if (tokens.front() == "vec3") {
 			tokens.pop_front();
 			vars[tokens.front()] = new Vec3ScriptValue(new vec3());
-		}
-		else if (isOperator(tokens.front()))
-		{
-			while (!ops.empty() && precedence(ops.top())
-				>= precedence(tokens.front())) {
-				ScriptValue* val2 = values.top();
-				values.pop();
-
-				ScriptValue* val1 = values.top();
-				values.pop();
-
-				std::string op = ops.top();
-				ops.pop();
-
-				values.push(applyOp(val1, val2, op));
-			}
-			ops.push(tokens.front());
-		}
-		else if (tokens.front()[0] == '{') {
-			values.push(new CodeValue(new Script(tokens.front().substr(1, tokens.front().length() - 2))));
-		}
-		else if (isFloat(tokens.front())) {
-
-			values.push(new NumberScriptValue(new float(std::stof(tokens.front()))));
-		}
-		else if (tokens.front()==";") {
-			while (!ops.empty()) {
-				ScriptValue* val2 = values.top();
-				values.pop();
-
-				ScriptValue* val1 = values.top();
-				values.pop();
-
-				std::string op = ops.top();
-				ops.pop();
-
-				values.push(applyOp(val1, val2, op));
-			}
-			while (!values.empty()) values.pop();
-			while (!ops.empty()) ops.pop();
+			tokens.pop_front();
+			check(tokens, ";");
 		}
 		else {
-			std::string x = tokens.front();
-			std::string s = "";
-			int i = 0;
-			while (i < x.size() && isalnum(x[i])) {
-				s += x[i];
-				i++;
-			}
-			if (vars.find(s) == vars.end()) throw std::exception("Invalid script");
-
-			ScriptValue* val = vars[s];
-			while (i < x.length() && x[i] == '.') {
-				i++;
-				std::string s = "";
-				while (i < x.length() && isalnum(x[i])) {
-					s += x[i];
-					i++;
-				}
-				val = val->dot(s);
-			}
-			i--;
-			values.push(val);
+			evaluate_assign(tokens, vars);
+			check(tokens, ";");
 		}
-		tokens.pop_front();
 	}
 }
 
