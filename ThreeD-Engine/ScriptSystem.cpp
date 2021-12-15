@@ -97,6 +97,14 @@ std::list<std::string> tokenize(std::string str) {
 			tokens.push_back("vec3");
 			i += 3;
 		}
+		else if (at_index(str, "true", i)) {
+			tokens.push_back("true");
+			i += 3;
+		}
+		else if (at_index(str, "false", i)) {
+			tokens.push_back("false");
+			i += 4;
+		}
 		else if (at_index(str, "if", i)) {
 			tokens.push_back("if");
 			i += 1;
@@ -205,6 +213,12 @@ ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, 
 	}
 	else if (isFloat(t)) {
 		return new NumberScriptValue(new float(std::stof(t)));
+	}
+	else if (t=="true") {
+		return new BoolScriptValue(new bool(true));
+	}
+	else if (t == "false") {
+		return new BoolScriptValue(new bool(false));
 	}
 	else if (t[0] == '{') {
 		return new CodeValue(new Script(t.substr(1, t.length() - 2)));

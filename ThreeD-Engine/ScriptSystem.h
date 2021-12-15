@@ -85,6 +85,28 @@ public:
 		return nullptr;
 	}
 };
+class BoolScriptValue : public ScriptValue {
+public:
+	bool* v;
+	BoolScriptValue(bool* v) : v(v) {}
+	virtual bool bool_value() { return *v; }
+	virtual ScriptValue* dot(std::string) { return nullptr; }
+	virtual ScriptValue* add(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* addassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* subassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mulassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* divassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* assign(ScriptValue* o) {
+		if (instanceof<BoolScriptValue>(o)) {
+			*v = *((BoolScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+};
 
 class Vec3ScriptValue : public ScriptValue {
 public:
