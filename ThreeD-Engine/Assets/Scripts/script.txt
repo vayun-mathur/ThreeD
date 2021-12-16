@@ -4,8 +4,11 @@ value.y = 0.2;
 this.parent.speed.value = value;
 
 this.parent.click = {
-	if(button == 1)
-		this.mesh2.position += this.speed.value;
-	else if(( button == 0 ) == true)
-		this.mesh2.position -= this.speed.value;
+	if(button == 1) {
+		number i;
+		while(i < 5) {
+			i = i+1;
+		}
+		this.camera.position.x = i;
+	}
 };

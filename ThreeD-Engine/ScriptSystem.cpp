@@ -327,6 +327,13 @@ void skip_line(std::list<std::string>& tokens, std::map<std::string, ScriptValue
 			skip_line(tokens, vars);
 		}
 	}
+	else if (tokens.front() == "while") {
+		tokens.pop_front();
+		check(tokens, "(");
+		skip_assign(tokens, vars);
+		check(tokens, ")");
+		skip_line(tokens, vars);
+	}
 	else if (tokens.front() == "number") {
 		tokens.pop_front();
 		tokens.pop_front();
@@ -370,6 +377,19 @@ void evaluate_line(std::list<std::string>& tokens, std::map<std::string, ScriptV
 				skip_line(tokens, vars);
 			}
 		}
+	}
+	else if (tokens.front() == "while") {
+		tokens.pop_front();
+		check(tokens, "(");
+		std::list<std::string> checkpoint = tokens;
+		while (evaluate_assign(checkpoint, vars)->bool_value()) {
+			check(checkpoint, ")");
+			evaluate_line(checkpoint, vars);
+			checkpoint = tokens;
+		}
+		skip_assign(tokens, vars);
+		check(tokens, ")");
+		skip_line(tokens, vars);
 	}
 	else if (tokens.front() == "number") {
 		tokens.pop_front();

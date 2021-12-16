@@ -45,7 +45,7 @@ void CameraObject::update(double delta_time)
 	world_cam *= temp;
 
 
-	vec3 new_pos = m_world_cam.getTranslation() + world_cam.getZDirection() * (m_forward * 0.02f);
+	vec3 new_pos = m_camera_position + world_cam.getZDirection() * (m_forward * 0.02f);
 
 	new_pos = new_pos + world_cam.getXDirection() * (m_rightward * 0.02f);
 
