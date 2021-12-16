@@ -64,6 +64,14 @@ std::list<std::string> tokenize(std::string str) {
 			tokens.push_back("if");
 			i += 1;
 		}
+		else if (at_index(str, "while", i)) {
+			tokens.push_back("while");
+			i += 4;
+		}
+		else if (at_index(str, "do", i)) {
+			tokens.push_back("do");
+			i += 1;
+		}
 		else if (at_index(str, "else", i)) {
 			tokens.push_back("else");
 			i += 3;
@@ -334,6 +342,15 @@ void skip_line(std::list<std::string>& tokens, std::map<std::string, ScriptValue
 		check(tokens, ")");
 		skip_line(tokens, vars);
 	}
+	else if (tokens.front() == "do") {
+		tokens.pop_front();
+		skip_line(tokens, vars);
+		check(tokens, "while");
+		check(tokens, "(");
+		skip_assign(tokens, vars);
+		check(tokens, ")");
+		check(tokens, ";");
+	}
 	else if (tokens.front() == "number") {
 		tokens.pop_front();
 		tokens.pop_front();
@@ -390,6 +407,22 @@ void evaluate_line(std::list<std::string>& tokens, std::map<std::string, ScriptV
 		skip_assign(tokens, vars);
 		check(tokens, ")");
 		skip_line(tokens, vars);
+	}
+	else if (tokens.front() == "do") {
+		tokens.pop_front();
+		std::list<std::string> checkpoint = tokens;
+		do {
+			checkpoint = tokens;
+			evaluate_line(checkpoint, vars);
+			check(checkpoint, "while");
+			check(checkpoint, "(");
+		} while (evaluate_assign(checkpoint, vars)->bool_value());
+		skip_line(tokens, vars);
+		check(tokens, "while");
+		check(tokens, "(");
+		skip_assign(tokens, vars);
+		check(tokens, ")");
+		check(tokens, ";");
 	}
 	else if (tokens.front() == "number") {
 		tokens.pop_front();
