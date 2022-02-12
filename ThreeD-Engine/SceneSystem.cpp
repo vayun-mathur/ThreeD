@@ -3,6 +3,7 @@
 #include "CameraObject.h"
 #include "DirectionalLightObject.h"
 #include "PointLightObject.h"
+#include "TerrainObject.h"
 #include "AudioSourceObject.h"
 #include "NumberObject.h"
 #include "Vec3Object.h"
@@ -41,6 +42,11 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	PixelShaderPtr skybox_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
+
+	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"TerrainShader.hlsl", "psmain", &shader_byte_code, &size_shader);
+	PixelShaderPtr terrain_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
 	std::unordered_map<int, SceneObjectPtr> components;
 	std::unordered_map<int, std::string> component_type;
 	components.insert({ 0, m_root });
@@ -69,6 +75,11 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			mesh->setScale(scale);
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
+		}
+		else if (type == "TERRAIN") {
+			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, vs, terrain_ps);
+			components[parent]->addChild(terrain);
+			components.insert({ id, terrain });
 		}
 		else if (type == "SKYBOX") {
 			std::wstring obj;

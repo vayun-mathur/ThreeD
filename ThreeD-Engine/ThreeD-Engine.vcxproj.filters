@@ -97,6 +97,9 @@
     <Filter Include="Engine\ScriptingSystem\Script">
       <UniqueIdentifier>{c22ee686-43c5-4a2f-be89-04c2a615134c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\TerrainObject">
+      <UniqueIdentifier>{90981222-929d-40b5-80d9-88fa8e38e312}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -203,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="Script.cpp">
       <Filter>Engine\ScriptingSystem\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainObject.cpp">
+      <Filter>Engine\SceneSystem\TerrainObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,6 +332,9 @@
     <ClInclude Include="Script.h">
       <Filter>Engine\ScriptingSystem\Script</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainObject.h">
+      <Filter>Engine\SceneSystem\TerrainObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -338,6 +347,9 @@
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

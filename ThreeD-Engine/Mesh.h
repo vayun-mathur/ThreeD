@@ -3,6 +3,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "prerequisites.h"
+#include "VertexMesh.h"
 #include <vector>
 
 struct MaterialIndexRange {
@@ -15,6 +16,7 @@ class Mesh : public Resource
 {
 public:
 	Mesh(const wchar_t* full_path);
+	Mesh(std::vector<VertexMesh> list_vertices, std::vector<unsigned int> list_indices, std::vector<MaterialIndexRange> materials);
 	~Mesh();
 	const VertexBufferPtr& getVertexBuffer();
 	const IndexBufferPtr& getIndexBuffer();

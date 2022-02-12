@@ -24,6 +24,7 @@ void InputSystem::update()
 
 	if (current_mouse_pos.x != m_old_mouse_pos.x || current_mouse_pos.y != m_old_mouse_pos.y) {
 		for (InputListener* l : m_map_listeners) {
+			if (l == nullptr) continue;
 			l->onMouseMove(Point(current_mouse_pos.x, current_mouse_pos.y));
 		}
 		m_old_mouse_pos = Point(current_mouse_pos.x, current_mouse_pos.y);
@@ -35,6 +36,7 @@ void InputSystem::update()
 				//KEY DOWN
 
 				for (InputListener* l : m_map_listeners) {
+					if (l == nullptr) continue;
 					if (i == VK_LBUTTON) {
 						if (m_keys_state[i] != m_old_keys_state[i])
 							l->onLeftMouseDown(Point(current_mouse_pos.x, current_mouse_pos.y));
@@ -50,6 +52,7 @@ void InputSystem::update()
 				//KEY UP
 				if (m_keys_state[i] != m_old_keys_state[i]) {
 					for (InputListener* l : m_map_listeners) {
+						if (l == nullptr) continue;
 						if (i == VK_LBUTTON) {
 							l->onLeftMouseUp(Point(current_mouse_pos.x, current_mouse_pos.y));
 						}

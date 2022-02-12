@@ -188,6 +188,7 @@
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
+    <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="ScriptSystem.h" />
+    <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="Vec3Object.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
@@ -258,6 +260,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="TerrainShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
     </FxCompile>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

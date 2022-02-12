@@ -6,6 +6,7 @@
 #include "PointLightObject.h"
 #include "ScriptObject.h"
 #include "MeshObject.h"
+#include "TerrainObject.h"
 #include "InputSystem.h"
 #include "AudioSystem.h"
 #include "AudioSoundManager.h"
@@ -139,6 +140,42 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
 
+void AppWindow::setConstantBuffer(TerrainObject& terrain)
+{
+	constant cc;
+
+	std::vector<DirectionalLightObjectPtr> dlights;
+	std::vector<PointLightObjectPtr> plights;
+
+	findLights(m_scene->getRoot(), dlights, plights);
+
+	for (int i = 0; i < dlights.size(); i++) {
+		cc.dlight[i].light_direction = dlights[i]->getDirection();
+	}
+	cc.m_dlight_count = (int)dlights.size();
+
+	for (int i = 0; i < plights.size(); i++) {
+		cc.plight[i].light_position = plights[i]->getPosition();
+		cc.plight[i].light_radius = plights[i]->getRadius();
+		cc.plight[i].attenuation = plights[i]->getAttenuation();
+	}
+	cc.m_plight_count = (int)plights.size();
+
+	//transform
+	cc.m_transform.setIdentity();
+	cc.m_transform.setTranslation(terrain.getPosition());
+	cc.m_transform.setScale(terrain.getScale());
+
+	//camera
+	CameraObjectPtr cam = m_scene->getCamera();
+	cc.m_view = cam->getViewMatrix();
+	cc.m_projection = cam->getProjectionMatrix();
+	cc.m_camera_position = cam->getCameraPosition();
+
+
+	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+}
+
 AppWindow::~AppWindow()
 {
 }
@@ -161,7 +198,7 @@ void AppWindow::onCreate()
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 
 	//m_scene->getRoot()->m_click = *m_scene->getRoot()->getChild<ScriptObject>("script")->getScript();
-	m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
+	//m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
 

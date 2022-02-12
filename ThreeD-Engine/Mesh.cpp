@@ -17,7 +17,7 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 	tinyobj::ObjReaderConfig reader_config;
 	std::wstring input = full_path;
 	std::string input_path = std::string(input.begin(), input.end());
-	reader_config.mtl_search_path = input_path.substr(0, input_path.find_last_of('\\')+1); // Path to material files
+	reader_config.mtl_search_path = input_path.substr(0, input_path.find_last_of('\\') + 1); // Path to material files
 
 	tinyobj::ObjReader reader;
 
@@ -59,7 +59,7 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 			unsigned char num_face_verts = shapes[s].mesh.num_face_vertices[f];
 			int mat = shapes[s].mesh.material_ids[f];
 			if (mat != material) {
-				if(material != -1)
+				if (material != -1)
 					m_materials.push_back({ low, (int)list_indices.size(), materials_lit[material] });
 				low = list_indices.size();
 				material = mat;
@@ -73,7 +73,7 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 				vx = attribs.vertices[index.vertex_index * 3 + 0];
 				vy = attribs.vertices[index.vertex_index * 3 + 1];
 				vz = attribs.vertices[index.vertex_index * 3 + 2];
-				
+
 				if (index.texcoord_index != -1) {
 					tx = attribs.texcoords[index.texcoord_index * 2 + 0];
 					ty = attribs.texcoords[index.texcoord_index * 2 + 1];
@@ -104,6 +104,18 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh),
 		list_vertices.size(), shader_byte_code, size_shader);
 	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
+}
+
+Mesh::Mesh(std::vector<VertexMesh> list_vertices, std::vector<unsigned int> list_indices, std::vector<MaterialIndexRange> materials)
+	: Resource(L"")
+{
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
+	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh),
+		list_vertices.size(), shader_byte_code, size_shader);
+	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
+	m_materials = materials;
 }
 
 Mesh::~Mesh()

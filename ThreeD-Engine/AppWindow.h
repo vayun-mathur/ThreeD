@@ -23,6 +23,7 @@ public:
 	void render();
 	void update();
 	void setConstantBuffer(MeshObject& mesh);
+	void setConstantBuffer(TerrainObject& mesh);
 
 	~AppWindow();
 

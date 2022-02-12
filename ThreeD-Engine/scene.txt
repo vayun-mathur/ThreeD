@@ -1,4 +1,4 @@
-11
+7
 2 0 6 camera 6 CAMERA 1000 10
 3 0 6 dlight 17 DIRECTIONAL_LIGHT 0.2 0.2 0.2 1 1 1
 7 0 7 dlight2 17 DIRECTIONAL_LIGHT 0.2 0.2 0.2 1 1 -1
@@ -6,8 +6,4 @@
 9 0 7 dlight4 17 DIRECTIONAL_LIGHT 0.2 0.2 0.2 -1 1 -1
 5 0 6 plight 11 POINT_LIGHT 0.2 0.2 0.2 0 3 0 8 1 1 1
 4 0 6 skybox 6 SKYBOX 24 Assets\Meshes\sphere.obj 23 Assets\Textures\sky.jpg 0 0 0
-6 0 5 mesh2 4 MESH 21 Assets\Meshes\nyc.obj 0 0 0 0.1 0.1 0.1
-10 0 5 audio 12 AUDIO_SOURCE 30.8128 1.82757 12.0662
-11 0 6 script 6 SCRIPT 25 Assets\Scripts\script.txt
-12 0 5 speed 12 VECTOR_VALUE 0.02 0 0
 2
