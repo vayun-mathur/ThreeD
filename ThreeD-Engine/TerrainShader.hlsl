@@ -8,10 +8,9 @@ sampler map_ks_sampler : register(s2);
 struct PS_INPUT
 {
 	float4 position : SV_POSITION;
-	float2 texcoord: TEXCOORD0;
 	float3 normal: NORMAL0;
 	float3 world_pos: TEXCOORD1;
-	float3 color: TEXCOORD2;
+	float3 color: TEXCOORD0;
 };
 
 //Directional Light
@@ -71,8 +70,8 @@ float3 specularLight(float3 ks, float4 tex_color, float3 light_dir, float3 norma
 
 float3 calculateDirectional(PS_INPUT input, MATERIAL material, DLIGHT dlight)
 {
-	float4 d_tex_color = (material.has_tex & 2) == 0 ? float4(1, 1, 1, 1) : map_kd.Sample(map_kd_sampler, 1 - input.texcoord);
-	float4 s_tex_color = (material.has_tex & 4) == 0 ? float4(1, 1, 1, 1) : map_ks.Sample(map_ks_sampler, 1 - input.texcoord);
+	float4 d_tex_color = float4(1, 1, 1, 1);
+	float4 s_tex_color = float4(1, 1, 1, 1);
 
 	//DIFFUSE LIGHT
 
@@ -90,8 +89,8 @@ float3 calculateDirectional(PS_INPUT input, MATERIAL material, DLIGHT dlight)
 
 float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
 {
-	float4 d_tex_color = (material.has_tex & 2) == 0 ? float4(1, 1, 1, 1) : map_kd.Sample(map_kd_sampler, 1 - input.texcoord);
-	float4 s_tex_color = (material.has_tex & 4) == 0 ? float4(1, 1, 1, 1) : map_ks.Sample(map_ks_sampler, 1 - input.texcoord);
+	float4 d_tex_color = float4(1, 1, 1, 1);
+	float4 s_tex_color = float4(1, 1, 1, 1);
 
 	//DIFFUSE LIGHT
 	float3 light_dir = normalize(plight.light_position.xyz - input.world_pos.xyz);

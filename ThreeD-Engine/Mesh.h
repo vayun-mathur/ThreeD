@@ -16,7 +16,7 @@ class Mesh : public Resource
 {
 public:
 	Mesh(const wchar_t* full_path);
-	Mesh(std::vector<VertexMesh> list_vertices, std::vector<unsigned int> list_indices, std::vector<MaterialIndexRange> materials);
+	Mesh(std::vector<TerrainMesh> list_vertices, std::vector<unsigned int> list_indices, std::vector<MaterialIndexRange> materials);
 	~Mesh();
 	const VertexBufferPtr& getVertexBuffer();
 	const IndexBufferPtr& getIndexBuffer();

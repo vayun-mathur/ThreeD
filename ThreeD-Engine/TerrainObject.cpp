@@ -13,11 +13,11 @@ vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2) {
 	return normal;
 }
 
-void storeTriangle(vec3* cornerPos, vec3 normal, vec2* colours, std::vector<VertexMesh>& list_vertices,
+void storeTriangle(vec3* cornerPos, vec3 normal, vec3* colours, std::vector<TerrainMesh>& list_vertices,
 	int index0, int index1, int index2) {
-	list_vertices.push_back(VertexMesh(cornerPos[index0], colours[index0], normal));
-	list_vertices.push_back(VertexMesh(cornerPos[index1], colours[index1], normal));
-	list_vertices.push_back(VertexMesh(cornerPos[index2], colours[index2], normal));
+	list_vertices.push_back(TerrainMesh(cornerPos[index0], colours[index0], normal));
+	list_vertices.push_back(TerrainMesh(cornerPos[index1], colours[index1], normal));
+	list_vertices.push_back(TerrainMesh(cornerPos[index2], colours[index2], normal));
 }
 
 vec3* calculateCornerPositions(int col, int row, float** heights) {
@@ -29,8 +29,8 @@ vec3* calculateCornerPositions(int col, int row, float** heights) {
 	return vertices;
 }
 
-vec2* calculateCornerColours(int col, int row, vec2** colours) {
-	vec2* cornerCols = new vec2[4];
+vec3* calculateCornerColours(int col, int row, vec3** colours) {
+	vec3* cornerCols = new vec3[4];
 	cornerCols[0] = colours[row][col];
 	cornerCols[1] = colours[row + 1][col];
 	cornerCols[2] = colours[row][col + 1];
@@ -38,9 +38,9 @@ vec2* calculateCornerColours(int col, int row, vec2** colours) {
 	return cornerCols;
 }
 
-void storeGridSquare(int col, int row, float** heights, vec2** colours, std::vector<VertexMesh>& list_vertices) {
+void storeGridSquare(int col, int row, float** heights, vec3** colours, std::vector<TerrainMesh>& list_vertices) {
 	vec3* cornerPos = calculateCornerPositions(col, row, heights);
-	vec2* cornerCols = calculateCornerColours(col, row, colours);
+	vec3* cornerCols = calculateCornerColours(col, row, colours);
 	vec3 normalTopLeft = calcNormal(cornerPos[0], cornerPos[1], cornerPos[2]);
 	vec3 normalBottomRight = calcNormal(cornerPos[2], cornerPos[1], cornerPos[3]);
 	storeTriangle(cornerPos, normalTopLeft, cornerCols, list_vertices, 0, 1, 2);
@@ -48,8 +48,8 @@ void storeGridSquare(int col, int row, float** heights, vec2** colours, std::vec
 }
 
 
-MeshPtr createTerrain(float** heights, vec2** colours, int gridSize) {
-	std::vector<VertexMesh> list_vertices;
+MeshPtr createTerrain(float** heights, vec3** colours, int gridSize) {
+	std::vector<TerrainMesh> list_vertices;
 	std::vector<unsigned int> list_indices;
 	std::vector<MaterialIndexRange> materials;
 
@@ -97,7 +97,9 @@ float** generateHeights(int gridSize, PerlinNoise perlinNoise) {
 
 MeshPtr generateTerrain(int gridSize, PerlinNoise perlinNoise) {
 	float** heights = generateHeights(gridSize, perlinNoise);
-	vec2** colours = ColorGenerator(new vec2[]{vec2(1, 1), vec2(1-0.25, 1), vec2(1-0.5, 1), vec2(1-0.75, 1), vec2(1-0.25, 1)}, 5, 0.45).generateColours(heights, gridSize, perlinNoise.getAmplitude());
+	vec3** colours = ColorGenerator(new vec3[]{ vec3(201, 178, 99) * (1.f / 255),
+			vec3(135, 184, 82) * (1.f / 255), vec3(80, 171, 93) * (1.f / 255), vec3(120, 120, 120) * (1.f / 255),
+			vec3(200, 200, 210) * (1.f / 255) }, 5, 0.45).generateColours(heights, gridSize, perlinNoise.getAmplitude());
 	return createTerrain(heights, colours, gridSize);
 }
 
@@ -105,7 +107,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, VertexShader
 	: SceneObject(name, system), m_vs(vs), m_ps(ps)
 {
 	//TODO: Complete this
-	m_mesh = generateTerrain(200, PerlinNoise(3, 20, 0.05));
+	m_mesh = generateTerrain(200, PerlinNoise(3, 10, 0.05));
 }
 
 TerrainObject::~TerrainObject()

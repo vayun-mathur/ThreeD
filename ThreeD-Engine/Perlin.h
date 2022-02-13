@@ -77,32 +77,32 @@ private:
 
 class ColorGenerator {
 public:
-	ColorGenerator(vec2* biomeColors, int biomes, float spread)
+	ColorGenerator(vec3* biomeColors, int biomes, float spread)
 		: biomeColors(biomeColors), spread(spread), halfSpread(spread / 2), part(1 / (biomes - 1.f)) {
 	}
 
-	vec2** generateColours(float** heights, float gridSize, float amplitude) {
-		vec2** colours = new vec2 * [gridSize + 1];
+	vec3** generateColours(float** heights, float gridSize, float amplitude) {
+		vec3** colors = new vec3 * [gridSize + 1];
 		for (int z = 0; z <= gridSize; z++) {
-			colours[z] = new vec2[gridSize + 1];
+			colors[z] = new vec3[gridSize + 1];
 			for (int x = 0; x <= gridSize; x++) {
-				colours[z][x] = calculateColour(heights[z][x], amplitude);
+				colors[z][x] = calculateColour(heights[z][x], amplitude);
 			}
 		}
-		return colours;
+		return colors;
 	}
 
-	vec2 calculateColour(float height, float amplitude) {
+	vec3 calculateColour(float height, float amplitude) {
 		float value = (height + amplitude) / (amplitude * 2);
 		value = clamp((value - halfSpread) * (1.f / spread), 0.f, 0.9999f);
 		int firstBiome = (int)floor(value / part);
 		float blend = (value - (firstBiome * part)) / part;
-		return biomeColors[firstBiome];
+		return vec3::lerp(biomeColors[firstBiome], biomeColors[firstBiome + 1], blend);
 	}
 private:
 	float spread;
 	float halfSpread;
 
-	vec2* biomeColors;
+	vec3* biomeColors;
 	float part;
 };

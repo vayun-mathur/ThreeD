@@ -15,3 +15,18 @@ public:
 	vec2 m_texcoord;
 	vec3 m_normal;
 };
+
+class TerrainMesh {
+public:
+	TerrainMesh() : m_position(), m_color(), m_normal() {}
+	TerrainMesh(vec3 position, vec3 color, vec3 normal) : m_position(position), m_color(color), m_normal(normal) {}
+	TerrainMesh(const TerrainMesh& vertex) : m_position(vertex.m_position), m_color(vertex.m_color), m_normal(vertex.m_normal) {}
+
+	~TerrainMesh() {
+
+	}
+public:
+	vec3 m_position;
+	vec3 m_color;
+	vec3 m_normal;
+};

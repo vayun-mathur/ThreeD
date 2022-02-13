@@ -106,14 +106,14 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 }
 
-Mesh::Mesh(std::vector<VertexMesh> list_vertices, std::vector<unsigned int> list_indices, std::vector<MaterialIndexRange> materials)
+Mesh::Mesh(std::vector<TerrainMesh> list_vertices, std::vector<unsigned int> list_indices, std::vector<MaterialIndexRange> materials)
 	: Resource(L"")
 {
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
 	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
-	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh),
-		list_vertices.size(), shader_byte_code, size_shader);
+	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(TerrainMesh),
+		list_vertices.size(), shader_byte_code, size_shader, true);
 	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 	m_materials = materials;
 }
