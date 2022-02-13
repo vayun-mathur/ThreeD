@@ -335,6 +335,9 @@
     <ClInclude Include="TerrainObject.h">
       <Filter>Engine\SceneSystem\TerrainObject</Filter>
     </ClInclude>
+    <ClInclude Include="Perlin.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -350,6 +353,9 @@
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="TerrainShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainVertexShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

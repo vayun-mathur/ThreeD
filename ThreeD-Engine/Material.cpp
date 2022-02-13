@@ -32,9 +32,9 @@ Material::Material(tinyobj::material_t* objmat)
 	std::string map_ka_str = objmat->ambient_texname;
 	std::string map_kd_str = objmat->diffuse_texname;
 	std::string map_ks_str = objmat->specular_texname;
-	if (map_ka_str != "") map_ka = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(toWide("Assets\\Meshes\\" + map_ka_str).c_str());
-	if (map_kd_str != "") map_kd = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(toWide("Assets\\Meshes\\" + map_kd_str).c_str());
-	if (map_ks_str != "") map_ks = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(toWide("Assets\\Meshes\\" + map_ks_str).c_str());
+	if (map_ka_str != "") map_ka = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(toWide("Assets\\Textures\\" + map_ka_str).c_str());
+	if (map_kd_str != "") map_kd = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(toWide("Assets\\Textures\\" + map_kd_str).c_str());
+	if (map_ks_str != "") map_ks = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(toWide("Assets\\Textures\\" + map_ks_str).c_str());
 
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;

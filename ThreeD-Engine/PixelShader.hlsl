@@ -78,7 +78,7 @@ float3 calculateDirectional(PS_INPUT input, MATERIAL material, DLIGHT dlight)
 	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, dlight.light_direction, input.normal, 1.0);
 
 	//SPECULAR LIGHT
-	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
+	float3 direction_to_camera = -normalize(input.world_pos.xyz - m_camera_position.xyz);
 
 	float3 specular_light = specularLight(material.ks, s_tex_color, dlight.light_direction, input.normal, direction_to_camera, material.shininess, 1.0);
 
@@ -124,12 +124,12 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 
 	float3 light = ambient_light;
 
-	for (int i = 0; i < m_dlight_count;i++) {
+	for (int i = 0; i < m_dlight_count; i++) {
 		light += calculateDirectional(input, material, dlight[i]) * 0.5;
 	}
-	//for (int i = 0; i < m_plight_count; i++) {
-	//	light += calculatePoint(input, material, plight[i]);
-	//}
+	for (int i = 0; i < m_plight_count; i++) {
+		light += calculatePoint(input, material, plight[i]);
+	}
 
 	return float4(light, 1.0);
 }

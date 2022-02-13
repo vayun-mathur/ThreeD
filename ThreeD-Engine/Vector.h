@@ -45,6 +45,14 @@ public:
 		return v;
 	}
 
+	vec3 cross(const vec3& other) {
+		return vec3(
+			y * other.z - z * other.y,
+			z * other.x - x * other.z,
+			x * other.y - y * other.x
+		);
+	}
+
 	vec3 operator*(float scalar)
 	{
 		return vec3(x * scalar, y * scalar, z * scalar);

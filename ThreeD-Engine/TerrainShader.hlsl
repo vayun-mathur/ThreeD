@@ -11,6 +11,7 @@ struct PS_INPUT
 	float2 texcoord: TEXCOORD0;
 	float3 normal: NORMAL0;
 	float3 world_pos: TEXCOORD1;
+	float3 color: TEXCOORD2;
 };
 
 //Directional Light
@@ -78,7 +79,7 @@ float3 calculateDirectional(PS_INPUT input, MATERIAL material, DLIGHT dlight)
 	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, dlight.light_direction, input.normal, 1.0);
 
 	//SPECULAR LIGHT
-	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
+	float3 direction_to_camera = -normalize(input.world_pos.xyz - m_camera_position.xyz);
 
 	float3 specular_light = specularLight(material.ks, s_tex_color, dlight.light_direction, input.normal, direction_to_camera, material.shininess, 1.0);
 
@@ -118,7 +119,7 @@ float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
-	float4 tex_color = (material.has_tex & 1) == 0 ? float4(0.2, 0.2, 0.2, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
+	float4 tex_color = float4(input.color, 1);
 
 	float3 ambient_light = ambientLight(material.ka, tex_color);
 
@@ -127,9 +128,9 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	for (int i = 0; i < m_dlight_count; i++) {
 		light += calculateDirectional(input, material, dlight[i]) * 0.5;
 	}
-	//for (int i = 0; i < m_plight_count; i++) {
-	//	light += calculatePoint(input, material, plight[i]);
-	//}
+	for (int i = 0; i < m_plight_count; i++) {
+		light += calculatePoint(input, material, plight[i]);
+	}
 
 	return float4(light, 1.0);
 }

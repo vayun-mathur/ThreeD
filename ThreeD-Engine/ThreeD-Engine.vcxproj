@@ -215,6 +215,7 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshObject.h" />
     <ClInclude Include="NumberObject.h" />
+    <ClInclude Include="Perlin.h" />
     <ClInclude Include="PointLightObject.h" />
     <ClInclude Include="prerequisites.h" />
     <ClInclude Include="InputListener.h" />
@@ -284,6 +285,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="scene.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="TerrainVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,58 @@
+struct VS_INPUT
+{
+	float4 position : POSITION0;
+	float2 texcoord: TEXCOORD0;
+	float3 normal: NORMAL0;
+};
+struct VS_OUTPUT
+{
+	float4 position : SV_POSITION;
+	float2 texcoord: TEXCOORD0;
+	float3 normal: NORMAL0;
+	float3 world_pos: TEXCOORD1;
+	float3 color: TEXCOORD2;
+};
+
+cbuffer constant: register(b0)
+{
+	row_major float4x4 m_transform;
+	row_major float4x4 m_view;
+	row_major float4x4 m_projection;
+	float4 m_camera_position;
+};
+
+
+VS_OUTPUT vsmain(VS_INPUT input)
+{
+	VS_OUTPUT output = (VS_OUTPUT)0;
+
+	//WORLD SPACE
+	output.position = mul(input.position, m_transform);
+	output.world_pos = output.position.xyz;
+	//VIEW SPACE
+	output.position = mul(output.position, m_view);
+	//SCREEN SPACE
+	output.position = mul(output.position, m_projection);
+
+
+	output.texcoord = input.texcoord;
+	output.normal = input.normal;
+
+	if (input.texcoord.x == 1 && input.texcoord.y == 1) {
+		output.color = float3(201, 177, 99) / 255;
+	}
+	if (input.texcoord.x == 0.75 && input.texcoord.y == 1) {
+		output.color = float3(135, 184, 82) / 255;
+	}
+	if (input.texcoord.x == 0.5 && input.texcoord.y == 1) {
+		output.color = float3(80, 171, 93) / 255;
+	}
+	if (input.texcoord.x == 0.25 && input.texcoord.y == 1) {
+		output.color = float3(120, 120, 120) / 255;
+	}
+	if (input.texcoord.x == 1 && input.texcoord.y == 0.75) {
+		output.color = float3(200, 200, 210) / 255;
+	}
+
+	return output;
+}

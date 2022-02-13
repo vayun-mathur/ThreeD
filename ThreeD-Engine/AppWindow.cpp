@@ -68,15 +68,20 @@ void AppWindow::render()
 void AppWindow::update()
 {
 	//light
+	/*
 	DirectionalLightObjectPtr light = m_scene->getRoot()->getChild<DirectionalLightObject>("dlight");
 
-	mat4 m_light_rot_matrix;
-	m_light_rot_matrix.setIdentity();
-	m_light_rot_matrix.setRotationY(m_light_rot_y);
+	mat4 rot_y;
+	rot_y.setIdentity();
+	rot_y.setRotationY(m_light_rot_y);
+	mat4 rot_x;
+	rot_x.setIdentity();
+	rot_x.setRotationX(-0.5f);
+
 
 	m_light_rot_y += 0.707f * m_delta_time;
 
-	light->setDirection(m_light_rot_matrix.getZDirection());
+	light->setDirection((rot_x *= rot_y).getZDirection());
 
 	PointLightObjectPtr plight = m_scene->getRoot()->getChild<PointLightObject>("plight");
 
@@ -84,7 +89,7 @@ void AppWindow::update()
 	float dist = 3.0f;
 
 	plight->setPosition(vec3(dist * cos(m_light_rot_y), 1.0f, dist * sin(m_light_rot_y)));
-
+	*/
 	CameraObjectPtr cam = m_scene->getCamera();
 	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
 	skybox->setPosition(vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z));

@@ -43,6 +43,11 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
 
+	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"TerrainVertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
+	VertexShaderPtr terrain_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+
 	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"TerrainShader.hlsl", "psmain", &shader_byte_code, &size_shader);
 	PixelShaderPtr terrain_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
@@ -77,9 +82,10 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components.insert({ id, mesh });
 		}
 		else if (type == "TERRAIN") {
-			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, vs, terrain_ps);
+			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, terrain_vs, terrain_ps);
 			components[parent]->addChild(terrain);
 			components.insert({ id, terrain });
+			terrain->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::BACK);
 		}
 		else if (type == "SKYBOX") {
 			std::wstring obj;
