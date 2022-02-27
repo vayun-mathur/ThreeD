@@ -19,8 +19,12 @@ public:
 	inline mat4 getViewMatrix() { return m_view; }
 	inline mat4 getProjectionMatrix() { return m_projection; }
 	inline vec3 getCameraPosition() { return m_camera_position; }
+	inline void setCameraPosition(vec3 position) { m_camera_position = position; }
+
+	inline void invertPitch() { this->m_rot_x *= -1; }
 
 	void updateProjectionMatrix();
+	void updateMatrices();
 
 	virtual ScriptValue* dot(std::string);
 private:

@@ -10,6 +10,7 @@ public:
 	~DeviceContext();
 
 	void clearRenderTargetColor(const SwapChainPtr& swap_chain, float r, float g, float b, float a);
+	void clearRenderTargetColor(const FrameBufferPtr& frame_buffer, float r, float g, float b, float a);
 	void setVertexBuffer(const VertexBufferPtr& vertex_buffer);
 	void setIndexBuffer(const IndexBufferPtr& index_buffer);
 

@@ -22,6 +22,7 @@ class Material;
 class SceneObject;
 class MeshObject;
 class TerrainObject;
+class WaterTileObject;
 class CameraObject;
 class DirectionalLightObject;
 class PointLightObject;
@@ -29,6 +30,7 @@ class AudioSourceObject;
 class ScriptObject;
 class NumberObject;
 class Vec3Object;
+class FrameBuffer;
 
 typedef std::shared_ptr<SwapChain> SwapChainPtr;
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -45,6 +47,7 @@ typedef std::shared_ptr<Material> MaterialPtr;
 typedef std::shared_ptr<SceneObject> SceneObjectPtr;
 typedef std::shared_ptr<MeshObject> MeshObjectPtr;
 typedef std::shared_ptr<TerrainObject> TerrainObjectPtr;
+typedef std::shared_ptr<WaterTileObject> WaterTileObjectPtr;
 typedef std::shared_ptr<CameraObject> CameraObjectPtr;
 typedef std::shared_ptr<DirectionalLightObject> DirectionalLightObjectPtr;
 typedef std::shared_ptr<PointLightObject> PointLightObjectPtr;
@@ -52,6 +55,7 @@ typedef std::shared_ptr<AudioSourceObject> AudioSourceObjectPtr;
 typedef std::shared_ptr<ScriptObject> ScriptObjectPtr;
 typedef std::shared_ptr<NumberObject> NumberObjectPtr;
 typedef std::shared_ptr<Vec3Object> Vec3ObjectPtr;
+typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
 
 template<typename Base, typename T>
 inline bool instanceof(const T* ptr) {

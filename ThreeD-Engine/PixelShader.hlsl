@@ -31,6 +31,7 @@ cbuffer constant: register(b0)
 	row_major float4x4 m_view;
 	row_major float4x4 m_projection;
 	float4 m_camera_position;
+	float4 m_clip;
 	int m_dlight_count;
 	int m_plight_count;
 	int v;
@@ -118,6 +119,8 @@ float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
+	clip(dot(m_clip, float4(input.world_pos, 1)));
+
 	float4 tex_color = (material.has_tex & 1) == 0 ? float4(0.2, 0.2, 0.2, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
 
 	float3 ambient_light = ambientLight(material.ka, tex_color);

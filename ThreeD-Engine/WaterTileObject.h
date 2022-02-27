@@ -2,21 +2,21 @@
 #include "prerequisites.h"
 #include "SceneObject.h"
 #include "Vector.h"
-class TerrainObject
+class WaterTileObject
 	: public SceneObject
 {
 public:
-	TerrainObject(std::string name, SceneSystem* system, VertexShaderPtr vs, PixelShaderPtr ps);
+	WaterTileObject(std::string name, SceneSystem* system, VertexShaderPtr vs, PixelShaderPtr ps);
 
-	~TerrainObject();
+	~WaterTileObject();
 
 	virtual SceneObjectType getType() const {
-		return SceneObjectType::TerrainObject;
+		return SceneObjectType::WaterTileObject;
 	}
 
 	inline VertexShaderPtr getVertexShader() { return m_vs; }
 	inline PixelShaderPtr getPixelShader() { return m_ps; }
-	inline MeshPtr getMesh() { return m_mesh; }
+	inline static MeshPtr getMesh() { return m_mesh; }
 
 	virtual ScriptValue* dot(std::string);
 public:
@@ -29,9 +29,10 @@ private:
 private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
-	MeshPtr m_mesh;
+	static MeshPtr m_mesh;
 private:
 	vec3 m_position = vec3(0, 0, 0);
 	vec3 m_scale = vec3(1, 1, 1);
 };
 
+inline MeshPtr WaterTileObject::m_mesh = nullptr;

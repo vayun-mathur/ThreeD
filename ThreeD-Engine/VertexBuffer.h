@@ -6,7 +6,7 @@
 class VertexBuffer
 {
 public:
-	VertexBuffer(void* list_vertices, UINT size_vertex, UINT size_list, void* shader_byte_code, UINT size_byte_shader, RenderSystem* system, bool terrain);
+	VertexBuffer(void* list_vertices, UINT size_vertex, UINT size_list, void* shader_byte_code, UINT size_byte_shader, RenderSystem* system, int type);
 	UINT getSizeVertexList();
 	~VertexBuffer();
 private:

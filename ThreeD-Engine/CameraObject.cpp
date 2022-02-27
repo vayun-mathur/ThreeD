@@ -28,9 +28,7 @@ ScriptValue* CameraObject::dot(std::string s)
 	return nullptr;
 }
 
-void CameraObject::update(double delta_time)
-{
-
+void CameraObject::updateMatrices() {
 	//view matrix
 	mat4 temp;
 	mat4 world_cam;
@@ -44,14 +42,7 @@ void CameraObject::update(double delta_time)
 	temp.setRotationY(m_rot_y);
 	world_cam *= temp;
 
-
-	vec3 new_pos = m_camera_position + world_cam.getZDirection() * (m_forward * 0.02f);
-
-	new_pos = new_pos + world_cam.getXDirection() * (m_rightward * 0.02f);
-
-	world_cam.setTranslation(new_pos);
-
-	m_camera_position = new_pos;
+	world_cam.setTranslation(m_camera_position);
 
 	m_world_cam = world_cam;
 
@@ -60,13 +51,17 @@ void CameraObject::update(double delta_time)
 
 	m_view = world_cam;
 
+
 	//projection matrix
 
-	int width = (AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left);
-	int height = (AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
+	updateProjectionMatrix();
+}
 
-
-	m_projection.setPerspectiveFovLH(1.57f, ((float)width / (float)height), 0.1f, m_clip_dist);
+void CameraObject::update(double delta_time)
+{
+	updateMatrices();
+	m_camera_position = m_camera_position + m_world_cam.getZDirection() * (m_forward * delta_time);
+	m_camera_position = m_camera_position + m_world_cam.getXDirection() * (m_rightward * delta_time);
 
 	m_delta_time = delta_time;
 }

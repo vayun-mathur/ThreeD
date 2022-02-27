@@ -30,3 +30,16 @@ public:
 	vec3 m_color;
 	vec3 m_normal;
 };
+
+class WaterMesh {
+public:
+	WaterMesh() : m_position() {}
+	WaterMesh(vec2 position) : m_position(position) {}
+	WaterMesh(const WaterMesh& vertex) : m_position(vertex.m_position) {}
+
+	~WaterMesh() {
+
+	}
+public:
+	vec2 m_position;
+};

@@ -10,7 +10,10 @@
 #include "PixelShader.h"
 #include "InputListener.h"
 #include "Mesh.h"
+#include "TerrainObject.h"
+#include "WaterTileObject.h"
 #include "Vector.h"
+#include "FrameBuffer.h"
 #include "SceneSystem.h"
 
 class AppWindow : public Window, public InputListener
@@ -24,6 +27,7 @@ public:
 	void update();
 	void setConstantBuffer(MeshObject& mesh);
 	void setConstantBuffer(TerrainObject& mesh);
+	void setConstantBuffer(WaterTileObject& mesh);
 
 	~AppWindow();
 
@@ -49,6 +53,8 @@ public:
 private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
+public:
+	FrameBufferPtr m_reflection, m_refraction;
 private:
 	SceneSystem* m_scene = nullptr;
 private:

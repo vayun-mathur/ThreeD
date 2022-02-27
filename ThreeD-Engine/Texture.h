@@ -6,6 +6,7 @@ class Texture : public Resource
 {
 public:
 	Texture(const wchar_t* full_path);
+	Texture(ID3D11Resource* texture, ID3D11ShaderResourceView* shader_res_view);
 	~Texture();
 private:
 	ID3D11Resource* m_texture = nullptr;

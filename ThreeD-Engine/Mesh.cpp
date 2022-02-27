@@ -100,9 +100,9 @@ Mesh::Mesh(const wchar_t* full_path) : Resource(full_path)
 	m_materials.push_back({ low, (int)list_indices.size(), materials_lit[material] });
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
-	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
+	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader, 0);
 	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh),
-		list_vertices.size(), shader_byte_code, size_shader);
+		list_vertices.size(), shader_byte_code, size_shader, 0);
 	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 }
 
@@ -111,11 +111,22 @@ Mesh::Mesh(std::vector<TerrainMesh> list_vertices, std::vector<unsigned int> lis
 {
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
-	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
+	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader, 1);
 	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(TerrainMesh),
 		list_vertices.size(), shader_byte_code, size_shader, true);
 	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 	m_materials = materials;
+}
+
+Mesh::Mesh(std::vector<WaterMesh> list_vertices)
+	: Resource(L"")
+{
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader, 2);
+	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(WaterMesh),
+		list_vertices.size(), shader_byte_code, size_shader, 2);
+	m_index_buffer = nullptr;
 }
 
 Mesh::~Mesh()

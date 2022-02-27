@@ -166,6 +166,7 @@
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="DirectionalLightObject.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
@@ -190,6 +191,7 @@
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
+    <ClCompile Include="WaterTileObject.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -210,6 +212,7 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="CameraObject.h" />
     <ClInclude Include="DirectionalLightObject.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
@@ -229,6 +232,7 @@
     <ClInclude Include="Vec3Object.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
+    <ClInclude Include="WaterTileObject.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="SwapChain.h" />
@@ -282,12 +286,32 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="WaterPixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="WaterVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="scene.txt" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="TerrainVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexWaterLayoutShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <FileType>Document</FileType>
     </FxCompile>

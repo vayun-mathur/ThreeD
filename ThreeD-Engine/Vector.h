@@ -107,6 +107,10 @@ public:
 		this->w = -(v1.x * (v2.y * v3.z - v3.y * v2.z) - v1.y * (v2.x * v3.z - v3.x * v2.z) + v1.z * (v2.x * v3.y - v3.x * v2.y));
 	}
 
+	vec3 xyz() {
+		return vec3(x, y, z);
+	}
+
 	~vec4() {
 
 	}

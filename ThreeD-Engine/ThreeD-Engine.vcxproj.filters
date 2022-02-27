@@ -100,6 +100,12 @@
     <Filter Include="Engine\SceneSystem\TerrainObject">
       <UniqueIdentifier>{90981222-929d-40b5-80d9-88fa8e38e312}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\WaterTile">
+      <UniqueIdentifier>{9f1abb36-0429-43fc-9391-44f847b0006d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\FrameBuffer">
+      <UniqueIdentifier>{fe4934de-94fe-448f-b50b-2298f982e0fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -209,6 +215,12 @@
     </ClCompile>
     <ClCompile Include="TerrainObject.cpp">
       <Filter>Engine\SceneSystem\TerrainObject</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterTileObject.cpp">
+      <Filter>Engine\SceneSystem\WaterTile</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\FrameBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,6 +350,12 @@
     <ClInclude Include="Perlin.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
+    <ClInclude Include="WaterTileObject.h">
+      <Filter>Engine\SceneSystem\WaterTile</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\FrameBuffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -357,6 +375,15 @@
     </FxCompile>
     <FxCompile Include="TerrainVertexShader.hlsl">
       <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterVertexShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterPixelShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexWaterLayoutShader.hlsl">
+      <Filter>Engine\GraphicsEngine</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

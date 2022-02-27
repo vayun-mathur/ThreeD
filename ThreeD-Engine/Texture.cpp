@@ -23,6 +23,11 @@ Texture::Texture(const wchar_t* full_path) : Resource(full_path)
 	}
 }
 
+Texture::Texture(ID3D11Resource* texture, ID3D11ShaderResourceView* shader_res_view)
+	: Resource(L""), m_texture(texture), m_shader_res_view(shader_res_view)
+{
+}
+
 Texture::~Texture()
 {
 	m_shader_res_view->Release();

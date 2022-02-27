@@ -6,6 +6,8 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Texture.h"
+#include "FrameBuffer.h"
+#include "RenderSystem.h"
 #include <exception>
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
@@ -25,6 +27,14 @@ void DeviceContext::clearRenderTargetColor(const SwapChainPtr& swap_chain, float
 	m_device_context->ClearRenderTargetView(swap_chain->m_rtv, color);
 	m_device_context->ClearDepthStencilView(swap_chain->m_dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	m_device_context->OMSetRenderTargets(1, &swap_chain->m_rtv, swap_chain->m_dsv);
+}
+
+void DeviceContext::clearRenderTargetColor(const FrameBufferPtr& frame_buffer, float r, float g, float b, float a)
+{
+	FLOAT color[] = { r, g, b, a };
+	m_device_context->ClearRenderTargetView(frame_buffer->m_rtv, color);
+	m_device_context->ClearDepthStencilView(frame_buffer->m_dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	m_device_context->OMSetRenderTargets(1, &frame_buffer->m_rtv, frame_buffer->m_dsv);
 }
 
 void DeviceContext::setVertexBuffer(const VertexBufferPtr& vertex_buffer)

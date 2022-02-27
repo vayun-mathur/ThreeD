@@ -106,8 +106,7 @@ MeshPtr generateTerrain(int gridSize, PerlinNoise perlinNoise) {
 TerrainObject::TerrainObject(std::string name, SceneSystem* system, VertexShaderPtr vs, PixelShaderPtr ps)
 	: SceneObject(name, system), m_vs(vs), m_ps(ps)
 {
-	//TODO: Complete this
-	m_mesh = generateTerrain(200, PerlinNoise(3, 10, 0.05));
+	m_mesh = generateTerrain(400, PerlinNoise(3, 10, 0.05));
 }
 
 TerrainObject::~TerrainObject()

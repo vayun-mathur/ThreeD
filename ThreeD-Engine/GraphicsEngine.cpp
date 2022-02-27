@@ -25,8 +25,17 @@ GraphicsEngine::GraphicsEngine()
 	size_t size_shader = 0;
 
 	m_render_system->compileVertexShader(L"VertexMeshLayoutShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-	::memcpy(m_mesh_layout_byte_code, shader_byte_code, size_shader);
-	m_mesh_layout_size = size_shader;
+	::memcpy(m_mesh_layout_byte_code[0], shader_byte_code, size_shader);
+	m_mesh_layout_size[0] = size_shader;
+	m_render_system->releaseCompiledShader();
+	m_render_system->compileVertexShader(L"VertexMeshLayoutShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
+	::memcpy(m_mesh_layout_byte_code[1], shader_byte_code, size_shader);
+	m_mesh_layout_size[1] = size_shader;
+	m_render_system->releaseCompiledShader();
+
+	m_render_system->compileVertexShader(L"VertexWaterLayoutShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
+	::memcpy(m_mesh_layout_byte_code[2], shader_byte_code, size_shader);
+	m_mesh_layout_size[2] = size_shader;
 	m_render_system->releaseCompiledShader();
 }
 
@@ -45,10 +54,10 @@ MeshManager* GraphicsEngine::getMeshManager()
 	return m_mesh_manager;
 }
 
-void GraphicsEngine::getVertexMeshLayoutShaderByteCodeAndSize(void** byte_code, size_t* size)
+void GraphicsEngine::getVertexMeshLayoutShaderByteCodeAndSize(void** byte_code, size_t* size, int type)
 {
-	*byte_code = m_mesh_layout_byte_code;
-	*size = m_mesh_layout_size;
+	*byte_code = m_mesh_layout_byte_code[type];
+	*size = m_mesh_layout_size[type];
 }
 
 GraphicsEngine::~GraphicsEngine()

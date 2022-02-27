@@ -31,6 +31,7 @@ struct constant
 	mat4 m_view;
 	mat4 m_projection;
 	vec4 m_camera_position;
+	vec4 m_clip;
 	int m_dlight_count = 0;
 	int m_plight_count = 0;
 	int v = 0;
@@ -46,17 +47,46 @@ AppWindow::AppWindow()
 	s_main = this;
 }
 
+constant cc;
+
 void AppWindow::render()
 {
+	//camera
+	CameraObjectPtr cam = m_scene->getCamera();
+	cc.m_view = cam->getViewMatrix();
+	cc.m_projection = cam->getProjectionMatrix();
+	cc.m_camera_position = cam->getCameraPosition();
 
+	float distance = 2 * cc.m_camera_position.y;
+
+	cc.m_camera_position.y -= distance;
+	cam->setCameraPosition(cc.m_camera_position.xyz());
+	cam->invertPitch();
+	cam->updateMatrices();
+	cc.m_view = cam->getViewMatrix();
+	cc.m_clip = vec4(0, 1, 0, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_reflection, 0, 0, 0, 1);
+	m_scene->render(m_cb);
+
+	cc.m_camera_position.y += distance;
+	cam->setCameraPosition(cc.m_camera_position.xyz());
+	cam->invertPitch();
+	cam->updateMatrices();
+	cc.m_view = cam->getViewMatrix();
+	cc.m_clip = vec4(0, -1, 0, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_refraction, 0, 0, 0, 1);
+	m_scene->render(m_cb);
+
+	cc.m_clip = vec4(0, 0, 0, 100000);
 	//CLEAR THE RENDER TARGET 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
-		0, 0.3f, 0.4f, 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 0, 0, 1);
 	//SET VIEWPORT OF RENDER TARGET IN WHICH WE HAVE TO DRAW
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
 	m_scene->render(m_cb);
+
+
 	m_swap_chain->present(true);
 
 	m_old_delta = m_new_delta;
@@ -67,29 +97,6 @@ void AppWindow::render()
 
 void AppWindow::update()
 {
-	//light
-	/*
-	DirectionalLightObjectPtr light = m_scene->getRoot()->getChild<DirectionalLightObject>("dlight");
-
-	mat4 rot_y;
-	rot_y.setIdentity();
-	rot_y.setRotationY(m_light_rot_y);
-	mat4 rot_x;
-	rot_x.setIdentity();
-	rot_x.setRotationX(-0.5f);
-
-
-	m_light_rot_y += 0.707f * m_delta_time;
-
-	light->setDirection((rot_x *= rot_y).getZDirection());
-
-	PointLightObjectPtr plight = m_scene->getRoot()->getChild<PointLightObject>("plight");
-
-
-	float dist = 3.0f;
-
-	plight->setPosition(vec3(dist * cos(m_light_rot_y), 1.0f, dist * sin(m_light_rot_y)));
-	*/
 	CameraObjectPtr cam = m_scene->getCamera();
 	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
 	skybox->setPosition(vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z));
@@ -111,7 +118,6 @@ void findLights(SceneObjectPtr obj, std::vector<DirectionalLightObjectPtr>& dlig
 
 void AppWindow::setConstantBuffer(MeshObject& mesh)
 {
-	constant cc;
 
 	std::vector<DirectionalLightObjectPtr> dlights;
 	std::vector<PointLightObjectPtr> plights;
@@ -135,19 +141,11 @@ void AppWindow::setConstantBuffer(MeshObject& mesh)
 	cc.m_transform.setTranslation(mesh.getPosition());
 	cc.m_transform.setScale(mesh.getScale());
 
-	//camera
-	CameraObjectPtr cam = m_scene->getCamera();
-	cc.m_view = cam->getViewMatrix();
-	cc.m_projection = cam->getProjectionMatrix();
-	cc.m_camera_position = cam->getCameraPosition();
-
-
 	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
 
 void AppWindow::setConstantBuffer(TerrainObject& terrain)
 {
-	constant cc;
 
 	std::vector<DirectionalLightObjectPtr> dlights;
 	std::vector<PointLightObjectPtr> plights;
@@ -171,12 +169,33 @@ void AppWindow::setConstantBuffer(TerrainObject& terrain)
 	cc.m_transform.setTranslation(terrain.getPosition());
 	cc.m_transform.setScale(terrain.getScale());
 
-	//camera
-	CameraObjectPtr cam = m_scene->getCamera();
-	cc.m_view = cam->getViewMatrix();
-	cc.m_projection = cam->getProjectionMatrix();
-	cc.m_camera_position = cam->getCameraPosition();
+	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+}
 
+void AppWindow::setConstantBuffer(WaterTileObject& water_tile)
+{
+
+	std::vector<DirectionalLightObjectPtr> dlights;
+	std::vector<PointLightObjectPtr> plights;
+
+	findLights(m_scene->getRoot(), dlights, plights);
+
+	for (int i = 0; i < dlights.size(); i++) {
+		cc.dlight[i].light_direction = dlights[i]->getDirection();
+	}
+	cc.m_dlight_count = (int)dlights.size();
+
+	for (int i = 0; i < plights.size(); i++) {
+		cc.plight[i].light_position = plights[i]->getPosition();
+		cc.plight[i].light_radius = plights[i]->getRadius();
+		cc.plight[i].attenuation = plights[i]->getAttenuation();
+	}
+	cc.m_plight_count = (int)plights.size();
+
+	//transform
+	cc.m_transform.setIdentity();
+	cc.m_transform.setTranslation(water_tile.getPosition());
+	cc.m_transform.setScale(water_tile.getScale());
 
 	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
@@ -206,6 +225,9 @@ void AppWindow::onCreate()
 	//m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
+
+	m_reflection = std::make_shared<FrameBuffer>(rc.right - rc.left, rc.bottom - rc.top, GraphicsEngine::get()->getRenderSystem());
+	m_refraction = std::make_shared<FrameBuffer>(rc.right - rc.left, rc.bottom - rc.top, GraphicsEngine::get()->getRenderSystem());
 
 	onFocus();
 }
