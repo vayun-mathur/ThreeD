@@ -40,6 +40,12 @@ struct constant
 	plight plight[5];
 };
 
+__declspec(align(16))
+struct water_constant
+{
+	float move_factor;
+};
+
 AppWindow* AppWindow::s_main;
 
 AppWindow::AppWindow()
@@ -48,9 +54,14 @@ AppWindow::AppWindow()
 }
 
 constant cc;
+water_constant wc;
 
 void AppWindow::render()
 {
+	wc.move_factor += 0.03 * m_delta_time;
+	wc.move_factor -= floor(wc.move_factor);
+	m_wcb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &wc);
+
 	//camera
 	CameraObjectPtr cam = m_scene->getCamera();
 	cc.m_view = cam->getViewMatrix();
@@ -216,8 +227,8 @@ void AppWindow::onCreate()
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	constant cc;
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
+	m_wcb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&wc, sizeof(water_constant));
 
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 

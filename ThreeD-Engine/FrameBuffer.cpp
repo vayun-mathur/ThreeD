@@ -109,6 +109,8 @@ void FrameBuffer::reloadBuffers(unsigned int width, unsigned int height)
 	result = device->CreateDepthStencilView(_shadowMapTexture, &shadowDsv, &_shadowMapStencil);
 	result = device->CreateShaderResourceView(_shadowMapTexture, &shadowSrv, &_shadowMapRV);
 
+	m_depth_texture = std::make_shared<Texture>(_shadowMapTexture, _shadowMapRV);
+
 	m_dsv = _shadowMapStencil;
 	if (FAILED(result))
 	{

@@ -19,6 +19,8 @@ WaterTileObject::WaterTileObject(std::string name, SceneSystem* system, VertexSh
 {
 	if (!m_mesh) {
 		m_mesh = generateMesh();
+		m_dudv = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(L"Assets/Textures/waterDUDV.png");
+		m_normal_map = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(L"Assets/Textures/matchingNormalMap.png");
 	}
 }
 
@@ -45,12 +47,20 @@ void WaterTileObject::render(ConstantBufferPtr cb)
 	//SET CONSTANT BUFFER
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, AppWindow::s_main->m_wcb, 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, AppWindow::s_main->m_wcb, 1);
 
 	//SET TEXTURES
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_vs, AppWindow::s_main->m_reflection->getTexture(), 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->m_reflection->getTexture(), 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_vs, AppWindow::s_main->m_refraction->getTexture(), 1);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->m_refraction->getTexture(), 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_vs, m_dudv, 2);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, m_dudv, 2);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_vs, m_normal_map, 3);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, m_normal_map, 3);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_vs, AppWindow::s_main->m_refraction->getDepthTexture(), 4);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->m_refraction->getDepthTexture(), 4);
 
 	//SET THE VERTICES OF THE TRIANGLE TO DRAW
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_mesh->getVertexBuffer());

@@ -54,6 +54,7 @@ private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 public:
+	ConstantBufferPtr m_wcb;
 	FrameBufferPtr m_reflection, m_refraction;
 private:
 	SceneSystem* m_scene = nullptr;
