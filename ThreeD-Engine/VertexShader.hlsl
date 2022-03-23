@@ -10,6 +10,7 @@ struct VS_OUTPUT
 	float2 texcoord: TEXCOORD0;
 	float3 normal: NORMAL0;
 	float3 world_pos: TEXCOORD1;
+	float visibility : COLOR0;
 };
 
 cbuffer constant: register(b0)
@@ -30,11 +31,20 @@ VS_OUTPUT vsmain(VS_INPUT input)
 	output.world_pos = output.position.xyz;
 	//VIEW SPACE
 	output.position = mul(output.position, m_view);
+	float4 viewSpace = output.position;
 	//SCREEN SPACE
 	output.position = mul(output.position, m_projection);
 
 
 	output.texcoord = input.texcoord;
 	output.normal = input.normal;
+
+	float density = 0.007;
+	float gradient = 1.5;
+
+	float distance = length(viewSpace.xyz);
+	output.visibility = exp(-pow(distance * density, gradient));
+	output.visibility = clamp(output.visibility, 0.0, 1.0);
+
 	return output;
 }

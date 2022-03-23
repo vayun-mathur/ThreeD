@@ -38,6 +38,7 @@ struct constant
 	int x = 0;
 	dlight dlight[5];
 	plight plight[5];
+	vec4 fog_color;
 };
 
 __declspec(align(16))
@@ -58,6 +59,8 @@ water_constant wc;
 
 void AppWindow::render()
 {
+	cc.fog_color = vec4(0.2, 0.2, 0.2, 1);
+
 	wc.move_factor += 0.03 * m_delta_time;
 	wc.move_factor -= floor(wc.move_factor);
 	m_wcb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &wc);
@@ -111,7 +114,7 @@ void AppWindow::update()
 	CameraObjectPtr cam = m_scene->getCamera();
 	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
 	skybox->setPosition(vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z));
-	skybox->setScale(vec3(100, 100, 100));
+	skybox->setScale(vec3(10000, 10000, 10000));
 }
 
 void findLights(SceneObjectPtr obj, std::vector<DirectionalLightObjectPtr>& dlights, std::vector<PointLightObjectPtr>& plights) {

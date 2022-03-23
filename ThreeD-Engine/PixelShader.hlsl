@@ -11,6 +11,7 @@ struct PS_INPUT
 	float2 texcoord: TEXCOORD0;
 	float3 normal: NORMAL0;
 	float3 world_pos: TEXCOORD1;
+	float visibility : COLOR0;
 };
 
 //Directional Light
@@ -38,6 +39,7 @@ cbuffer constant: register(b0)
 	int x;
 	DLIGHT dlight[5];
 	PLIGHT plight[5];
+	float4 fog_color;
 };
 
 struct MATERIAL
@@ -134,5 +136,5 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 		light += calculatePoint(input, material, plight[i]);
 	}
 
-	return float4(light, 1.0);
+	return float4(light, 1.0) * input.visibility + fog_color * (1 - input.visibility);
 }
