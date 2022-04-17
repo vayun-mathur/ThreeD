@@ -72,7 +72,7 @@ protected:
 	SceneObjectPtr m_parent;
 	SceneSystem* m_system;
 public:
-	Script m_click;
+	Script m_click, m_update;
 private:
 	friend class SceneSystem;
 	friend class SceneObjectInputListener;

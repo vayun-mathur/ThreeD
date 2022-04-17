@@ -3,6 +3,8 @@
 #include "AudioSound.h"
 #include "alhelper.h"
 #include "SceneSystem.h"
+#include "AudioSystem.h"
+#include "AudioSoundManager.h"
 #include "CameraObject.h"
 
 AudioSourceObject::AudioSourceObject(std::string name, SceneSystem* system, vec3 position) 
@@ -22,12 +24,36 @@ AudioSourceObject::~AudioSourceObject()
 	alCall(alDeleteSources, 1, &source);
 }
 
+class PlayScript : public Script {
+public:
+	AudioSourceObject* obj;
+	PlayScript(AudioSourceObject* obj) : obj(obj) {}
+	virtual ScriptValue* call(SceneObject* origin, std::map<std::string, ScriptValue*>& var_in) override {
+		std::string v = *((StringScriptValue*)var_in["audio_file"])->v;
+		AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(std::wstring(v.begin(), v.end()).c_str());
+		obj->play(audio);
+		return nullptr;
+	}
+};
+class LoopScript : public Script {
+public:
+	AudioSourceObject* obj;
+	LoopScript(AudioSourceObject* obj) : obj(obj) {}
+	virtual ScriptValue* call(SceneObject* origin, std::map<std::string, ScriptValue*>& var_in) override {
+		bool v = *((BoolScriptValue*)var_in["looping"])->v;
+		obj->loop(v);
+		return nullptr;
+	}
+};
+
 ScriptValue* AudioSourceObject::dot(std::string s)
 {
 	if (s == "parent") return m_parent.get();
 	if (s == "position") return new Vec3ScriptValue(&m_position);
 	if (s == "gain") return new NumberScriptValue(&m_gain);
 	if (s == "pitch") return new NumberScriptValue(&m_pitch);
+	if (s == "play") return new CodeValue(static_cast<Script*>(new PlayScript(this)), this, {"audio_file"});
+	if (s == "loop") return new CodeValue(static_cast<Script*>(new LoopScript(this)), this, { "looping" });
 	return nullptr;
 }
 

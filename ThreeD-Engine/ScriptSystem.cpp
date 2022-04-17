@@ -76,6 +76,23 @@ std::list<std::string> tokenize(std::string str) {
 			tokens.push_back("else");
 			i += 3;
 		}
+		else if (str[i] == '[') {
+			tokens.push_back("[");
+		}
+		else if (str[i] == ']') {
+			tokens.push_back("]");
+		}
+		else if (str[i] == '"') {
+			int initial = i;
+			i++;
+			while (i < str.length() && str[i] != '"') {
+				i++;
+			}
+			tokens.push_back(str.substr(initial, i + 1 - initial));
+		}
+		else if (str[i] == ',') {
+			tokens.push_back(",");
+		}
 		else if (str[i] == '{') {
 			int cnt = 1;
 			int initial = i;
@@ -110,7 +127,10 @@ std::list<std::string> tokenize(std::string str) {
 		}
 		else {
 			std::string s = "";
-			while (i < str.length() && (isalnum(str[i]) || str[i] == '.')) {
+			int count = 0;
+			while (i < str.length() && (count!=0 || (isalnum(str[i]) || str[i] == '.' || str[i] == '(' || str[i] == ')'))) {
+				if (str[i] == '(') count++;
+				if (str[i] == ')') count--;
 				s += str[i];
 				i++;
 			}
@@ -179,6 +199,16 @@ void skip_assign(std::list<std::string>& tokens, std::map<std::string, ScriptVal
 	}
 }
 
+void split(std::string s, std::string delimiter, std::vector<std::string>& res) {
+	size_t pos = 0;
+	std::string token;
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+		token = s.substr(0, pos);
+		res.push_back(token);
+		s.erase(0, pos + delimiter.length());
+	}
+}
+
 ScriptValue* evaluate_assign(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars);
 
 ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
@@ -195,11 +225,23 @@ ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, 
 	else if (t=="true") {
 		return new BoolScriptValue(new bool(true));
 	}
+	else if (t[0] == '"') {
+		return new StringScriptValue(new std::string(t.substr(1, t.size()-2)));
+	}
 	else if (t == "false") {
 		return new BoolScriptValue(new bool(false));
 	}
-	else if (t[0] == '{') {
-		return new CodeValue(new Script(t.substr(1, t.length() - 2)));
+	else if (t == "[") {
+		std::vector<std::string> names;
+		while (tokens.front() != "]") {
+			names.push_back(tokens.front());
+			tokens.pop_front();
+			if (tokens.front() == ",") tokens.pop_front();
+		}
+		tokens.pop_front();
+		t = tokens.front();
+		tokens.pop_front();
+		return new CodeValue(new Script(t.substr(1, t.length() - 2)), nullptr, names);
 	}
 	else {
 		std::string x = t;
@@ -212,14 +254,27 @@ ScriptValue* evaluate_obj(std::list<std::string>& tokens, std::map<std::string, 
 		if (vars.find(s) == vars.end()) throw std::exception("Invalid script");
 
 		ScriptValue* val = vars[s];
-		while (i < x.length() && x[i] == '.') {
-			i++;
-			std::string s = "";
-			while (i < x.length() && isalnum(x[i])) {
-				s += x[i];
+		while (i < x.length() && (x[i] == '.' || x[i] == '(')) {
+			if (x[i] == '.') {
 				i++;
+				std::string s = "";
+				while (i < x.length() && isalnum(x[i])) {
+					s += x[i];
+					i++;
+				}
+				val = val->dot(s);
 			}
-			val = val->dot(s);
+			else {
+				i++;
+				std::list<std::string> tokens = tokenize(x.substr(i));
+				std::vector<ScriptValue*> params;
+				while (tokens.front() != ")") {
+					params.push_back(evaluate_assign(tokens, vars));
+					if (tokens.front() == ",") tokens.pop_front();
+				}
+				tokens.pop_front();
+				val = dynamic_cast<CodeValue*>(val)->call(params);
+			}
 		}
 		i--;
 		return val;
@@ -371,7 +426,7 @@ void skip_line(std::list<std::string>& tokens, std::map<std::string, ScriptValue
 	}
 }
 
-void evaluate(std::string str, std::map<std::string, ScriptValue*> vars);
+ScriptValue* evaluate(std::string str, std::map<std::string, ScriptValue*> vars);
 
 void evaluate_line(std::list<std::string>& tokens, std::map<std::string, ScriptValue*>& vars) {
 	if (tokens.front() == "if") {
@@ -445,7 +500,7 @@ void evaluate_line(std::list<std::string>& tokens, std::map<std::string, ScriptV
 	}
 }
 
-void evaluate(std::string str, std::map<std::string, ScriptValue*> vars) {
+ScriptValue* evaluate(std::string str, std::map<std::string, ScriptValue*> vars) {
 	std::stack <ScriptValue*> values;
 	std::stack <std::string> ops;
 
@@ -454,6 +509,7 @@ void evaluate(std::string str, std::map<std::string, ScriptValue*> vars) {
 	while(!tokens.empty()) {
 		evaluate_line(tokens, vars);
 	}
+	return nullptr;
 }
 
 void skip(std::string str, std::map<std::string, ScriptValue*> vars) {
@@ -467,13 +523,13 @@ void skip(std::string str, std::map<std::string, ScriptValue*> vars) {
 	}
 }
 
-void ScriptSystem::exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in)
+ScriptValue* ScriptSystem::exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in)
 {
 
 	std::map<std::string, ScriptValue*> vars;
 	vars = var_in;
 	vars["this"] = object;
-	evaluate(cmd, vars);
+	return evaluate(cmd, vars);
 }
 
 ScriptSystem* ScriptSystem::get()

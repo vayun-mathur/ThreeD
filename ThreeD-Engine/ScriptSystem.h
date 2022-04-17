@@ -85,6 +85,77 @@ public:
 	}
 };
 
+class StringScriptValue : public ScriptValue {
+public:
+	std::string* v;
+	StringScriptValue(std::string* v) : v(v) {}
+	virtual bool bool_value() { return *v != ""; }
+	virtual ScriptValue* dot(std::string) { return nullptr; }
+	virtual ScriptValue* add(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new StringScriptValue(new std::string(*v + *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mul(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* div(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* addassign(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			*v += *((StringScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* subassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* mulassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* divassign(ScriptValue* o) { return nullptr; }
+	virtual ScriptValue* assign(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			*v = *((StringScriptValue*)o)->v;
+			return this;
+		}
+		return nullptr;
+	}
+
+	virtual ScriptValue* equal_to(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v == *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* not_equal_to(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v != *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v > *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v >= *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* less_than(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v < *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) {
+		if (instanceof<StringScriptValue>(o)) {
+			return new BoolScriptValue(new bool(*v <= *((StringScriptValue*)o)->v));
+		}
+		return nullptr;
+	}
+};
+
 class NumberScriptValue : public ScriptValue {
 public:
 	float* v;
@@ -292,7 +363,7 @@ public:
 	ScriptSystem();
 	~ScriptSystem();
 
-	void exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in);
+	ScriptValue* exec(std::string cmd, SceneObject* object, std::map<std::string, ScriptValue*>& var_in);
 public:
 	static ScriptSystem* get();
 	static void create();

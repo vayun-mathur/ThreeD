@@ -1,14 +1,9 @@
-vec3 value;
-value.x = 0.2;
-value.y = 0.2;
-this.parent.speed.value = value;
-
-this.parent.click = {
-	if(button == 1) {
-		number i;
-		do {
-			i = i+1;
-		} while(i < 5);
-		this.camera.position.x = i;
-	}
+this.parent.audio.pitch = 1;
+this.parent.audio.gain = 1;
+this.parent.onclick = [button]{
+	this.audio.play("Assets/Audio/CantinaBand60.wav");
+	this.onupdate = [dt]{
+		this.audio.position.x += 1 * dt;
+	};
 };
+

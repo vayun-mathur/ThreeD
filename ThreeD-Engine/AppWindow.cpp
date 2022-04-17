@@ -152,19 +152,13 @@ void AppWindow::onCreate()
 	InputSystem::get()->showCursor(false);
 
 	m_scene = new SceneSystem(L"scene.txt");
+
 	m_scene->init();
 
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
-
-	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
-
-	//m_scene->getRoot()->m_click = *m_scene->getRoot()->getChild<ScriptObject>("script")->getScript();
-	//m_scene->getRoot()->getChild<AudioSourceObject>("audio")->play(audio);
-	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
-	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
 
 	water_manager = new WaterRenderManager();
 	water_manager->init(rc);

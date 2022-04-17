@@ -13,7 +13,7 @@ public:
 	Script();
 	~Script();
 
-	void call(SceneObject* origin, std::map<std::string, ScriptValue*> var_in);
+	virtual ScriptValue* call(SceneObject* origin, std::map<std::string, ScriptValue*>& var_in);
 
 	std::string getCommands() { return m_commands; }
 private:
@@ -22,8 +22,10 @@ private:
 
 class CodeValue : public ScriptValue {
 public:
+	std::vector<std::string> param_names;
+	SceneObject* on;
 	Script* v;
-	CodeValue(Script* v) : v(v) {}
+	CodeValue(Script* v, SceneObject* on, std::vector<std::string> param_names) : v(v), on(on), param_names(param_names) {}
 	virtual ScriptValue* dot(std::string) { return nullptr; }
 	virtual ScriptValue* add(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* sub(ScriptValue* o) { return nullptr; }
@@ -46,4 +48,12 @@ public:
 	virtual ScriptValue* greater_than_or_equal_to(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* less_than(ScriptValue* o) { return nullptr; }
 	virtual ScriptValue* less_than_or_equal_to(ScriptValue* o) { return nullptr; }
+
+	virtual ScriptValue* call(std::vector<ScriptValue*> params) {
+		std::map<std::string, ScriptValue*> p;
+		for (int i = 0; i < param_names.size(); i++) {
+			p.insert({ param_names[i], params[i] });
+		}
+		return v->call(on, p);
+	}
 };

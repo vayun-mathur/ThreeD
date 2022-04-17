@@ -64,6 +64,9 @@ void SceneObject::update(double delta_time)
 	for (auto&& [name, child] : m_children) {
 		child->update(delta_time);
 	}
+	std::map<std::string, ScriptValue*> var_in;
+	var_in["dt"] = new NumberScriptValue(new float(delta_time));
+	m_update.call(this, var_in);
 }
 
 SceneObject::~SceneObject()
@@ -73,7 +76,8 @@ SceneObject::~SceneObject()
 ScriptValue* SceneObject::dot(std::string s)
 {
 	if (s == "parent") return m_parent.get();
-	if (s == "click") return new CodeValue(&m_click);
+	if (s == "onclick") return new CodeValue(&m_click, this, { "button" });
+	if (s == "onupdate") return new CodeValue(&m_update, this, {});
 	if (m_children.find(s) != m_children.end()) {
 		return m_children[s].get();
 	}
