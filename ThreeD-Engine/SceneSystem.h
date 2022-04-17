@@ -11,7 +11,6 @@ public:
 public:
 	void init();
 	void update(double delta_time);
-	void render(ConstantBufferPtr cb);
 
 	inline CameraObjectPtr getCamera() { return m_main_camera; }
 	inline SceneObjectPtr getRoot() { return m_root; }

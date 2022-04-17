@@ -14,39 +14,6 @@
 #include "ScriptSystem.h"
 #include <iostream>
 
-struct dlight {
-	vec4 light_direction;
-};
-
-struct plight {
-	vec4 light_position;
-	float light_radius = 0;
-	vec3 attenuation;
-};
-
-__declspec(align(16))
-struct constant
-{
-	mat4 m_transform;
-	mat4 m_view;
-	mat4 m_projection;
-	vec4 m_camera_position;
-	vec4 m_clip;
-	int m_dlight_count = 0;
-	int m_plight_count = 0;
-	int v = 0;
-	int x = 0;
-	dlight dlight[5];
-	plight plight[5];
-	vec4 fog_color;
-};
-
-__declspec(align(16))
-struct water_constant
-{
-	float move_factor;
-};
-
 AppWindow* AppWindow::s_main;
 
 AppWindow::AppWindow()
@@ -55,15 +22,70 @@ AppWindow::AppWindow()
 }
 
 constant cc;
-water_constant wc;
+
+void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
+	std::vector<TerrainObjectPtr>& terrains,
+	std::vector<WaterTileObjectPtr>& waters,
+	std::vector<DirectionalLightObjectPtr>& dlights,
+	std::vector<PointLightObjectPtr>& plights, MeshObjectPtr* skybox) {
+	if (obj->getType() == SceneObjectType::MeshObject) {
+		if (obj->getName() == "skybox") {
+			*skybox = std::dynamic_pointer_cast<MeshObject>(obj);
+		}
+		else {
+			meshes.push_back(std::dynamic_pointer_cast<MeshObject>(obj));
+		}
+	}
+	if (obj->getType() == SceneObjectType::TerrainObject) {
+		terrains.push_back(std::dynamic_pointer_cast<TerrainObject>(obj));
+	}
+	if (obj->getType() == SceneObjectType::WaterTileObject) {
+		waters.push_back(std::dynamic_pointer_cast<WaterTileObject>(obj));
+	}
+	if (obj->getType() == SceneObjectType::DirectionalLightObject) {
+		dlights.push_back(std::dynamic_pointer_cast<DirectionalLightObject>(obj));
+	}
+	if (obj->getType() == SceneObjectType::PointLightObject) {
+		plights.push_back(std::dynamic_pointer_cast<PointLightObject>(obj));
+	}
+	for (auto&& [_, child] : obj->getChildren()) {
+		find(child, meshes, terrains, waters, dlights, plights, skybox);
+	}
+}
+
+void AppWindow::renderScene(ConstantBufferPtr cb) {
+	std::vector<MeshObjectPtr> meshes;
+	std::vector<TerrainObjectPtr> terrains;
+	std::vector<WaterTileObjectPtr> waters;
+	std::vector<DirectionalLightObjectPtr> dlights;
+	std::vector<PointLightObjectPtr> plights;
+	MeshObjectPtr skybox;
+	find(m_scene->getRoot(), meshes, terrains, waters, dlights, plights, &skybox);
+
+	//set lights
+	for (int i = 0; i < dlights.size(); i++) {
+		cc.dlight[i].light_direction = dlights[i]->getDirection();
+	}
+	cc.m_dlight_count = (int)dlights.size();
+
+	for (int i = 0; i < plights.size(); i++) {
+		cc.plight[i].light_position = plights[i]->getPosition();
+		cc.plight[i].light_radius = plights[i]->getRadius();
+		cc.plight[i].attenuation = plights[i]->getAttenuation();
+	}
+	cc.m_plight_count = (int)plights.size();
+
+	mesh_manager->render(meshes, m_cb, cc);
+	mesh_manager->render_skybox(skybox, m_cb, cc);
+
+	terrain_manager->render(terrains, m_cb, cc);
+	
+	water_manager->render(waters, m_cb, cc);
+}
 
 void AppWindow::render()
 {
 	cc.fog_color = vec4(0.2, 0.2, 0.2, 1);
-
-	wc.move_factor += 0.03 * m_delta_time;
-	wc.move_factor -= floor(wc.move_factor);
-	m_wcb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &wc);
 
 	//camera
 	CameraObjectPtr cam = m_scene->getCamera();
@@ -79,8 +101,8 @@ void AppWindow::render()
 	cam->updateMatrices();
 	cc.m_view = cam->getViewMatrix();
 	cc.m_clip = vec4(0, 1, 0, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_reflection, 0, 0, 0, 1);
-	m_scene->render(m_cb);
+	water_manager->setReflectionTexture();
+	renderScene(m_cb);
 
 	cc.m_camera_position.y += distance;
 	cam->setCameraPosition(cc.m_camera_position.xyz());
@@ -88,8 +110,8 @@ void AppWindow::render()
 	cam->updateMatrices();
 	cc.m_view = cam->getViewMatrix();
 	cc.m_clip = vec4(0, -1, 0, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_refraction, 0, 0, 0, 1);
-	m_scene->render(m_cb);
+	water_manager->setRefractionTexture();
+	renderScene(m_cb);
 
 	cc.m_clip = vec4(0, 0, 0, 100000);
 	//CLEAR THE RENDER TARGET 
@@ -98,7 +120,7 @@ void AppWindow::render()
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
-	m_scene->render(m_cb);
+	renderScene(m_cb);
 
 
 	m_swap_chain->present(true);
@@ -115,103 +137,8 @@ void AppWindow::update()
 	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
 	skybox->setPosition(vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z));
 	skybox->setScale(vec3(10000, 10000, 10000));
-}
 
-void findLights(SceneObjectPtr obj, std::vector<DirectionalLightObjectPtr>& dlights, std::vector<PointLightObjectPtr>& plights) {
-	if (obj->getType()==SceneObjectType::DirectionalLightObject) {
-		dlights.push_back(std::dynamic_pointer_cast<DirectionalLightObject>(obj));
-	}
-	if (obj->getType() == SceneObjectType::PointLightObject) {
-		plights.push_back(std::dynamic_pointer_cast<PointLightObject>(obj));
-	}
-	for (auto&&[_, child] : obj->getChildren()) {
-		findLights(child, dlights, plights);
-	}
-
-}
-
-void AppWindow::setConstantBuffer(MeshObject& mesh)
-{
-
-	std::vector<DirectionalLightObjectPtr> dlights;
-	std::vector<PointLightObjectPtr> plights;
-
-	findLights(m_scene->getRoot(), dlights, plights);
-
-	for (int i = 0; i < dlights.size(); i++) {
-		cc.dlight[i].light_direction = dlights[i]->getDirection();
-	}
-	cc.m_dlight_count = (int)dlights.size();
-
-	for (int i = 0; i < plights.size(); i++) {
-		cc.plight[i].light_position = plights[i]->getPosition();
-		cc.plight[i].light_radius = plights[i]->getRadius();
-		cc.plight[i].attenuation = plights[i]->getAttenuation();
-	}
-	cc.m_plight_count = (int)plights.size();
-
-	//transform
-	cc.m_transform.setIdentity();
-	cc.m_transform.setTranslation(mesh.getPosition());
-	cc.m_transform.setScale(mesh.getScale());
-
-	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
-}
-
-void AppWindow::setConstantBuffer(TerrainObject& terrain)
-{
-
-	std::vector<DirectionalLightObjectPtr> dlights;
-	std::vector<PointLightObjectPtr> plights;
-
-	findLights(m_scene->getRoot(), dlights, plights);
-
-	for (int i = 0; i < dlights.size(); i++) {
-		cc.dlight[i].light_direction = dlights[i]->getDirection();
-	}
-	cc.m_dlight_count = (int)dlights.size();
-
-	for (int i = 0; i < plights.size(); i++) {
-		cc.plight[i].light_position = plights[i]->getPosition();
-		cc.plight[i].light_radius = plights[i]->getRadius();
-		cc.plight[i].attenuation = plights[i]->getAttenuation();
-	}
-	cc.m_plight_count = (int)plights.size();
-
-	//transform
-	cc.m_transform.setIdentity();
-	cc.m_transform.setTranslation(terrain.getPosition());
-	cc.m_transform.setScale(terrain.getScale());
-
-	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
-}
-
-void AppWindow::setConstantBuffer(WaterTileObject& water_tile)
-{
-
-	std::vector<DirectionalLightObjectPtr> dlights;
-	std::vector<PointLightObjectPtr> plights;
-
-	findLights(m_scene->getRoot(), dlights, plights);
-
-	for (int i = 0; i < dlights.size(); i++) {
-		cc.dlight[i].light_direction = dlights[i]->getDirection();
-	}
-	cc.m_dlight_count = (int)dlights.size();
-
-	for (int i = 0; i < plights.size(); i++) {
-		cc.plight[i].light_position = plights[i]->getPosition();
-		cc.plight[i].light_radius = plights[i]->getRadius();
-		cc.plight[i].attenuation = plights[i]->getAttenuation();
-	}
-	cc.m_plight_count = (int)plights.size();
-
-	//transform
-	cc.m_transform.setIdentity();
-	cc.m_transform.setTranslation(water_tile.getPosition());
-	cc.m_transform.setScale(water_tile.getScale());
-
-	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+	water_manager->update(m_delta_time);
 }
 
 AppWindow::~AppWindow()
@@ -231,7 +158,6 @@ void AppWindow::onCreate()
 	m_swap_chain = GraphicsEngine::get()->getRenderSystem()->createSwapChain(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
-	m_wcb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&wc, sizeof(water_constant));
 
 	AudioSoundPtr audio = AudioSystem::get()->getAudioSoundManager()->createAudioSoundFromFile(L"Assets/Audio/CantinaBand60.wav");
 
@@ -240,8 +166,12 @@ void AppWindow::onCreate()
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setPitch(1.5);
 	// m_scene->getRoot()->getChild<AudioSourceObject>("audio")->setGain(0.2);
 
-	m_reflection = std::make_shared<FrameBuffer>(rc.right - rc.left, rc.bottom - rc.top, GraphicsEngine::get()->getRenderSystem());
-	m_refraction = std::make_shared<FrameBuffer>(rc.right - rc.left, rc.bottom - rc.top, GraphicsEngine::get()->getRenderSystem());
+	water_manager = new WaterRenderManager();
+	water_manager->init(rc);
+	terrain_manager = new TerrainRenderManager();
+	terrain_manager->init();
+	mesh_manager = new MeshRenderManager();
+	mesh_manager->init();
 
 	onFocus();
 }

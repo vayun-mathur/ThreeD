@@ -43,26 +43,6 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	PixelShaderPtr skybox_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
-
-	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"TerrainVertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-	VertexShaderPtr terrain_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"TerrainShader.hlsl", "psmain", &shader_byte_code, &size_shader);
-	PixelShaderPtr terrain_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-
-	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"WaterVertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-	VertexShaderPtr water_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"WaterPixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
-	PixelShaderPtr water_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
 	std::unordered_map<int, SceneObjectPtr> components;
 	std::unordered_map<int, std::string> component_type;
 	components.insert({ 0, m_root });
@@ -93,7 +73,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components.insert({ id, mesh });
 		}
 		else if (type == "TERRAIN") {
-			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, terrain_vs, terrain_ps);
+			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this);
 			components[parent]->addChild(terrain);
 			components.insert({ id, terrain });
 			terrain->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::BACK);
@@ -102,7 +82,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			vec3 position, scale;
 			scene_file >> position.x >> position.y >> position.z;
 			scene_file >> scale.x >> scale.y >> scale.z;
-			WaterTileObjectPtr water = std::make_shared<WaterTileObject>(name, this, water_vs, water_ps);
+			WaterTileObjectPtr water = std::make_shared<WaterTileObject>(name, this);
 			water->setPosition(position);
 			water->setScale(scale);
 			components[parent]->addChild(water);
@@ -201,9 +181,4 @@ void SceneSystem::init()
 void SceneSystem::update(double delta_time)
 {
 	m_root->update(delta_time);
-}
-
-void SceneSystem::render(ConstantBufferPtr cb)
-{
-	m_root->render(cb);
 }

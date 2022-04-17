@@ -18,6 +18,8 @@ class SceneObject : public ScriptValue
 public:
 	SceneObject(std::string name, SceneSystem* system);
 
+	inline std::string getName() { return m_name; };
+
 	void addChild(SceneObjectPtr child);
 
 	template<typename type>
@@ -62,7 +64,6 @@ public:
 private:
 	virtual void init();
 	virtual void update(double delta_time);
-	virtual void render(ConstantBufferPtr cb);
 
 private:
 	std::string m_name;

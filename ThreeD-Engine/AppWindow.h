@@ -15,6 +15,36 @@
 #include "Vector.h"
 #include "FrameBuffer.h"
 #include "SceneSystem.h"
+#include "WaterRenderManager.h"
+#include "TerrainRendererManager.h"
+#include "MeshRenderManager.h"
+
+struct dlight {
+	vec4 light_direction;
+};
+
+struct plight {
+	vec4 light_position;
+	float light_radius = 0;
+	vec3 attenuation;
+};
+
+__declspec(align(16))
+struct constant
+{
+	mat4 m_transform;
+	mat4 m_view;
+	mat4 m_projection;
+	vec4 m_camera_position;
+	vec4 m_clip;
+	int m_dlight_count = 0;
+	int m_plight_count = 0;
+	int v = 0;
+	int x = 0;
+	dlight dlight[5];
+	plight plight[5];
+	vec4 fog_color;
+};
 
 class AppWindow : public Window, public InputListener
 {
@@ -24,10 +54,8 @@ public:
 	AppWindow();
 
 	void render();
+	void renderScene(ConstantBufferPtr cc);
 	void update();
-	void setConstantBuffer(MeshObject& mesh);
-	void setConstantBuffer(TerrainObject& mesh);
-	void setConstantBuffer(WaterTileObject& mesh);
 
 	~AppWindow();
 
@@ -53,10 +81,11 @@ public:
 private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
-public:
-	ConstantBufferPtr m_wcb;
-	FrameBufferPtr m_reflection, m_refraction;
-private:
+
+	WaterRenderManager* water_manager;
+	TerrainRenderManager* terrain_manager;
+	MeshRenderManager* mesh_manager;
+
 	SceneSystem* m_scene = nullptr;
 private:
 	float m_old_delta=0;

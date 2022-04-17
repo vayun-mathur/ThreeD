@@ -182,6 +182,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshObject.cpp" />
+    <ClCompile Include="MeshRenderManager.cpp" />
     <ClCompile Include="NumberObject.cpp" />
     <ClCompile Include="PointLightObject.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -190,7 +191,9 @@
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
+    <ClCompile Include="TerrainRendererManager.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
+    <ClCompile Include="WaterRenderManager.cpp" />
     <ClCompile Include="WaterTileObject.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="SwapChain.cpp" />
@@ -217,6 +220,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshObject.h" />
+    <ClInclude Include="MeshRenderManager.h" />
     <ClInclude Include="NumberObject.h" />
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="PointLightObject.h" />
@@ -229,9 +233,11 @@
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="ScriptSystem.h" />
     <ClInclude Include="TerrainObject.h" />
+    <ClInclude Include="TerrainRendererManager.h" />
     <ClInclude Include="Vec3Object.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
+    <ClInclude Include="WaterRenderManager.h" />
     <ClInclude Include="WaterTileObject.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="GraphicsEngine.h" />
@@ -266,7 +272,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="TerrainShader.hlsl">
+    <FxCompile Include="TerrainPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <FileType>Document</FileType>
     </FxCompile>

@@ -25,8 +25,6 @@ public:
 	inline vec3 getScale() { return m_scale; }
 	inline void setScale(vec3 scale) { m_scale = scale; }
 private:
-	virtual void render(ConstantBufferPtr cb);
-private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
 	MeshPtr m_mesh;

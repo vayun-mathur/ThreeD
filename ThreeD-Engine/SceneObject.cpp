@@ -66,13 +66,6 @@ void SceneObject::update(double delta_time)
 	}
 }
 
-void SceneObject::render(ConstantBufferPtr cb)
-{
-	for (auto&& [name, child] : m_children) {
-		child->render(cb);
-	}
-}
-
 SceneObject::~SceneObject()
 {
 }
