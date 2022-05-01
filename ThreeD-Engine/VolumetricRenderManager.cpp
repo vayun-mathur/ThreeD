@@ -10,6 +10,7 @@
 #include "VolumeObject.h"
 #include "Texture.h"
 #include "FrameBuffer.h"
+#include "Texture3D.h"
 
 __declspec(align(16))
 struct MatrixBuffer
@@ -28,13 +29,10 @@ struct WindowSizeBuffer
 };
 
 WindowSizeBuffer wbuf;
-void CreateCube();
-void LoadVolume(ID3D11Device* const device, const LPCWSTR file);
 
-//volume texture
-ID3D11Texture3D* m_volumeTex3D;
-ID3D11ShaderResourceView* m_volRSV;
-//vertex and index buffers
+void CreateCube();
+
+Texture3DPtr m_vol;
 VertexBufferPtr m_cubeVB;
 IndexBufferPtr m_cubeIB;
 ConstantBufferPtr m_cb;
@@ -42,31 +40,6 @@ ConstantBufferPtr m_wcb;
 FrameBufferPtr m_cubeFront, m_cubeBack;
 
 ID3D11RasterizerState* m_backFaceCull, * m_frontFaceCull;
-
-const UINT g_iVolumeSize = 256;	// voxel volume width, height and depth
-const UINT g_vol = 178;
-
-void Initialize(ID3D11Device* const device, const int width, const int height)
-{
-
-	// create a resource view (RT) for the front and back of the volume
-	m_cubeFront = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(width, height);
-	m_cubeBack = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(width, height);
-
-	// load of the raw textures into a D3D11_TEXTURE3D_DESC 
-	LoadVolume(device, L"./Assets/foot.raw");
-
-	// create the volume/cube primitive
-	CreateCube();
-
-	buf.view = AppWindow::s_main->m_scene->getCamera()->getViewMatrix();
-	buf.projection = AppWindow::s_main->m_scene->getCamera()->getProjectionMatrix();
-	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(MatrixBuffer));
-
-	wbuf.windowSize[0] = 1.f / width;
-	wbuf.windowSize[1] = 1.f / height;
-	m_wcb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&wbuf, sizeof(WindowSizeBuffer));
-}
 
 
 void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, std::vector<VolumeObjectPtr>& volumes)
@@ -126,30 +99,12 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_cb, 1);
 
 		// pass in our textures )
-		deviceContext->PSSetShaderResources(0, 1, &m_volRSV); // the loaded RAW file
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_vol, 0);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_cubeFront->getTexture(), 1);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_cubeBack->getTexture(), 2);
 
 		// Draw the cube
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);
-
-		// Un-bind textures
-		ID3D11ShaderResourceView* nullRV[3] = { NULL, NULL, NULL };
-		deviceContext->PSSetShaderResources(0, 3, nullRV);
-	}
-}
-
-void Shutdown()
-{
-
-	if (m_volumeTex3D != nullptr) {
-		m_volumeTex3D->Release();
-		m_volumeTex3D = nullptr;
-	}
-
-	if (m_volRSV != nullptr) {
-		m_volRSV->Release();
-		m_volRSV = nullptr;
 	}
 }
 
@@ -204,51 +159,6 @@ void CreateCube()
 	m_cubeIB = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&indices[0], 36);
 }
 
-//---------------------------------------------------------------//
-// Load RAW texture files 
-//---------------------------------------------------------------//
-void LoadVolume(ID3D11Device* const device, const LPCWSTR file)
-{
-	HRESULT hr;
-	HANDLE hFile = CreateFileW(file, GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) {
-		MessageBox(NULL, L"Opening volume data file failed.", L"Error", MB_ICONERROR | MB_OK);
-
-	}
-	BYTE* buffer = (BYTE*)malloc(g_iVolumeSize * g_iVolumeSize * g_iVolumeSize * sizeof(BYTE));
-
-	DWORD numberOfBytesRead = 0;
-	if (ReadFile(hFile, buffer, g_iVolumeSize * g_iVolumeSize * g_iVolumeSize, &numberOfBytesRead, NULL) == 0)
-	{
-		MessageBox(NULL, L"Reading volume data failed.", L"Error", MB_ICONERROR | MB_OK);
-	}
-
-	CloseHandle(hFile);
-
-	D3D11_TEXTURE3D_DESC descTex;
-	ZeroMemory(&descTex, sizeof(descTex));
-	descTex.Height = g_iVolumeSize;
-	descTex.Width = g_iVolumeSize;
-	descTex.Depth = g_iVolumeSize;
-	descTex.MipLevels = 1;
-	descTex.Format = DXGI_FORMAT_R8_UNORM;
-	descTex.Usage = D3D11_USAGE_DEFAULT;
-	descTex.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_SHADER_RESOURCE;
-	descTex.CPUAccessFlags = 0;
-	// Initial data
-	D3D11_SUBRESOURCE_DATA initData;
-	ZeroMemory(&initData, sizeof(initData));
-	initData.pSysMem = buffer;
-	initData.SysMemPitch = g_iVolumeSize;
-	initData.SysMemSlicePitch = g_iVolumeSize * g_iVolumeSize;
-	// Create texture
-	hr = (device->CreateTexture3D(&descTex, &initData, &m_volumeTex3D));
-
-	// Create a resource view of the texture
-	hr = (device->CreateShaderResourceView(m_volumeTex3D, NULL, &m_volRSV));
-
-	free(buffer);
-}
 
 void VolumetricRenderManager::init()
 {
@@ -285,7 +195,25 @@ void VolumetricRenderManager::init()
 	rasterizerDesc.DepthClipEnable = true;
 	GraphicsEngine::get()->getRenderSystem()->m_d3d_device->CreateRasterizerState(&rasterizerDesc, &m_frontFaceCull);
 
-	Initialize(GraphicsEngine::get()->getRenderSystem()->m_d3d_device, AppWindow::s_main->getScreenSize().right, AppWindow::s_main->getScreenSize().bottom);
+	double width = AppWindow::s_main->getScreenSize().right;
+	double height = AppWindow::s_main->getScreenSize().bottom;
+
+	m_cubeFront = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(width, height);
+	m_cubeBack = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(width, height);
+
+	// load of the raw textures into a D3D11_TEXTURE3D_DESC 
+	m_vol = std::make_shared<Texture3D>(L"./Assets/foot.raw", 256);
+
+	// create the volume/cube primitive
+	CreateCube();
+
+	buf.view = AppWindow::s_main->m_scene->getCamera()->getViewMatrix();
+	buf.projection = AppWindow::s_main->m_scene->getCamera()->getProjectionMatrix();
+	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(MatrixBuffer));
+
+	wbuf.windowSize[0] = 1.f / width;
+	wbuf.windowSize[1] = 1.f / height;
+	m_wcb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&wbuf, sizeof(WindowSizeBuffer));
 }
 
 void VolumetricRenderManager::render(std::vector<VolumeObjectPtr>& volumes)

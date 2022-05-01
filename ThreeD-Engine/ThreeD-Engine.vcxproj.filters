@@ -109,6 +109,9 @@
     <Filter Include="Engine\SceneSystem\VolumeObject">
       <UniqueIdentifier>{c8b8f077-5b3f-453e-99d6-c50c746c4ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\GraphicsEngine\ResourceManager\Texture3DManager">
+      <UniqueIdentifier>{0eca5985-0d83-42da-94d3-c58ca69ed2d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -239,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="VolumeObject.cpp">
       <Filter>Engine\SceneSystem\VolumeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture3D.cpp">
+      <Filter>Engine\GraphicsEngine\ResourceManager\Texture3DManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -388,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="VolumeObject.h">
       <Filter>Engine\SceneSystem\VolumeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture3D.h">
+      <Filter>Engine\GraphicsEngine\ResourceManager\Texture3DManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

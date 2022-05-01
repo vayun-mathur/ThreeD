@@ -192,6 +192,7 @@
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="TerrainRendererManager.cpp" />
+    <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
     <ClCompile Include="VolumeObject.cpp" />
     <ClCompile Include="VolumetricRenderManager.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="ScriptSystem.h" />
     <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="TerrainRendererManager.h" />
+    <ClInclude Include="Texture3D.h" />
     <ClInclude Include="Vec3Object.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />

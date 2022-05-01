@@ -6,6 +6,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Texture.h"
+#include "Texture3D.h"
 #include "FrameBuffer.h"
 #include "RenderSystem.h"
 #include <exception>
@@ -93,6 +94,16 @@ void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const Textu
 }
 
 void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const TexturePtr& texture, unsigned int index)
+{
+	m_device_context->PSSetShaderResources(index, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const Texture3DPtr& texture, unsigned int index)
+{
+	m_device_context->VSSetShaderResources(index, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const Texture3DPtr& texture, unsigned int index)
 {
 	m_device_context->PSSetShaderResources(index, 1, &texture->m_shader_res_view);
 }

@@ -25,6 +25,8 @@ public:
 
 	void setTexture(const VertexShaderPtr& vertex_shader, const TexturePtr& texture, unsigned int index);
 	void setTexture(const PixelShaderPtr& pixel_shader, const TexturePtr& texture, unsigned int index);
+	void setTexture(const VertexShaderPtr& vertex_shader, const Texture3DPtr& texture, unsigned int index);
+	void setTexture(const PixelShaderPtr& pixel_shader, const Texture3DPtr& texture, unsigned int index);
 
 	void setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index);
 	void setConstantBuffer(const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index);
