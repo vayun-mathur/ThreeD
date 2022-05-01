@@ -1,8 +1,6 @@
 // Reference:
 // http://graphicsrunner.blogspot.de/2009/01/volume-rendering-101.html
 
-#pragma pack_matrix(row_major)
-
 // Textures and samplers
 Texture3D<float> txVolume : register(t0);
 
@@ -14,13 +12,12 @@ SamplerState samplerLinear : register(s0);
 // Constants and constant buffer variables
 static const uint g_iMaxIterations = 128;
 
-// Diagonal of a unit cube has length sqrt(3)
-static const float g_fStepSize = sqrt(3.f)/g_iMaxIterations;
-
 // for vertex shader
-cbuffer cbEveryFrame : register(b0)
+cbuffer cbEveryFrame : register(b1)
 {
-	matrix mWVP;
+	row_major float4x4 m_transform;
+	row_major float4x4 m_view;
+	row_major float4x4 m_projection;
 }
 
 // for pixel shader
@@ -45,8 +42,9 @@ struct PSInput
 PSInput RayCastVS(VSInput input)
 {
 	PSInput output;
-	// transform position
-	output.pos = mul(mWVP, input.pos);
+	output.pos = mul(input.pos, m_transform);
+	output.pos = mul(output.pos, m_view);
+	output.pos = mul(output.pos, m_projection);
 	return output;
 }
 
@@ -63,6 +61,8 @@ float4 RayCastPS(PSInput input) : SV_TARGET
  
 	// Calculate the direction the ray is cast
 	float3 dir = normalize(pos_back - pos_front);
+
+	float g_fStepSize = length(pos_back - pos_front) / g_iMaxIterations;
 
 	// Single step: direction times delta step - g_fStepSize is precaluclated
 	float3 step = g_fStepSize * dir;

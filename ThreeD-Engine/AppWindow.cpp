@@ -12,6 +12,7 @@
 #include "AudioSoundManager.h"
 #include "AudioSourceObject.h"
 #include "ScriptSystem.h"
+#include "VolumeObject.h"
 #include <iostream>
 
 AppWindow* AppWindow::s_main;
@@ -59,6 +60,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 	std::vector<WaterTileObjectPtr> waters;
 	std::vector<DirectionalLightObjectPtr> dlights;
 	std::vector<PointLightObjectPtr> plights;
+	std::vector<VolumeObjectPtr> volumes;
 	MeshObjectPtr skybox;
 	find(m_scene->getRoot(), meshes, terrains, waters, dlights, plights, &skybox);
 
@@ -80,7 +82,9 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 	terrain_manager->render(terrains, m_cb, cc);
 	
 	water_manager->render(waters, m_cb, cc);
-	volumetric_manager->render();
+	volumes.push_back(std::make_shared<VolumeObject>(vec3(0, 3, 0), vec3(2, 2, 2)));
+	volumes.push_back(std::make_shared<VolumeObject>(vec3(5, 3, 0), vec3(2, 1, 2)));
+	volumetric_manager->render(volumes);
 }
 
 void AppWindow::render()

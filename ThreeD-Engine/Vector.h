@@ -111,11 +111,21 @@ public:
 		return vec3(x, y, z);
 	}
 
+	vec4 operator*(float scalar)
+	{
+		return vec4(x * scalar, y * scalar, z * scalar, w * scalar);
+	}
+
 	~vec4() {
 
 	}
 public:
-	float x, y, z, w;
+	union {
+		struct {
+			float x, y, z, w;
+		};
+		float mat[4];
+	};
 };
 
 
@@ -241,7 +251,7 @@ public:
 		return vec3(mat[3][0], mat[3][1], mat[3][2]);
 	}
 
-	mat4& operator *=(const mat4& matrix)
+	mat4 operator()(const mat4& matrix)
 	{
 		mat4 out;
 		for (int i = 0; i < 4; i++) {
@@ -253,8 +263,20 @@ public:
 					+ mat[i][3] * matrix.mat[3][j];
 			}
 		}
-		setMatrix(out);
-		return *this;
+		return out;
+	}
+
+	vec4 operator()(const vec4& vector)
+	{
+		vec4 out;
+		for (int i = 0; i < 4; i++) {
+			out.mat[i] =
+				mat[i][0] * vector.mat[0]
+				+ mat[i][1] * vector.mat[1]
+				+ mat[i][2] * vector.mat[2]
+				+ mat[i][3] * vector.mat[3];
+		}
+		return out;
 	}
 
 	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar)

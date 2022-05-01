@@ -7,6 +7,7 @@ CameraObject::CameraObject(std::string name, SceneSystem* system, float clip_dis
 	: SceneObject(name, system), m_clip_dist(clip_dist), m_speed(speed)
 {
 	m_world_cam.setTranslation(vec3(0, 0, -1));
+	updateProjectionMatrix();
 }
 
 CameraObject::~CameraObject()
@@ -36,11 +37,11 @@ void CameraObject::updateMatrices() {
 
 	temp.setIdentity();
 	temp.setRotationX(m_rot_x);
-	world_cam *= temp;
+	world_cam = world_cam(temp);
 
 	temp.setIdentity();
 	temp.setRotationY(m_rot_y);
-	world_cam *= temp;
+	world_cam = world_cam(temp);
 
 	world_cam.setTranslation(m_camera_position);
 

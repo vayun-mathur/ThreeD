@@ -28,6 +28,7 @@ GraphicsEngine::GraphicsEngine()
 	::memcpy(m_mesh_layout_byte_code[0], shader_byte_code, size_shader);
 	m_mesh_layout_size[0] = size_shader;
 	m_render_system->releaseCompiledShader();
+
 	m_render_system->compileVertexShader(L"VertexMeshLayoutShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	::memcpy(m_mesh_layout_byte_code[1], shader_byte_code, size_shader);
 	m_mesh_layout_size[1] = size_shader;
@@ -36,6 +37,11 @@ GraphicsEngine::GraphicsEngine()
 	m_render_system->compileVertexShader(L"VertexWaterLayoutShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	::memcpy(m_mesh_layout_byte_code[2], shader_byte_code, size_shader);
 	m_mesh_layout_size[2] = size_shader;
+	m_render_system->releaseCompiledShader();
+
+	m_render_system->compileVertexShader(L"./Assets/model_position.hlsl", "ModelPositionVS", &shader_byte_code, &size_shader);
+	::memcpy(m_mesh_layout_byte_code[3], shader_byte_code, size_shader);
+	m_mesh_layout_size[3] = size_shader;
 	m_render_system->releaseCompiledShader();
 }
 

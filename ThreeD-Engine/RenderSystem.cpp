@@ -6,6 +6,7 @@
 #include "ConstantBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "FrameBuffer.h"
 
 #include <d3dcompiler.h>
 
@@ -131,6 +132,17 @@ PixelShaderPtr RenderSystem::createPixelShader(void* shader_byte_code, size_t by
 	}
 	catch (...) {}
 	return ps;
+}
+
+FrameBufferPtr RenderSystem::createFrameBuffer(UINT width, UINT height)
+{
+	FrameBufferPtr fb = nullptr;
+	try
+	{
+		fb = std::make_shared<FrameBuffer>(width, height, this);
+	}
+	catch (...) {}
+	return fb;
 }
 
 bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)

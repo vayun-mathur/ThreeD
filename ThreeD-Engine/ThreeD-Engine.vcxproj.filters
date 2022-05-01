@@ -106,6 +106,9 @@
     <Filter Include="Engine\GraphicsEngine\RenderSystem\FrameBuffer">
       <UniqueIdentifier>{fe4934de-94fe-448f-b50b-2298f982e0fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\VolumeObject">
+      <UniqueIdentifier>{c8b8f077-5b3f-453e-99d6-c50c746c4ff5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -234,9 +237,9 @@
     <ClCompile Include="VolumetricRenderManager.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="RayCastMaterial.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="VolumeObject.cpp">
+      <Filter>Engine\SceneSystem\VolumeObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -383,9 +386,9 @@
     <ClInclude Include="VolumetricRenderManager.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="RayCastMaterial.h" />
-    <ClInclude Include="Shader.h" />
+    <ClInclude Include="VolumeObject.h">
+      <Filter>Engine\SceneSystem\VolumeObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">

@@ -19,6 +19,7 @@ public:
 	ConstantBufferPtr createConstantBuffer(void* buffer, UINT size_buffer);
 	VertexShaderPtr createVertexShader(void* shader_byte_code, size_t byte_code_size);
 	PixelShaderPtr createPixelShader(void* shader_byte_code, size_t byte_code_size);
+	FrameBufferPtr createFrameBuffer(UINT width, UINT height);
 public:
 	bool compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	bool compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);

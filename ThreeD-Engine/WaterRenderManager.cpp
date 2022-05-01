@@ -34,8 +34,8 @@ void WaterRenderManager::init(RECT rc)
 
 	m_wcb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&wc, sizeof(water_constant));
 
-	m_reflection = std::make_shared<FrameBuffer>(rc.right - rc.left, rc.bottom - rc.top, GraphicsEngine::get()->getRenderSystem());
-	m_refraction = std::make_shared<FrameBuffer>(rc.right - rc.left, rc.bottom - rc.top, GraphicsEngine::get()->getRenderSystem());
+	m_reflection = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
+	m_refraction = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 }
 
 void WaterRenderManager::render(std::vector<WaterTileObjectPtr>& waters, ConstantBufferPtr cb, constant& cc)

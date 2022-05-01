@@ -1,12 +1,19 @@
 #pragma once
 #include <d3d11.h>
+#include "prerequisites.h"
+#include <vector>
 
 class VolumetricRenderManager
 {
 public:
 	void init();
-	void render();
+	void render(std::vector<VolumeObjectPtr>& volumes);
 private:
-	void Render(ID3D11DeviceContext* const deviceContext, ID3D11RasterizerState* const back, ID3D11RasterizerState* const front, ID3D11RenderTargetView* const rtView);
+	void Render(ID3D11DeviceContext* const deviceContext, std::vector<VolumeObjectPtr>& volumes);
+private:
+	VertexShaderPtr m_cube_vs;
+	PixelShaderPtr m_cube_ps;
+	VertexShaderPtr m_ray_vs;
+	PixelShaderPtr m_ray_ps;
 };
 

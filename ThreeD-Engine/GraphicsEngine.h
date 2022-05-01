@@ -28,7 +28,7 @@ private:
 	TextureManager* m_texture_manager = nullptr;
 	static GraphicsEngine* m_engine;
 
-	unsigned char m_mesh_layout_byte_code[3][1024];
-	size_t m_mesh_layout_size[3];
+	unsigned char m_mesh_layout_byte_code[4][2048];
+	size_t m_mesh_layout_size[4];
 };
 
