@@ -231,6 +231,12 @@
     <ClCompile Include="MeshRenderManager.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="VolumetricRenderManager.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="RayCastMaterial.cpp" />
+    <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -374,6 +380,12 @@
     <ClInclude Include="MeshRenderManager.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="VolumetricRenderManager.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="RayCastMaterial.h" />
+    <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">

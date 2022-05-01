@@ -18,6 +18,7 @@
 #include "WaterRenderManager.h"
 #include "TerrainRendererManager.h"
 #include "MeshRenderManager.h"
+#include "VolumetricRenderManager.h"
 
 struct dlight {
 	vec4 light_direction;
@@ -78,13 +79,14 @@ public:
 	virtual void onKeyUp(int key);
 
 	virtual void onMouseMove(const Point& delta_mouse_pos);
-private:
+public:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 
 	WaterRenderManager* water_manager;
 	TerrainRenderManager* terrain_manager;
 	MeshRenderManager* mesh_manager;
+	VolumetricRenderManager* volumetric_manager;
 
 	SceneSystem* m_scene = nullptr;
 private:

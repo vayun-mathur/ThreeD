@@ -1,11 +1,11 @@
 11
 2 0 6 camera 6 CAMERA 1000 10
+4 0 6 skybox 6 SKYBOX 24 Assets\Meshes\sphere.obj 29 Assets\Textures\stars_map.jpg 0 0 0
 3 0 6 dlight 17 DIRECTIONAL_LIGHT 0.2 0.2 0.2 0.666 -0.333 0.666
 3 0 7 dlight2 17 DIRECTIONAL_LIGHT 0.05 0.05 0.05 -0.666 -0.333 0.666
 3 0 7 dlight3 17 DIRECTIONAL_LIGHT 0.1 0.1 0.1 0.666 -0.333 -0.666
 3 0 7 dlight4 17 DIRECTIONAL_LIGHT 0.1 0.1 0.1 -0.666 -0.333 -0.666
 5 0 6 plight 11 POINT_LIGHT 0.2 0.2 0.2 0 3 0 8 1 1 1
-4 0 6 skybox 6 SKYBOX 24 Assets\Meshes\sphere.obj 29 Assets\Textures\stars_map.jpg 0 0 0
 10 0 7 terrain 7 TERRAIN
 11 0 5 water 5 WATER 10 0 10 20 20 20
 12 0 5 audio 12 AUDIO_SOURCE 0 0 0

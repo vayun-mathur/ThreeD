@@ -74,13 +74,13 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 		cc.plight[i].attenuation = plights[i]->getAttenuation();
 	}
 	cc.m_plight_count = (int)plights.size();
-
 	mesh_manager->render(meshes, m_cb, cc);
 	mesh_manager->render_skybox(skybox, m_cb, cc);
 
 	terrain_manager->render(terrains, m_cb, cc);
 	
 	water_manager->render(waters, m_cb, cc);
+	volumetric_manager->render();
 }
 
 void AppWindow::render()
@@ -114,12 +114,11 @@ void AppWindow::render()
 	renderScene(m_cb);
 
 	cc.m_clip = vec4(0, 0, 0, 100000);
-	//CLEAR THE RENDER TARGET 
+	//CLEAR THE RENDER TARGET
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 0, 0, 1);
 	//SET VIEWPORT OF RENDER TARGET IN WHICH WE HAVE TO DRAW
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
-
 	renderScene(m_cb);
 
 
@@ -166,6 +165,8 @@ void AppWindow::onCreate()
 	terrain_manager->init();
 	mesh_manager = new MeshRenderManager();
 	mesh_manager->init();
+	volumetric_manager = new VolumetricRenderManager();
+	volumetric_manager->init();
 
 	onFocus();
 }

@@ -52,6 +52,7 @@ private:
 	friend class PixelShader;
 	friend class IndexBuffer;
 	friend class Texture;
+	friend class VolumetricRenderManager;
 	friend class FrameBuffer;
 	friend class DeviceContext;
 };

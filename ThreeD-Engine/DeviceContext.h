@@ -34,5 +34,6 @@ private:
 	RenderSystem* m_system = nullptr;
 private:
 	friend class ConstantBuffer;
+	friend class VolumetricRenderManager;
 };
 

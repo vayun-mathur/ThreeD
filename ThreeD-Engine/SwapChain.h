@@ -23,5 +23,6 @@ private:
 	RenderSystem* m_system = nullptr;
 private:
 	friend class DeviceContext;
+	friend class VolumetricRenderManager;
 };
 
