@@ -18,6 +18,7 @@ struct MatrixBuffer
 	mat4 transform;
 	mat4 view;
 	mat4 projection;
+	mat4 selection;
 };
 
 MatrixBuffer buf;
@@ -59,6 +60,7 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		buf.transform = mat4();
 		buf.transform.setScale(volume->getScale());
 		buf.transform.setTranslation(volume->getPosition());
+		buf.selection = volume->getSelection();
 		m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &buf);
 
 		//-----------------------------------------------------------------------------//
@@ -87,6 +89,7 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 
 
 		// Render to standard render target
+		deviceContext->RSSetState(m_backFaceCull);
 		deviceContext->OMSetRenderTargets(1, &AppWindow::s_main->m_swap_chain->m_rtv, NULL);
 
 		// Set the vertex shader to the Volume Renderer vertex program

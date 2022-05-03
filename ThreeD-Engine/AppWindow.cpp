@@ -82,8 +82,16 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 	terrain_manager->render(terrains, m_cb, cc);
 	
 	water_manager->render(waters, m_cb, cc);
-	volumes.push_back(std::make_shared<VolumeObject>(vec3(0, 3, 0), vec3(2, 2, 2)));
-	volumes.push_back(std::make_shared<VolumeObject>(vec3(5, 3, 0), vec3(2, 1, 2)));
+	volumes.push_back(std::make_shared<VolumeObject>(vec3(0, 30, 0), vec3(20, 20, 20)));
+	mat4 selection;
+	selection.setScale(vec3(1, 0.5, 1));
+	selection.setTranslation(vec3(0, 0.5, 0));
+	volumes[0]->setSelection(selection);
+	volumes.push_back(std::make_shared<VolumeObject>(vec3(0, 30, 0), vec3(20, 20, 20)));
+	selection = mat4();
+	selection.setScale(vec3(1, 0.5, 1));
+	selection.setTranslation(vec3(0, -0.5, 0));
+	volumes[1]->setSelection(selection);
 	volumetric_manager->render(volumes);
 }
 

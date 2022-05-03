@@ -18,6 +18,7 @@ cbuffer cbEveryFrame : register(b1)
 	row_major float4x4 m_transform;
 	row_major float4x4 m_view;
 	row_major float4x4 m_projection;
+	row_major float4x4 m_selection;
 }
 
 // for pixel shader
@@ -41,6 +42,7 @@ struct PSInput
 // Vertex shader
 PSInput RayCastVS(VSInput input)
 {
+	input.pos = mul(input.pos, m_selection);
 	PSInput output;
 	output.pos = mul(input.pos, m_transform);
 	output.pos = mul(output.pos, m_view);
