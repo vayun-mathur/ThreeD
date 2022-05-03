@@ -271,10 +271,10 @@ public:
 		vec4 out;
 		for (int i = 0; i < 4; i++) {
 			out.mat[i] =
-				mat[i][0] * vector.mat[0]
-				+ mat[i][1] * vector.mat[1]
-				+ mat[i][2] * vector.mat[2]
-				+ mat[i][3] * vector.mat[3];
+				mat[0][i] * vector.mat[0]
+				+ mat[1][i] * vector.mat[1]
+				+ mat[2][i] * vector.mat[2]
+				+ mat[3][i] * vector.mat[3];
 		}
 		return out;
 	}

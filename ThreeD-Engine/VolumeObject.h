@@ -10,10 +10,7 @@ public:
 	void setPosition(vec3 position) { this->position = position; }
 	vec3 getScale() { return scale; }
 	void setScale(vec3 scale) { this->scale = scale; }
-	mat4 getSelection() { return selection; }
-	void setSelection(mat4 selection) { this->selection = selection; }
 private:
 	vec3 position;
 	vec3 scale;
-	mat4 selection;
 };

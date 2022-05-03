@@ -18,7 +18,7 @@ cbuffer cbEveryFrame : register(b1)
 	row_major float4x4 m_transform;
 	row_major float4x4 m_view;
 	row_major float4x4 m_projection;
-	row_major float4x4 m_selection;
+	float3 cam_box_coords;
 }
 
 // for pixel shader
@@ -42,7 +42,6 @@ struct PSInput
 // Vertex shader
 PSInput RayCastVS(VSInput input)
 {
-	input.pos = mul(input.pos, m_selection);
 	PSInput output;
 	output.pos = mul(input.pos, m_transform);
 	output.pos = mul(output.pos, m_view);
@@ -58,8 +57,14 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	float2 tex = input.pos.xy * g_fInvWindowSize;
 
 	// Now read the cube frotn to back - "sample from front to back"	
-	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
-	float3 pos_back = txPositionBack.Sample(samplerLinear, tex);
+	float3 pos_front = txPositionFront.Sample(samplerLinear, tex).xyz;
+	if (length(pos_front) < 0.01) {
+		pos_front = cam_box_coords;
+	}
+	float3 pos_back = txPositionBack.Sample(samplerLinear, tex).xyz;
+	if (length(pos_back) < 0.01) {
+		pos_back = cam_box_coords;
+	}
  
 	// Calculate the direction the ray is cast
 	float3 dir = normalize(pos_back - pos_front);
