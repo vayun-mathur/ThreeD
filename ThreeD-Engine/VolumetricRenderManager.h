@@ -11,8 +11,6 @@ public:
 private:
 	void Render(ID3D11DeviceContext* const deviceContext, std::vector<VolumeObjectPtr>& volumes);
 private:
-	VertexShaderPtr m_cube_vs;
-	PixelShaderPtr m_cube_ps;
 	VertexShaderPtr m_ray_vs;
 	PixelShaderPtr m_ray_ps;
 };

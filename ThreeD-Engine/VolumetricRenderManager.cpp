@@ -18,18 +18,20 @@ struct MatrixBuffer
 	mat4 transform;
 	mat4 view;
 	mat4 projection;
+	mat4 inv_transform;
 	vec3 cam_box_coords;
+	float f;
+	vec3 bounds_min;
+	float f2;
+	vec3 bounds_max;
+	float f3;
+	vec3 cam_pos;
+	float f4;
+	vec3 cam_dir;
+	float f5;
 };
 
 MatrixBuffer buf;
-
-__declspec(align(16))
-struct WindowSizeBuffer
-{
-	float windowSize[2];
-};
-
-WindowSizeBuffer wbuf;
 
 void CreateCube();
 
@@ -37,10 +39,8 @@ Texture3DPtr m_vol;
 VertexBufferPtr m_cubeVB;
 IndexBufferPtr m_cubeIB;
 ConstantBufferPtr m_cb;
-ConstantBufferPtr m_wcb;
-FrameBufferPtr m_cubeFront, m_cubeBack;
 
-ID3D11RasterizerState* m_backFaceCull, * m_frontFaceCull;
+ID3D11RasterizerState* m_frontFaceCull;
 
 
 void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, std::vector<VolumeObjectPtr>& volumes)
@@ -65,27 +65,13 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		vec3 p = AppWindow::s_main->m_scene->getCamera()->getCameraPosition() - min;
 		vec3 s = max - min;
 		buf.cam_box_coords = vec3(p.x / s.x, p.y / s.y, p.z / s.z);
+		buf.bounds_min = min;
+		buf.bounds_max = max;
+		buf.cam_pos = AppWindow::s_main->m_scene->getCamera()->getCameraPosition();
+		buf.cam_dir = buf.view(vec4(0, 0, 1, 0)).xyz();
+		buf.inv_transform = buf.transform;
+		buf.inv_transform.inverse();
 		m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &buf);
-
-		//-----------------------------------------------------------------------------//
-		// Back and front buffer for faces of the volume
-		//-----------------------------------------------------------------------------//
-
-		// Set the vertex shader ~ simple model shader
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_cube_vs);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_cube_vs, m_cb, 0);
-
-		// Set the pixel shader ~ simple model shader
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_cube_ps);
-
-		deviceContext->RSSetState(m_backFaceCull);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_cubeBack, 0.f, 0.f, 0.f, 1.f);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);
-
-		// Back-face culling
-		deviceContext->RSSetState(m_frontFaceCull);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_cubeFront, 0.f, 0.f, 0.f, 1.f);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);
 
 		//-----------------------------------------------------------------------------//
 		// Ray-casting / Volume Rendering 
@@ -96,19 +82,14 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		deviceContext->RSSetState(m_frontFaceCull);
 		deviceContext->OMSetRenderTargets(1, &AppWindow::s_main->m_swap_chain->m_rtv, NULL);
 
-		// Set the vertex shader to the Volume Renderer vertex program
+		// set shaders
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_ray_vs);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_vs, m_cb, 1);
-
-		// Set the pixel shader to the Volume Render pixel program
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ray_ps);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_wcb, 0);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_cb, 1);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_vs, m_cb, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_cb, 0);
 
 		// pass in our textures )
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_vol, 0);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_cubeFront->getTexture(), 1);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_cubeBack->getTexture(), 2);
 
 		// Draw the cube
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);
@@ -172,14 +153,6 @@ void VolumetricRenderManager::init()
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
 
-	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"./Assets/model_position.hlsl", "ModelPositionVS", &shader_byte_code, &size_shader);
-	m_cube_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"./Assets/model_position.hlsl", "ModelPositionPS", &shader_byte_code, &size_shader);
-	m_cube_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
 	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"./Assets/raycast.hlsl", "RayCastVS", &shader_byte_code, &size_shader);
 	m_ray_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
@@ -188,28 +161,16 @@ void VolumetricRenderManager::init()
 	m_ray_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerDesc.DepthClipEnable = true;
-	GraphicsEngine::get()->getRenderSystem()->m_d3d_device->CreateRasterizerState(&rasterizerDesc, &m_backFaceCull);
-
 	// Front face culling
+	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_FRONT;
 	rasterizerDesc.DepthClipEnable = true;
 	GraphicsEngine::get()->getRenderSystem()->m_d3d_device->CreateRasterizerState(&rasterizerDesc, &m_frontFaceCull);
 
-	double width = AppWindow::s_main->getScreenSize().right;
-	double height = AppWindow::s_main->getScreenSize().bottom;
-
-	m_cubeFront = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(width, height);
-	m_cubeBack = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(width, height);
-
 	// load of the raw textures into a D3D11_TEXTURE3D_DESC 
-	m_vol = std::make_shared<Texture3D>(L"./Assets/foot.raw", 256);
+	m_vol = std::make_shared<Texture3D>(L"./Assets/cloud.raw", 256);
 
 	// create the volume/cube primitive
 	CreateCube();
@@ -217,10 +178,6 @@ void VolumetricRenderManager::init()
 	buf.view = AppWindow::s_main->m_scene->getCamera()->getViewMatrix();
 	buf.projection = AppWindow::s_main->m_scene->getCamera()->getProjectionMatrix();
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(MatrixBuffer));
-
-	wbuf.windowSize[0] = 1.f / width;
-	wbuf.windowSize[1] = 1.f / height;
-	m_wcb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&wbuf, sizeof(WindowSizeBuffer));
 }
 
 void VolumetricRenderManager::render(std::vector<VolumeObjectPtr>& volumes)
