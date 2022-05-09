@@ -157,10 +157,17 @@ bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* ent
 	return true;
 }
 
+#include <iostream>
+
 bool RenderSystem::compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
 	ID3DBlob* error_blob = nullptr;
 	if (FAILED(::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob))) {
+		if (error_blob)
+		{
+			std::cout << (char*)error_blob->GetBufferPointer() << std::endl;
+			OutputDebugStringA((char*)error_blob->GetBufferPointer());
+		}
 		if (error_blob)error_blob->Release();
 		return false;
 	}

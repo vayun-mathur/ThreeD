@@ -76,37 +76,58 @@ float2 rayBoxDst(float3 boundsMin, float3 boundsMax, float3 rayOrigin, float3 in
 }
 
 float sampleDensity(float3 pos) {
-	return txVolume.Sample(samplerLinear, pos).r;
+	float3 textureSpace = mul(float4(pos, 1), m_inv_transform).xyz / 2 + 0.5;
+	return txVolume.Sample(samplerLinear, textureSpace).r;
 }
 
-float beer(float d) {
-	float beer = exp(-d);
-	return beer;
+float rfunc(float2 uv)
+{
+	float2 noise = (frac(sin(dot(uv, float2(12.9898, 78.233) * 2.0)) * 43758.5453));
+	return abs(noise.x + noise.y) * 0.5;
 }
 
-float lightMarch(float3 pos) {
-	const int numStepsLight = 64;
-	const float lightAbsorptionTowardSun = 1;
-	const float darknessThreshold = 0.2;
+float cloudDepth(float3 start_pos, float3 light_dir) {
+	float2 boxDst = rayBoxDst(bounds_min, bounds_max, start_pos, 1 / light_dir);
+	float3 end_pos = start_pos + light_dir * boxDst.y;
 
-	float3 dirToLight = float3(0, 1, 0);
-	float dstInsideBox = rayBoxDst(float3(-1, -1, -1), float3(1, 1, 1), pos, 1 / dirToLight).y;
+	uint iterations = 32;
 
-	float transmittance = 1;
-	float stepSize = dstInsideBox / numStepsLight;
-	pos += dirToLight * stepSize * .5;
-	float totalDensity = 0;
+	float3 step = (end_pos - start_pos) / iterations;
 
-	for (int step = 0; step < numStepsLight; step++) {
-		float density = sampleDensity(pos);
-		totalDensity += max(0, density * stepSize);
-		pos += dirToLight * stepSize;
+	for (uint i = 0; i < iterations; ++i)
+	{
+		float3 v = start_pos + step * (i + 0.3*rfunc(float2(i, i)));
+		
+		if (sampleDensity(v) < 0.01) {
+			end_pos = v;
+			break;
+		}
 	}
+	return length(end_pos - start_pos) / 15;
+}
 
-	transmittance = beer(totalDensity * lightAbsorptionTowardSun);
+float PI_r = 0.3183098;
 
-	float clampedTransmittance = darknessThreshold + transmittance * (1 - darknessThreshold);
-	return clampedTransmittance;
+float hg(float a, float g) {
+	float g2 = g * g;
+	return (1 - g2) / (4 * 3.1415 * pow(1 + g2 - 2 * g * (a), 1.5));
+}
+
+float phase(float3 v1, float3 v2) {
+	float4 phaseParams = float4(.8f, .3f, .8f, .15f);
+	float a = dot(v1, v2) / length(v1) / length(v2);
+	float blend = .5;
+	float hgBlend = hg(a, phaseParams.x) * (1 - blend) + hg(a, -phaseParams.y) * blend;
+	return phaseParams.z + hgBlend * phaseParams.w;
+}
+
+
+float brightness(float depth) {
+	float m = log(2);
+	float c = log(2);
+	float t = exp(-m * depth);
+	float s = 1 - exp(-c * depth);
+	return t * s;
 }
 
 // Pixel shader
@@ -122,40 +143,42 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	float3 pos_front = cam_pos + cam_dir * intersections.x;
 	float3 pos_back = pos_front + cam_dir * intersections.y;
 
-	pos_front = mul(float4(pos_front, 1), m_inv_transform).xyz / 2 +0.5;
-	pos_back = mul(float4(pos_back, 1), m_inv_transform).xyz / 2+0.5;
-
 	// Calculate the direction the ray is cast
 	float3 dir = normalize(pos_back - pos_front);
 
-	float g_fStepSize = length(pos_back - pos_front) / g_iMaxIterations;
+	float stepSize = length(pos_back - pos_front) / g_iMaxIterations;
 
-	// Single step: direction times delta step - g_fStepSize is precaluclated
-	float3 step = g_fStepSize * dir;
+	// Single step: direction times delta step - stepSize is precaluclated
+	float3 step = stepSize * dir;
 
 	// The current position - remember we start from the front
-	float3 v = pos_front;
+	//float3 v = pos_front;
 
 	// Accumulate result: value and transparency (alpha)
-	float2 result = float2(0, 0);
+	float4 result = float4(0, 0, 0, 0);
+
+	float3 light_color = float3(1, 1, 1);
+	float3 light_dir = float3(0, -1, 0);
 
 	// iterate for the volume, sampling along the way at equidistant steps 
+	[loop]
 	for (uint i = 0; i < g_iMaxIterations; ++i)
 	{
+		float3 v = pos_front + step * (i + 0.1*rfunc(float2(i, i)));
 		// sample the texture accumlating the result as we step through the texture
 		float density = sampleDensity(v);
 
-		const float b = 1;
+		if (result.a == 1) {
+			break;
+		}
 
-		float brightness_factor = exp(-b * density * (1-v.y));
+		result.a += density / 5;
+		result.a = clamp(result.a, 0, 1);
 
-		// Front to back blending
-		result.x += (1 - result.y) * density * brightness_factor * 0.5f * density;
-		result.y += (1 - result.y) * density * 0.5f * density * 0.5f;
+		float b = brightness(cloudDepth(v, light_dir)) * phase(-cam_dir, light_dir);
 
-		// Advance the current position
-		v += step;
+		result.rgb += b * light_color * result.a;
 	}
 
-	return float4(result.r, result.r, result.r, result.y);
+	return result;
 }
