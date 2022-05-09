@@ -148,7 +148,7 @@ FrameBufferPtr RenderSystem::createFrameBuffer(UINT width, UINT height)
 bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
 	ID3DBlob* error_blob = nullptr;
-	if (FAILED(::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob))) {
+	if (FAILED(::D3DCompileFromFile(file_name, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob))) {
 		if (error_blob)error_blob->Release();
 		return false;
 	}
@@ -162,11 +162,10 @@ bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* ent
 bool RenderSystem::compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
 	ID3DBlob* error_blob = nullptr;
-	if (FAILED(::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob))) {
+	if (FAILED(::D3DCompileFromFile(file_name, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob))) {
 		if (error_blob)
 		{
 			std::cout << (char*)error_blob->GetBufferPointer() << std::endl;
-			OutputDebugStringA((char*)error_blob->GetBufferPointer());
 		}
 		if (error_blob)error_blob->Release();
 		return false;

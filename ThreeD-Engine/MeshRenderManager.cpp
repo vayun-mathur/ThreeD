@@ -5,22 +5,36 @@
 #include "AppWindow.h"
 #include "MeshObject.h"
 
+__declspec(align(16))
+struct skybox_constant
+{
+	mat4 m_TVM;
+};
+
+skybox_constant sc;
+
 void MeshRenderManager::init()
 {
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
 
-	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
+	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"MeshShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	m_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
+	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"MeshShader.hlsl", "psmain", &shader_byte_code, &size_shader);
 	m_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"SkyboxShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
+	m_vs_skybox = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
 	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"SkyboxShader.hlsl", "psmain", &shader_byte_code, &size_shader);
 	m_ps_skybox = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+	m_sc = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&sc, sizeof(skybox_constant));
 }
 
 void MeshRenderManager::render(std::vector<MeshObjectPtr>& meshes, ConstantBufferPtr cb, constant& cc)
@@ -63,16 +77,18 @@ void MeshRenderManager::render(std::vector<MeshObjectPtr>& meshes, ConstantBuffe
 
 void MeshRenderManager::render_skybox(MeshObjectPtr& skybox, ConstantBufferPtr cb, constant& cc)
 {
-	cc.m_transform.setIdentity();
-	cc.m_transform.setTranslation(skybox->getPosition());
-	cc.m_transform.setScale(skybox->getScale());
-	cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+	mat4 transform;
+	transform.setIdentity();
+	transform.setTranslation(skybox->getPosition());
+	transform.setScale(skybox->getScale());
+	sc.m_TVM = cc.m_projection(cc.m_view(transform));
+	m_sc->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &sc);
 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs_skybox);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps_skybox);
 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps_skybox, cb, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs_skybox, m_sc, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps_skybox, m_sc, 0);
 
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(skybox->getMesh()->getVertexBuffer());
@@ -83,8 +99,6 @@ void MeshRenderManager::render_skybox(MeshObjectPtr& skybox, ConstantBufferPtr c
 
 		//SET MATERIAL
 		GraphicsEngine::get()->getRenderSystem()->setRasterizerState(material->getCullMode());
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, material->getConstantBuffer(), 1);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps_skybox, material->getConstantBuffer(), 1);
 
 		for (auto&& [index, texture] : material->getTextures()) {
 			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps_skybox, texture, index);

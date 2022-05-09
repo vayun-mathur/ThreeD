@@ -16,7 +16,7 @@
 #include "FrameBuffer.h"
 #include "SceneSystem.h"
 #include "WaterRenderManager.h"
-#include "TerrainRendererManager.h"
+#include "TerrainRenderManager.h"
 #include "MeshRenderManager.h"
 #include "VolumetricRenderManager.h"
 

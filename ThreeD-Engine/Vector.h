@@ -250,22 +250,22 @@ public:
 	{
 		return vec3(mat[3][0], mat[3][1], mat[3][2]);
 	}
-
+	
 	mat4 operator()(const mat4& matrix)
 	{
 		mat4 out;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				out.mat[i][j] =
-					mat[i][0] * matrix.mat[0][j]
-					+ mat[i][1] * matrix.mat[1][j]
-					+ mat[i][2] * matrix.mat[2][j]
-					+ mat[i][3] * matrix.mat[3][j];
+				out.mat[j][i] =
+					mat[0][i] * matrix.mat[j][0]
+					+ mat[1][i] * matrix.mat[j][1]
+					+ mat[2][i] * matrix.mat[j][2]
+					+ mat[3][i] * matrix.mat[j][3];
 			}
 		}
 		return out;
 	}
-
+	
 	vec4 operator()(const vec4& vector)
 	{
 		vec4 out;

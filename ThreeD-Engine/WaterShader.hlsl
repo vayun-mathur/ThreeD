@@ -9,6 +9,11 @@ sampler normal_map_sampler : register(s3);
 Texture2D depth_map : register(t4);
 sampler depth_map_sampler : register(s4);
 
+struct VS_INPUT
+{
+	float2 position : POSITION0;
+};
+
 struct PS_INPUT
 {
 	float4 position : SV_POSITION;
@@ -48,6 +53,26 @@ cbuffer constant: register(b0)
 cbuffer water: register(b1)
 {
 	float move_factor;
+}
+
+PS_INPUT vsmain(VS_INPUT input)
+{
+	PS_INPUT output = (PS_INPUT)0;
+
+	//WORLD SPACE
+	output.position = mul(float4(input.position.x, 0.0, input.position.y, 1.0), m_transform);
+	output.world_pos = output.position.xyz;
+	//VIEW SPACE
+	output.position = mul(output.position, m_view);
+	//SCREEN SPACE
+	output.position = mul(output.position, m_projection);
+
+	output.clip_space = output.position;
+	output.texcoord = (input.position / 2 + 0.5) * 6;
+
+	output.to_cam_vec = m_camera_position - output.world_pos;
+
+	return output;
 }
 
 float4 psmain(PS_INPUT input) : SV_TARGET

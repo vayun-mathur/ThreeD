@@ -1,10 +1,13 @@
+#include "PhongLighting.hlsl"
+
 struct VS_INPUT
 {
 	float4 position : POSITION0;
 	float2 texcoord: TEXCOORD0;
 	float3 normal: NORMAL0;
 };
-struct VS_OUTPUT
+
+struct PS_INPUT
 {
 	float4 position : SV_POSITION;
 	float2 texcoord: TEXCOORD0;
@@ -13,18 +16,9 @@ struct VS_OUTPUT
 	float visibility : COLOR0;
 };
 
-cbuffer constant: register(b0)
+PS_INPUT vsmain(VS_INPUT input)
 {
-	row_major float4x4 m_transform;
-	row_major float4x4 m_view;
-	row_major float4x4 m_projection;
-	float4 m_camera_position;
-};
-
-
-VS_OUTPUT vsmain(VS_INPUT input)
-{
-	VS_OUTPUT output = (VS_OUTPUT)0;
+	PS_INPUT output = (PS_INPUT)0;
 
 	//WORLD SPACE
 	output.position = mul(input.position, m_transform);
@@ -47,4 +41,24 @@ VS_OUTPUT vsmain(VS_INPUT input)
 	output.visibility = clamp(output.visibility, 0.0, 1.0);
 
 	return output;
+}
+
+float4 psmain(PS_INPUT input) : SV_TARGET
+{
+	clip(dot(m_clip, float4(input.world_pos, 1)));
+
+	float4 tex_color = (material.has_tex & 1) == 0 ? float4(0.2, 0.2, 0.2, 1) : map_ka.Sample(map_ka_sampler, 1 - input.texcoord);
+
+	float3 ambient_light = ambientLight(material.ka, tex_color);
+
+	float3 light = ambient_light;
+
+	for (int i = 0; i < m_dlight_count; i++) {
+		light += calculateDirectional(material, dlight[i], input.world_pos, input.normal) * 0.5;
+	}
+	for (int i = 0; i < m_plight_count; i++) {
+		light += calculatePoint(material, plight[i], input.world_pos, input.normal);
+	}
+
+	return float4(light, 1.0) * input.visibility + fog_color * (1 - input.visibility);
 }

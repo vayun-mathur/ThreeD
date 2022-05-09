@@ -13,6 +13,8 @@ public:
 private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
+	VertexShaderPtr m_vs_skybox;
 	PixelShaderPtr m_ps_skybox;
+	ConstantBufferPtr m_sc;
 };
 

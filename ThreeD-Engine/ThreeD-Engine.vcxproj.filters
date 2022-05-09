@@ -112,6 +112,9 @@
     <Filter Include="Engine\GraphicsEngine\ResourceManager\Texture3DManager">
       <UniqueIdentifier>{0eca5985-0d83-42da-94d3-c58ca69ed2d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App\RenderManagers">
+      <UniqueIdentifier>{80b6a2a1-0a6b-4a14-b469-f36313a89c12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -228,23 +231,23 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>Engine\GraphicsEngine\RenderSystem\FrameBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="WaterRenderManager.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainRendererManager.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRenderManager.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
-    <ClCompile Include="VolumetricRenderManager.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
     <ClCompile Include="VolumeObject.cpp">
       <Filter>Engine\SceneSystem\VolumeObject</Filter>
     </ClCompile>
     <ClCompile Include="Texture3D.cpp">
       <Filter>Engine\GraphicsEngine\ResourceManager\Texture3DManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainRenderManager.cpp">
+      <Filter>App\RenderManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumetricRenderManager.cpp">
+      <Filter>App\RenderManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterRenderManager.cpp">
+      <Filter>App\RenderManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderManager.cpp">
+      <Filter>App\RenderManagers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,16 +383,7 @@
     <ClInclude Include="FrameBuffer.h">
       <Filter>Engine\GraphicsEngine\RenderSystem\FrameBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="WaterRenderManager.h">
-      <Filter>App</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainRendererManager.h">
-      <Filter>App</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderManager.h">
-      <Filter>App</Filter>
-    </ClInclude>
-    <ClInclude Include="VolumetricRenderManager.h">
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="VolumeObject.h">
@@ -397,6 +391,15 @@
     </ClInclude>
     <ClInclude Include="Texture3D.h">
       <Filter>Engine\GraphicsEngine\ResourceManager\Texture3DManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainRenderManager.h">
+      <Filter>App\RenderManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumetricRenderManager.h">
+      <Filter>App\RenderManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterRenderManager.h">
+      <Filter>App\RenderManagers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -406,26 +409,23 @@
     <FxCompile Include="SkyboxShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
+    <FxCompile Include="MeshShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="TerrainShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="TerrainPixelShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="TerrainVertexShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="WaterVertexShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="WaterPixelShader.hlsl">
+    <FxCompile Include="WaterShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="VertexWaterLayoutShader.hlsl">
       <Filter>Engine\GraphicsEngine</Filter>
+    </FxCompile>
+    <FxCompile Include="CloudShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongLighting.hlsl">
+      <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

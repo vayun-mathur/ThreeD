@@ -31,17 +31,17 @@ ScriptValue* CameraObject::dot(std::string s)
 
 void CameraObject::updateMatrices() {
 	//view matrix
-	mat4 temp;
+	mat4 pitch;
+	mat4 yaw;
 	mat4 world_cam;
-	world_cam.setIdentity();
 
-	temp.setIdentity();
-	temp.setRotationX(m_rot_x);
-	world_cam = world_cam(temp);
+	pitch.setIdentity();
+	pitch.setRotationX(m_rot_x);
 
-	temp.setIdentity();
-	temp.setRotationY(m_rot_y);
-	world_cam = world_cam(temp);
+	yaw.setIdentity();
+	yaw.setRotationY(m_rot_y);
+
+	world_cam = yaw(pitch);
 
 	world_cam.setTranslation(m_camera_position);
 

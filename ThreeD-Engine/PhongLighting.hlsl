@@ -5,15 +5,6 @@ sampler map_kd_sampler : register(s1);
 Texture2D map_ks : register(t2);
 sampler map_ks_sampler : register(s2);
 
-struct PS_INPUT
-{
-	float4 position : SV_POSITION;
-	float3 normal: NORMAL0;
-	float3 world_pos: TEXCOORD1;
-	float3 color: TEXCOORD0;
-	float visibility : COLOR0;
-};
-
 //Directional Light
 struct DLIGHT {
 	float4 light_direction;
@@ -71,33 +62,33 @@ float3 specularLight(float3 ks, float4 tex_color, float3 light_dir, float3 norma
 	return (ks * amount_specular_light) / attenuation;
 }
 
-float3 calculateDirectional(PS_INPUT input, MATERIAL material, DLIGHT dlight)
+float3 calculateDirectional(MATERIAL material, DLIGHT dlight, float3 world_pos, float3 normal)
 {
 	float4 d_tex_color = float4(1, 1, 1, 1);
 	float4 s_tex_color = float4(1, 1, 1, 1);
 
 	//DIFFUSE LIGHT
 
-	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, dlight.light_direction, input.normal, 1.0);
+	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, dlight.light_direction, normal, 1.0);
 
 	//SPECULAR LIGHT
-	float3 direction_to_camera = -normalize(input.world_pos.xyz - m_camera_position.xyz);
+	float3 direction_to_camera = -normalize(world_pos.xyz - m_camera_position.xyz);
 
-	float3 specular_light = specularLight(material.ks, s_tex_color, dlight.light_direction, input.normal, direction_to_camera, material.shininess, 1.0);
+	float3 specular_light = specularLight(material.ks, s_tex_color, dlight.light_direction, normal, direction_to_camera, material.shininess, 1.0);
 
 	float3 final_light = diffuse_light + specular_light;
 
 	return final_light;
 }
 
-float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
+float3 calculatePoint(MATERIAL material, PLIGHT plight, float3 world_pos, float3 normal)
 {
 	float4 d_tex_color = float4(1, 1, 1, 1);
 	float4 s_tex_color = float4(1, 1, 1, 1);
 
 	//DIFFUSE LIGHT
-	float3 light_dir = normalize(plight.light_position.xyz - input.world_pos.xyz);
-	float distance_light_object = length(plight.light_position.xyz - input.world_pos.xyz);
+	float3 light_dir = normalize(plight.light_position.xyz - world_pos.xyz);
+	float distance_light_object = length(plight.light_position.xyz - world_pos.xyz);
 
 	float fade_area = max(0, distance_light_object - plight.light_radius);
 
@@ -107,34 +98,14 @@ float3 calculatePoint(PS_INPUT input, MATERIAL material, PLIGHT plight)
 
 	float attenuation = constant_func + linear_func * fade_area + quadratic_func * fade_area * fade_area;
 
-	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, light_dir, input.normal, attenuation);
+	float3 diffuse_light = diffuseLight(material.kd, d_tex_color, light_dir, normal, attenuation);
 
 	//SPECULAR LIGHT
-	float3 direction_to_camera = normalize(input.world_pos.xyz - m_camera_position.xyz);
+	float3 direction_to_camera = normalize(world_pos.xyz - m_camera_position.xyz);
 
-	float3 specular_light = specularLight(material.ks, s_tex_color, light_dir, input.normal, direction_to_camera, material.shininess, attenuation);
+	float3 specular_light = specularLight(material.ks, s_tex_color, light_dir, normal, direction_to_camera, material.shininess, attenuation);
 
 	float3 final_light = diffuse_light + specular_light;
 
 	return final_light;
-}
-
-float4 psmain(PS_INPUT input) : SV_TARGET
-{
-	clip(dot(m_clip, float4(input.world_pos, 1)));
-
-	float4 tex_color = float4(input.color, 1);
-
-	float3 ambient_light = ambientLight(material.ka, tex_color);
-
-	float3 light = ambient_light;
-
-	for (int i = 0; i < m_dlight_count; i++) {
-		light += calculateDirectional(input, material, dlight[i]) * 0.5;
-	}
-	for (int i = 0; i < m_plight_count; i++) {
-		light += calculatePoint(input, material, plight[i]);
-	}
-
-	return float4(light, 1.0) * input.visibility + fog_color * (1 - input.visibility);
 }

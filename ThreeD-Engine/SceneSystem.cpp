@@ -25,24 +25,6 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	std::wstring full_path = std::filesystem::absolute(file_path);
 	std::ifstream scene_file(full_path);
 
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-
-	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-	VertexShaderPtr vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
-	PixelShaderPtr ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-
-	GraphicsEngine::get()->getRenderSystem()->compilePixelShader(L"SkyboxShader.hlsl", "psmain", &shader_byte_code, &size_shader);
-	PixelShaderPtr skybox_ps = GraphicsEngine::get()->getRenderSystem()->createPixelShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
 	std::unordered_map<int, SceneObjectPtr> components;
 	std::unordered_map<int, std::string> component_type;
 	components.insert({ 0, m_root });
@@ -66,7 +48,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			vec3 position, scale;
 			readString(scene_file, obj);
 			scene_file >> position.x >> position.y >> position.z >> scale.x >> scale.y >> scale.z;
-			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, this, obj, vs, ps);
+			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, this, obj);
 			mesh->setPosition(position);
 			mesh->setScale(scale);
 			components[parent]->addChild(mesh);
@@ -95,7 +77,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			readString(scene_file, obj);
 			readString(scene_file, tex);
 			scene_file >> position.x >> position.y >> position.z;
-			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, this, obj, vs, skybox_ps);
+			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, this, obj);
 			mesh->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::FRONT);
 			mesh->getMesh()->getMaterials()[0].material->getTextures().insert({0,
 				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });

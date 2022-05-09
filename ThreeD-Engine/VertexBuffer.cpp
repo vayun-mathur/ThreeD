@@ -59,9 +59,10 @@ VertexBuffer::VertexBuffer(void* list_vertices, UINT size_vertex, UINT size_list
 	else if (type == 1) layout = layout_terrain, size_layout = 3;
 	else layout = layout_mesh, size_layout = 3;
 
-	if (FAILED(m_system->m_d3d_device->CreateInputLayout(layout, size_layout, shader_byte_code, size_byte_shader, &m_layout)))
+	HRESULT hres;
+
+	if (FAILED(hres = m_system->m_d3d_device->CreateInputLayout(layout, size_layout, shader_byte_code, size_byte_shader, &m_layout)))
 	{
-		HRESULT hres = m_system->m_d3d_device->CreateInputLayout(layout, size_layout, shader_byte_code, size_byte_shader, &m_layout);
 		throw std::exception("VertexBuffer not created successfully");
 	}
 }

@@ -6,7 +6,7 @@ class MeshObject
 	: public SceneObject
 {
 public:
-	MeshObject(std::string name, SceneSystem* system, std::wstring mesh_location, VertexShaderPtr vs, PixelShaderPtr ps);
+	MeshObject(std::string name, SceneSystem* system, std::wstring mesh_location);
 
 	~MeshObject();
 
@@ -14,8 +14,6 @@ public:
 		return SceneObjectType::MeshObject;
 	}
 
-	inline VertexShaderPtr getVertexShader() { return m_vs; }
-	inline PixelShaderPtr getPixelShader() { return m_ps; }
 	inline MeshPtr getMesh() { return m_mesh; }
 
 	virtual ScriptValue* dot(std::string);
@@ -25,8 +23,6 @@ public:
 	inline vec3 getScale() { return m_scale; }
 	inline void setScale(vec3 scale) { m_scale = scale; }
 private:
-	VertexShaderPtr m_vs;
-	PixelShaderPtr m_ps;
 	MeshPtr m_mesh;
 private:
 	vec3 m_position = vec3(0, 0, 0);
