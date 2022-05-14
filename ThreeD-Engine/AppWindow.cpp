@@ -13,6 +13,9 @@
 #include "AudioSourceObject.h"
 #include "ScriptSystem.h"
 #include "VolumeObject.h"
+#include "ComputeShader.h"
+#include "StructuredBuffer.h"
+#include "RWStructuredBuffer.h"
 #include <iostream>
 
 AppWindow* AppWindow::s_main;
@@ -80,7 +83,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 	mesh_manager->render_skybox(skybox, m_cb, cc);
 
 	terrain_manager->render(terrains, m_cb, cc);
-	
+
 	water_manager->render(waters, m_cb, cc);
 	volumes.push_back(std::make_shared<VolumeObject>(vec3(0, 30, 0), vec3(20, 20, 20)));
 	volumetric_manager->render(volumes);
@@ -147,6 +150,10 @@ AppWindow::~AppWindow()
 {
 }
 
+ID3D11Buffer* input1, * input2, * output, * outputCPU;
+ID3D11ShaderResourceView* iv1, * iv2;
+ID3D11UnorderedAccessView* ov;
+
 void AppWindow::onCreate()
 {
 	Window::onCreate();
@@ -172,6 +179,46 @@ void AppWindow::onCreate()
 	volumetric_manager->init();
 
 	onFocus();
+
+	float* i1 = new float[1024], * i2 = new float[1024], * o = new float[1024];
+	for (int i = 0; i < 128; i++) {
+		i2[i] = i1[i] = i + 1;
+	}
+
+	StructuredBufferPtr in1 = GraphicsEngine::get()->getRenderSystem()->createStructuredBuffer(i1, sizeof(float), 128);
+	StructuredBufferPtr in2 = GraphicsEngine::get()->getRenderSystem()->createStructuredBuffer(i2, sizeof(float), 128);
+
+	RWStructuredBufferPtr out = GraphicsEngine::get()->getRenderSystem()->createRWStructuredBuffer(o, sizeof(float), 128);
+
+	auto mDeviceContext = GraphicsEngine::get()->getRenderSystem()->m_imm_context;
+
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+
+	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"addTwoVectors.hlsl", "main", &shader_byte_code, &size_shader);
+	ComputeShaderPtr cs = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+	// Enable Compute Shader
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(cs);
+
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(in1, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(in2, 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(out, 0);
+
+	// Dispatch
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(128, 1, 1);
+
+	// Copy result
+	out->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
+
+	void* d = out->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
+	float* data = reinterpret_cast<float*>(d);
+
+	for (int i = 0; i < 128; i++) {
+		std::cout << data[i] << std::endl;
+	}
+	out->close_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 }
 
 void AppWindow::onUpdate()
@@ -180,17 +227,12 @@ void AppWindow::onUpdate()
 
 	InputSystem::get()->update();
 	m_scene->update(m_delta_time);
-	/*
-	auto audio = m_scene->getRoot()->getChild<AudioSourceObject>("audio");
-	vec3 v = audio->getPosition();
-	v.x += 0.1f;
-	audio->setPosition(v);
-	*/
+
 	vec3 v = m_scene->getCamera()->getCameraPosition();
-	std::cout << v.x << " " << v.y << " " << v.z << std::endl;
+	//std::cout << v.x << " " << v.y << " " << v.z << std::endl;
 
 	update();
-	render();
+	//render();
 }
 
 void AppWindow::onDestroy()

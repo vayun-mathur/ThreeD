@@ -9,6 +9,9 @@
 #include "Texture3D.h"
 #include "FrameBuffer.h"
 #include "RenderSystem.h"
+#include "ComputeShader.h"
+#include "StructuredBuffer.h"
+#include "RWStructuredBuffer.h"
 #include <exception>
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
@@ -69,6 +72,11 @@ void DeviceContext::drawTriangleStrip(UINT vertex_count, UINT start_vertex_index
 	m_device_context->Draw(vertex_count, start_vertex_index);
 }
 
+void DeviceContext::compute(UINT threadsX, UINT threadsY, UINT threadsZ)
+{
+	m_device_context->Dispatch(threadsX, threadsY, threadsZ);
+}
+
 void DeviceContext::setViewportSize(UINT width, UINT height)
 {
 	D3D11_VIEWPORT vp = {};
@@ -88,6 +96,11 @@ void DeviceContext::setPixelShader(const PixelShaderPtr& pixel_shader)
 	m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0);
 }
 
+void DeviceContext::setComputeShader(const ComputeShaderPtr& compute_shader)
+{
+	m_device_context->CSSetShader(compute_shader->m_cs, nullptr, 0);
+}
+
 void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const TexturePtr& texture, unsigned int index)
 {
 	m_device_context->VSSetShaderResources(index, 1, &texture->m_shader_res_view);
@@ -96,6 +109,11 @@ void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const Textu
 void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const TexturePtr& texture, unsigned int index)
 {
 	m_device_context->PSSetShaderResources(index, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setTextureCS(const TexturePtr& texture, unsigned int index)
+{
+	m_device_context->CSSetShaderResources(index, 1, &texture->m_shader_res_view);
 }
 
 void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const Texture3DPtr& texture, unsigned int index)
@@ -108,6 +126,11 @@ void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const Texture
 	m_device_context->PSSetShaderResources(index, 1, &texture->m_shader_res_view);
 }
 
+void DeviceContext::setTextureCS(const Texture3DPtr& texture, unsigned int index)
+{
+	m_device_context->CSSetShaderResources(index, 1, &texture->m_shader_res_view);
+}
+
 void DeviceContext::setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index)
 {
 	m_device_context->VSSetConstantBuffers(buffer_index, 1, &buffer->m_buffer);
@@ -116,4 +139,29 @@ void DeviceContext::setConstantBuffer(const VertexShaderPtr& vertex_shader, cons
 void DeviceContext::setConstantBuffer(const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index)
 {
 	m_device_context->PSSetConstantBuffers(buffer_index, 1, &buffer->m_buffer);
+}
+
+void DeviceContext::setConstantBufferCS(const ConstantBufferPtr& buffer, unsigned int buffer_index)
+{
+	m_device_context->CSSetConstantBuffers(buffer_index, 1, &buffer->m_buffer);
+}
+
+void DeviceContext::setStructuredBufferVS(const StructuredBufferPtr& buffer, unsigned int buffer_index)
+{
+	m_device_context->VSSetShaderResources(buffer_index, 1, &buffer->m_srv);
+}
+
+void DeviceContext::setStructuredBufferPS(const StructuredBufferPtr& buffer, unsigned int buffer_index)
+{
+	m_device_context->PSSetShaderResources(buffer_index, 1, &buffer->m_srv);
+}
+
+void DeviceContext::setStructuredBufferCS(const StructuredBufferPtr& buffer, unsigned int buffer_index)
+{
+	m_device_context->CSSetShaderResources(buffer_index, 1, &buffer->m_srv);
+}
+
+void DeviceContext::setRWStructuredBufferCS(const RWStructuredBufferPtr& buffer, unsigned int buffer_index)
+{
+	m_device_context->CSSetUnorderedAccessViews(buffer_index, 1, &buffer->m_uav, 0);
 }

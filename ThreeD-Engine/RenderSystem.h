@@ -17,12 +17,16 @@ public:
 	VertexBufferPtr createVertexBuffer(void* list_vertices, UINT size_vertex, UINT size_list, void* shader_byte_code, UINT size_byte_shader, int type);
 	IndexBufferPtr createIndexBuffer(void* list_indices, UINT size_list);
 	ConstantBufferPtr createConstantBuffer(void* buffer, UINT size_buffer);
+	StructuredBufferPtr createStructuredBuffer(void* buffer, UINT size_unit, UINT count);
+	RWStructuredBufferPtr createRWStructuredBuffer(void* buffer, UINT size_unit, UINT count);
 	VertexShaderPtr createVertexShader(void* shader_byte_code, size_t byte_code_size);
 	PixelShaderPtr createPixelShader(void* shader_byte_code, size_t byte_code_size);
+	ComputeShaderPtr createComputeShader(void* shader_byte_code, size_t byte_code_size);
 	FrameBufferPtr createFrameBuffer(UINT width, UINT height);
 public:
 	bool compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	bool compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
+	bool compileComputeShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void releaseCompiledShader();
 	void setRasterizerState(CULL_MODE cull_mode);
 private:
@@ -48,14 +52,18 @@ private:
 private:
 	friend class SwapChain;
 	friend class VertexBuffer;
+	friend class IndexBuffer;
 	friend class ConstantBuffer;
+	friend class StructuredBuffer;
+	friend class RWStructuredBuffer;
 	friend class VertexShader;
 	friend class PixelShader;
-	friend class IndexBuffer;
+	friend class ComputeShader;
 	friend class Texture;
 	friend class Texture3D;
 	friend class VolumetricRenderManager;
 	friend class FrameBuffer;
 	friend class DeviceContext;
+	friend class AppWindow;
 };
 

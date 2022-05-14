@@ -115,6 +115,15 @@
     <Filter Include="App\RenderManagers">
       <UniqueIdentifier>{80b6a2a1-0a6b-4a14-b469-f36313a89c12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\ComputeShader">
+      <UniqueIdentifier>{1bdf4749-f244-4817-a431-d22fd2bc2dbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\StructuredBuffer">
+      <UniqueIdentifier>{35dd6ca9-558d-4732-ab65-1a4d2eef18fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\RWStructuredBuffer">
+      <UniqueIdentifier>{4a47cefd-a9e1-4543-87a0-d9097b7d5c23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -251,6 +260,15 @@
     </ClCompile>
     <ClCompile Include="Vector.cpp">
       <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\ComputeShader</Filter>
+    </ClCompile>
+    <ClCompile Include="StructuredBuffer.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\StructuredBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="RWStructuredBuffer.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\RWStructuredBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +422,15 @@
     <ClInclude Include="WaterRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\ComputeShader</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\StructuredBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="RWStructuredBuffer.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\RWStructuredBuffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -428,6 +455,9 @@
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PhongLighting.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="addTwoVectors.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

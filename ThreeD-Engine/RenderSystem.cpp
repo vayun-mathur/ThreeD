@@ -6,9 +6,14 @@
 #include "ConstantBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "ComputeShader.h"
 #include "FrameBuffer.h"
+#include "StructuredBuffer.h"
+#include "RWStructuredBuffer.h"
 
 #include <d3dcompiler.h>
+
+#include <iostream>
 
 RenderSystem::RenderSystem()
 {
@@ -112,6 +117,28 @@ ConstantBufferPtr RenderSystem::createConstantBuffer(void* buffer, UINT size_buf
 	return cb;
 }
 
+StructuredBufferPtr RenderSystem::createStructuredBuffer(void* buffer, UINT size_unit, UINT count)
+{
+	StructuredBufferPtr sb = nullptr;
+	try
+	{
+		sb = std::make_shared<StructuredBuffer>(buffer, size_unit, count, this);
+	}
+	catch (...) {}
+	return sb;
+}
+
+RWStructuredBufferPtr RenderSystem::createRWStructuredBuffer(void* buffer, UINT size_unit, UINT count)
+{
+	RWStructuredBufferPtr sb = nullptr;
+	try
+	{
+		sb = std::make_shared<RWStructuredBuffer>(buffer, size_unit, count, this);
+	}
+	catch (...) {}
+	return sb;
+}
+
 VertexShaderPtr RenderSystem::createVertexShader(void* shader_byte_code, size_t byte_code_size)
 {
 	VertexShaderPtr vs = nullptr;
@@ -134,6 +161,17 @@ PixelShaderPtr RenderSystem::createPixelShader(void* shader_byte_code, size_t by
 	return ps;
 }
 
+ComputeShaderPtr RenderSystem::createComputeShader(void* shader_byte_code, size_t byte_code_size)
+{
+	ComputeShaderPtr cs = nullptr;
+	try
+	{
+		cs = std::make_shared<ComputeShader>(shader_byte_code, byte_code_size, this);
+	}
+	catch (...) {}
+	return cs;
+}
+
 FrameBufferPtr RenderSystem::createFrameBuffer(UINT width, UINT height)
 {
 	FrameBufferPtr fb = nullptr;
@@ -149,15 +187,18 @@ bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* ent
 {
 	ID3DBlob* error_blob = nullptr;
 	if (FAILED(::D3DCompileFromFile(file_name, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob))) {
-		if (error_blob)error_blob->Release();
+
+		if (error_blob)
+		{
+			std::cout << (char*)error_blob->GetBufferPointer() << std::endl;
+			error_blob->Release();
+		}
 		return false;
 	}
 	*shader_byte_code = m_blob->GetBufferPointer();
 	*byte_code_size = m_blob->GetBufferSize();
 	return true;
 }
-
-#include <iostream>
 
 bool RenderSystem::compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
@@ -166,8 +207,24 @@ bool RenderSystem::compilePixelShader(const wchar_t* file_name, const char* entr
 		if (error_blob)
 		{
 			std::cout << (char*)error_blob->GetBufferPointer() << std::endl;
+			error_blob->Release();
 		}
-		if (error_blob)error_blob->Release();
+		return false;
+	}
+	*shader_byte_code = m_blob->GetBufferPointer();
+	*byte_code_size = m_blob->GetBufferSize();
+	return true;
+}
+
+bool RenderSystem::compileComputeShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
+{
+	ID3DBlob* error_blob = nullptr;
+	if (FAILED(::D3DCompileFromFile(file_name, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry_point_name, "cs_5_0", 0, 0, &m_blob, &error_blob))) {
+		if (error_blob)
+		{
+			std::cout << (char*)error_blob->GetBufferPointer() << std::endl;
+			error_blob->Release();
+		}
 		return false;
 	}
 	*shader_byte_code = m_blob->GetBufferPointer();

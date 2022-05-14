@@ -1,0 +1,26 @@
+#pragma once
+#include <d3d11.h>
+
+#include "prerequisites.h"
+
+class RWStructuredBuffer
+{
+public:
+	RWStructuredBuffer(void* buffer, UINT size_unit, UINT count, RenderSystem* system);
+	void update(DeviceContextPtr context, void* buffer);
+
+	void toCPU(DeviceContextPtr context);
+	void toGPU(DeviceContextPtr context);
+	void* open_data(DeviceContextPtr context);
+	void close_data(DeviceContextPtr context);
+
+	~RWStructuredBuffer();
+private:
+	ID3D11Buffer* m_buffer;
+	ID3D11Buffer* m_bufferCPU;
+	ID3D11UnorderedAccessView* m_uav;
+private:
+	RenderSystem* m_system = nullptr;
+private:
+	friend class DeviceContext;
+};
