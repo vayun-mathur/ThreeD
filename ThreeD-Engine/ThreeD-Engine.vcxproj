@@ -194,6 +194,7 @@
     <ClCompile Include="TerrainRenderManager.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
+    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="VolumeObject.cpp" />
     <ClCompile Include="VolumetricRenderManager.cpp" />
     <ClCompile Include="WaterRenderManager.cpp" />

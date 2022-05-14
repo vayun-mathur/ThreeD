@@ -66,12 +66,12 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 
 	//set lights
 	for (int i = 0; i < dlights.size(); i++) {
-		cc.dlight[i].light_direction = dlights[i]->getDirection();
+		cc.dlight[i].light_direction = vec4(dlights[i]->getDirection(), 1);
 	}
 	cc.m_dlight_count = (int)dlights.size();
 
 	for (int i = 0; i < plights.size(); i++) {
-		cc.plight[i].light_position = plights[i]->getPosition();
+		cc.plight[i].light_position = vec4(plights[i]->getPosition(), 1);
 		cc.plight[i].light_radius = plights[i]->getRadius();
 		cc.plight[i].attenuation = plights[i]->getAttenuation();
 	}
@@ -94,7 +94,7 @@ void AppWindow::render()
 	CameraObjectPtr cam = m_scene->getCamera();
 	cc.m_view = cam->getViewMatrix();
 	cc.m_projection = cam->getProjectionMatrix();
-	cc.m_camera_position = cam->getCameraPosition();
+	cc.m_camera_position = vec4(cam->getCameraPosition(), 1);
 
 	float distance = 2 * cc.m_camera_position.y;
 

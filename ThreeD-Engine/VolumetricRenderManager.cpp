@@ -20,9 +20,9 @@ struct MatrixBuffer
 	mat4 projection;
 	mat4 inv_transform;
 	vec3 cam_box_coords;
-	float f;
+	float lightAbsorptionThroughCloud = 0.85;
 	vec3 bounds_min;
-	float f2;
+	float lightAbsorptionTowardSun = 0.94;
 	vec3 bounds_max;
 	float f3;
 	vec3 cam_pos;
@@ -31,13 +31,32 @@ struct MatrixBuffer
 	float f5;
 };
 
+__declspec(align(16))
+struct CloudBuffer
+{
+	vec4 shapeNoiseWeights = vec4(2.5, 0.65, 0.2, 0.25);
+	vec3 shapeOffset = vec3(0, 0, 0);
+	float scale = 1;
+	vec3 detailOffset = vec3(0, 0, 0);
+	float detailNoiseScale = 3;
+	vec3 detailWeights = vec3(1, 0.5, 0.5);
+	float detailNoiseWeight = 0;
+	float densityOffset = -4.07;
+	float densityMultiplier = 1;
+	float timeScale = 1;
+	float baseSpeed = 0.5;
+	float detailSpeed = 1;
+};
+
 MatrixBuffer buf;
+CloudBuffer cbuf;
 
 void CreateCube();
 
 Texture3DPtr m_vol;
 VertexBufferPtr m_cubeVB;
 IndexBufferPtr m_cubeIB;
+ConstantBufferPtr m_mb;
 ConstantBufferPtr m_cb;
 
 ID3D11RasterizerState* m_frontFaceCull;
@@ -71,7 +90,7 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		buf.cam_dir = buf.view(vec4(0, 0, 1, 0)).xyz();
 		buf.inv_transform = buf.transform;
 		buf.inv_transform.inverse();
-		m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &buf);
+		m_mb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &buf);
 
 		//-----------------------------------------------------------------------------//
 		// Ray-casting / Volume Rendering 
@@ -85,8 +104,10 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		// set shaders
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_ray_vs);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ray_ps);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_vs, m_cb, 0);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_cb, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_vs, m_mb, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_mb, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_vs, m_cb, 1);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ray_ps, m_cb, 1);
 
 		// pass in our textures )
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_vol, 0);
@@ -177,7 +198,8 @@ void VolumetricRenderManager::init()
 
 	buf.view = AppWindow::s_main->m_scene->getCamera()->getViewMatrix();
 	buf.projection = AppWindow::s_main->m_scene->getCamera()->getProjectionMatrix();
-	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(MatrixBuffer));
+	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(CloudBuffer));
+	m_mb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(MatrixBuffer));
 }
 
 void VolumetricRenderManager::render(std::vector<VolumeObjectPtr>& volumes)

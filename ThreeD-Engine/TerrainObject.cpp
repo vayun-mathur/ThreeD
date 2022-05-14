@@ -8,8 +8,8 @@
 vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2) {
 	vec3 tangentA = vertex1 - vertex0;
 	vec3 tangentB = vertex2 - vertex0;
-	vec3 normal = tangentA.cross(tangentB);
-	normal.norm();
+	vec3 normal = vec3::cross(tangentA, tangentB);
+	normal.normalize();
 	return normal;
 }
 

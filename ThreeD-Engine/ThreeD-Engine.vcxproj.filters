@@ -249,6 +249,9 @@
     <ClCompile Include="MeshRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
     </ClCompile>
+    <ClCompile Include="Vector.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">

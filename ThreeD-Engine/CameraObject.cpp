@@ -47,11 +47,9 @@ void CameraObject::updateMatrices() {
 
 	m_world_cam = world_cam;
 
-
 	world_cam.inverse();
 
 	m_view = world_cam;
-
 
 	//projection matrix
 

@@ -3,101 +3,98 @@
 
 class vec2 {
 public:
-	vec2() : x(0), y(0) {}
-	vec2(float x, float y) : x(x), y(y) {}
-	vec2(const vec2& vector) : x(vector.x), y(vector.y) {}
+	vec2();
+	vec2(float f);
+	vec2(float x, float y);
+	vec2(const vec2& vector);
 
-	static vec2 lerp(const vec2& start, const vec2& end, float delta) {
-		vec2 v;
-		v.x = start.x * (1.0f - delta) + end.x * delta;
-		v.y = start.y * (1.0f - delta) + end.y * delta;
-		return v;
-	}
+	static vec2 lerp(const vec2& start, const vec2& end, float delta);
+	static float dot(const vec2& v1, const vec2& v2);
+	static float angle(const vec2& v1, const vec2& v2);
 
-	vec2 operator*(float scalar)
-	{
-		return vec2(x * scalar, y * scalar);
-	}
+	vec2 operator+(const vec2& v) const;
+	vec2 operator-(const vec2& v) const;
+	vec2 operator*(const vec2& v) const;
+	vec2 operator/(const vec2& v) const;
 
-	vec2 operator+(const vec2& other)
-	{
-		return vec2(x + other.x, y + other.y);
-	}
+	vec2& operator+=(const vec2& v);
+	vec2& operator-=(const vec2& v);
+	vec2& operator*=(const vec2& v);
+	vec2& operator/=(const vec2& v);
 
-	~vec2() {
+	vec2& operator=(const vec2& v);
 
-	}
+	bool operator==(const vec2& v) const;
+	
+	float mag() const;
+	vec2 normal() const;
+	vec2& normalize();
+
 public:
-	float x, y;
+	union {
+		struct {
+			float x, y;
+		};
+		float m[2];
+	};
 };
 
 class vec3 {
 public:
-	vec3() : x(0), y(0), z(0) {}
-	vec3(float x, float y, float z) : x(x), y(y), z(z) {}
-	vec3(const vec3& vector) : x(vector.x), y(vector.y), z(vector.z) {}
+	vec3();
+	vec3(float f);
+	vec3(float x, float y, float z);
+	vec3(const vec2& xy, float z);
+	vec3(float x, const vec2& yz);
+	vec3(const vec3& vector);
 
-	static vec3 lerp(const vec3& start, const vec3& end, float delta) {
-		vec3 v;
-		v.x = start.x * (1.0f - delta) + end.x * delta;
-		v.y = start.y * (1.0f - delta) + end.y * delta;
-		v.z = start.z * (1.0f - delta) + end.z * delta;
-		return v;
-	}
+	static vec3 lerp(const vec3& start, const vec3& end, float delta);
+	static float dot(const vec3& v1, const vec3& v2);
+	static vec3 cross(const vec3& v1, const vec3& v2);
+	static float angle(const vec3& v1, const vec3& v2);
 
-	vec3 cross(const vec3& other) {
-		return vec3(
-			y * other.z - z * other.y,
-			z * other.x - x * other.z,
-			x * other.y - y * other.x
-		);
-	}
+	vec3 operator+(const vec3& v) const;
+	vec3 operator-(const vec3& v) const;
+	vec3 operator*(const vec3& v) const;
+	vec3 operator/(const vec3& v) const;
 
-	vec3 operator*(float scalar)
-	{
-		return vec3(x * scalar, y * scalar, z * scalar);
-	}
+	vec3& operator+=(const vec3& v);
+	vec3& operator-=(const vec3& v);
+	vec3& operator*=(const vec3& v);
+	vec3& operator/=(const vec3& v);
 
-	vec3 operator+(const vec3& other)
-	{
-		return vec3(x + other.x, y + other.y, z + other.z);
-	}
+	vec3& operator=(const vec3& v);
 
-	vec3 operator-(const vec3& other)
-	{
-		return vec3(x - other.x, y - other.y, z - other.z);
-	}
+	bool operator==(const vec3& v) const;
 
-	vec3& operator=(const vec3& other)
-	{
-		x = other.x;
-		y = other.y;
-		z = other.z;
-		return *this;
-	}
+	float mag() const;
+	vec3 normal() const;
+	vec3& normalize();
 
-	bool operator==(const vec3& other) {
-		return x == other.x && y == other.y && z == other.z;
-	}
+	vec2 xy();
+	vec2 yz();
+	vec2 xz();
+	vec2 yx();
+	vec2 zy();
+	vec2 zx();
 
-	vec3 norm() const {
-		float mag = sqrtf(x * x + y * y + z * z);
-		return vec3(x / mag, y / mag, z / mag);
-	}
-
-	~vec3() {
-
-	}
 public:
-	float x, y, z;
+	union {
+		struct {
+			float x, y, z;
+		};
+		float m[3];
+	};
 };
 
+/*
 class vec4 {
 public:
 	vec4() : x(0), y(0), z(0), w(0) {}
 	vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 	vec4(const vec4& vector) : x(vector.x), y(vector.y), z(vector.z), w(vector.w) {}
 	vec4(const vec3& vector) : x(vector.x), y(vector.y), z(vector.z), w(1) {}
+	vec4(const vec3& vector, float w) : x(vector.x), y(vector.y), z(vector.z), w(w) {}
 
 	void cross(vec4& v1, vec4& v2, vec4& v3)
 	{
@@ -124,7 +121,57 @@ public:
 		struct {
 			float x, y, z, w;
 		};
-		float mat[4];
+		float m[4];
+	};
+};
+*/
+
+
+
+class vec4 {
+public:
+	vec4();
+	vec4(float f);
+	vec4(float x, float y, float z, float w);
+	vec4(const vec2& xy, const vec2& zw);
+	vec4(const vec2& xy, float z, float w);
+	vec4(float x, float y, const vec2& zw);
+	vec4(const vec3& xyz, float w);
+	vec4(float x, const vec3& yzw);
+	vec4(const vec4&& vector) noexcept;
+
+	static vec4 lerp(const vec4& start, const vec4& end, float delta);
+	static float dot(const vec4& v1, const vec4& v2);
+	static vec4 cross(const vec4& v1, const vec4& v2, const vec4& v3);
+	static float angle(const vec4& v1, const vec4& v2);
+
+	vec4 operator+(const vec4& v) const;
+	vec4 operator-(const vec4& v) const;
+	vec4 operator*(const vec4& v) const;
+	vec4 operator/(const vec4& v) const;
+
+	vec4& operator+=(const vec4& v);
+	vec4& operator-=(const vec4& v);
+	vec4& operator*=(const vec4& v);
+	vec4& operator/=(const vec4& v);
+
+	vec4& operator=(const vec4& v);
+
+	bool operator==(const vec4& v) const;
+
+	float mag() const;
+	vec4 normal() const;
+	vec4& normalize();
+
+	vec3 xyz();
+	//TODO: add rest of subvectors
+
+public:
+	union {
+		struct {
+			float x, y, z, w;
+		};
+		float m[4];
 	};
 };
 
@@ -190,8 +237,7 @@ public:
 		v2 = vec4(this->mat[0][1], this->mat[1][1], this->mat[2][1], this->mat[3][1]);
 		v3 = vec4(this->mat[0][2], this->mat[1][2], this->mat[2][2], this->mat[3][2]);
 
-
-		minor.cross(v1, v2, v3);
+		minor = vec4::cross(v1, v2, v3);
 		det = -(this->mat[0][3] * minor.x + this->mat[1][3] * minor.y + this->mat[2][3] * minor.z +
 			this->mat[3][3] * minor.w);
 		return det;
@@ -220,7 +266,7 @@ public:
 					vec[a].w = (this->mat[j][3]);
 				}
 			}
-			v.cross(vec[0], vec[1], vec[2]);
+			v = vec4::cross(vec[0], vec[1], vec[2]);
 
 			out.mat[0][i] = (i & 1 ? -1.0f : 1.0f) * v.x / det;
 			out.mat[1][i] = (i & 1 ? -1.0f : 1.0f) * v.y / det;
@@ -270,11 +316,11 @@ public:
 	{
 		vec4 out;
 		for (int i = 0; i < 4; i++) {
-			out.mat[i] =
-				mat[0][i] * vector.mat[0]
-				+ mat[1][i] * vector.mat[1]
-				+ mat[2][i] * vector.mat[2]
-				+ mat[3][i] * vector.mat[3];
+			out.m[i] =
+				mat[0][i] * vector.m[0]
+				+ mat[1][i] * vector.m[1]
+				+ mat[2][i] * vector.m[2]
+				+ mat[3][i] * vector.m[3];
 		}
 		return out;
 	}
