@@ -1,16 +1,18 @@
 #pragma once
 #include "Vector.h"
+#undef max
+#undef min
 
 class VolumeObject {
 public:
-	VolumeObject(vec3 position, vec3 scale)
-		: position(position), scale(scale) {}
+	VolumeObject(vec3 min, vec3 max)
+		: min(min), max(max) {}
 
-	vec3 getPosition() { return position; }
-	void setPosition(vec3 position) { this->position = position; }
-	vec3 getScale() { return scale; }
-	void setScale(vec3 scale) { this->scale = scale; }
+	vec3 getMin() { return min; }
+	void setMin(vec3 min) { this->min = min; }
+	vec3 getMax() { return max; }
+	void setMax(vec3 max) { this->max = max; }
 private:
-	vec3 position;
-	vec3 scale;
+	vec3 min;
+	vec3 max;
 };

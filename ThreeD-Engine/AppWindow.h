@@ -55,7 +55,7 @@ public:
 	AppWindow();
 
 	void render();
-	void renderScene(ConstantBufferPtr cc);
+	void renderScene(ConstantBufferPtr cc, FrameBufferPtr toRender);
 	void update();
 
 	~AppWindow();
@@ -89,6 +89,8 @@ public:
 	VolumetricRenderManager* volumetric_manager;
 
 	SceneSystem* m_scene = nullptr;
+
+	FrameBufferPtr everything;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;

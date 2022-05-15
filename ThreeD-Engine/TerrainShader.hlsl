@@ -60,5 +60,5 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 		light += calculatePoint(material, plight[i], input.world_pos, input.normal);
 	}
 
-	return float4(light, 1.0) * input.visibility + fog_color * (1 - input.visibility);
+	return float4(light, 1.0);// *input.visibility + fog_color * (1 - input.visibility);
 }

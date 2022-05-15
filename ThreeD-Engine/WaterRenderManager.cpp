@@ -73,13 +73,3 @@ void WaterRenderManager::update(double dt)
 	wc.move_factor += 0.03 * dt;
 	wc.move_factor -= floor(wc.move_factor);
 }
-
-void WaterRenderManager::setReflectionTexture()
-{
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_reflection, 0, 0, 0, 1);
-}
-
-void WaterRenderManager::setRefractionTexture()
-{
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_refraction, 0, 0, 0, 1);
-}

@@ -12,6 +12,8 @@
 #include "ComputeShader.h"
 #include "StructuredBuffer.h"
 #include "RWStructuredBuffer.h"
+#include "RWTexture.h"
+#include "RWTexture3D.h"
 #include <exception>
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
@@ -111,9 +113,34 @@ void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const Texture
 	m_device_context->PSSetShaderResources(index, 1, &texture->m_shader_res_view);
 }
 
+void DeviceContext::setTextureVS(const RWTexturePtr& texture, unsigned int index)
+{
+	m_device_context->VSSetShaderResources(index, 1, &texture->m_srv);
+}
+
+void DeviceContext::setTexturePS(const RWTexturePtr& texture, unsigned int index)
+{
+	m_device_context->PSSetShaderResources(index, 1, &texture->m_srv);
+}
+
+void DeviceContext::setTextureVS(const RWTexture3DPtr& texture, unsigned int index)
+{
+	m_device_context->VSSetShaderResources(index, 1, &texture->m_srv);
+}
+
+void DeviceContext::setTexturePS(const RWTexture3DPtr& texture, unsigned int index)
+{
+	m_device_context->PSSetShaderResources(index, 1, &texture->m_srv);
+}
+
 void DeviceContext::setTextureCS(const TexturePtr& texture, unsigned int index)
 {
 	m_device_context->CSSetShaderResources(index, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setRWTextureCS(const RWTexturePtr& texture, unsigned int index)
+{
+	m_device_context->CSSetUnorderedAccessViews(index, 1, &texture->m_uav, 0);
 }
 
 void DeviceContext::setTexture(const VertexShaderPtr& vertex_shader, const Texture3DPtr& texture, unsigned int index)
@@ -129,6 +156,11 @@ void DeviceContext::setTexture(const PixelShaderPtr& pixel_shader, const Texture
 void DeviceContext::setTextureCS(const Texture3DPtr& texture, unsigned int index)
 {
 	m_device_context->CSSetShaderResources(index, 1, &texture->m_shader_res_view);
+}
+
+void DeviceContext::setRWTextureCS(const RWTexture3DPtr& texture, unsigned int index)
+{
+	m_device_context->CSSetUnorderedAccessViews(index, 1, &texture->m_uav, 0);
 }
 
 void DeviceContext::setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& buffer, unsigned int buffer_index)

@@ -12,8 +12,8 @@ public:
 	void render(std::vector<WaterTileObjectPtr>& waters, ConstantBufferPtr cb, constant& cc);
 	void update(double dt);
 
-	void setReflectionTexture();
-	void setRefractionTexture();
+	FrameBufferPtr getReflectionTexture() { return m_reflection; }
+	FrameBufferPtr getRefractionTexture() { return m_refraction; }
 private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;

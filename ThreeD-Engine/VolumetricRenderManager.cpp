@@ -11,6 +11,10 @@
 #include "Texture.h"
 #include "FrameBuffer.h"
 #include "Texture3D.h"
+#include "ComputeShader.h"
+#include "StructuredBuffer.h"
+#include "RWTexture3D.h"
+#include "RWTexture.h"
 
 __declspec(align(16))
 struct MatrixBuffer
@@ -20,15 +24,16 @@ struct MatrixBuffer
 	mat4 projection;
 	mat4 inv_transform;
 	vec3 cam_box_coords;
-	float lightAbsorptionThroughCloud = 0.85;
+	float lightAbsorptionThroughCloud = 0.75;
 	vec3 bounds_min;
-	float lightAbsorptionTowardSun = 0.94;
+	float lightAbsorptionTowardSun = 0.84;
 	vec3 bounds_max;
 	float f3;
 	vec3 cam_pos;
 	float f4;
 	vec3 cam_dir;
 	float f5;
+	vec2 screen_size;
 };
 
 __declspec(align(16))
@@ -41,11 +46,12 @@ struct CloudBuffer
 	float detailNoiseScale = 3;
 	vec3 detailWeights = vec3(1, 0.5, 0.5);
 	float detailNoiseWeight = 0;
-	float densityOffset = -4.07;
+	float densityOffset = -1;
 	float densityMultiplier = 1;
 	float timeScale = 1;
 	float baseSpeed = 0.5;
 	float detailSpeed = 1;
+	float rayOffsetStrength = 0.05;
 };
 
 MatrixBuffer buf;
@@ -54,12 +60,20 @@ CloudBuffer cbuf;
 void CreateCube();
 
 Texture3DPtr m_vol;
+TexturePtr m_blue;
 VertexBufferPtr m_cubeVB;
 IndexBufferPtr m_cubeIB;
 ConstantBufferPtr m_mb;
 ConstantBufferPtr m_cb;
 
 ID3D11RasterizerState* m_frontFaceCull;
+
+vec3 min(vec3 v1, vec3 v2) {
+	return vec3(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+}
+vec3 max(vec3 v1, vec3 v2) {
+	return vec3(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
+}
 
 
 void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, std::vector<VolumeObjectPtr>& volumes)
@@ -77,10 +91,13 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		buf.projection = AppWindow::s_main->m_scene->getCamera()->getProjectionMatrix();
 		buf.view = AppWindow::s_main->m_scene->getCamera()->getViewMatrix();
 		buf.transform = mat4();
-		buf.transform.setScale(volume->getScale());
-		buf.transform.setTranslation(volume->getPosition());
-		vec3 min = buf.transform(vec4(-1, -1, -1, 1)).xyz();
-		vec3 max = buf.transform(vec4(1, 1, 1, 1)).xyz();
+		vec3 tmin = min(volume->getMin(), AppWindow::s_main->m_scene->getCamera()->getCameraPosition() - 2);
+		vec3 tmax = max(volume->getMax(), AppWindow::s_main->m_scene->getCamera()->getCameraPosition() + 2);
+		buf.transform.setTranslation(tmin + (tmax - tmin)/2);
+		buf.transform.setScale((tmax - tmin)/2);
+
+		vec3 min = volume->getMin();
+		vec3 max = volume->getMax();
 		vec3 p = AppWindow::s_main->m_scene->getCamera()->getCameraPosition() - min;
 		vec3 s = max - min;
 		buf.cam_box_coords = vec3(p.x / s.x, p.y / s.y, p.z / s.z);
@@ -88,8 +105,11 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		buf.bounds_max = max;
 		buf.cam_pos = AppWindow::s_main->m_scene->getCamera()->getCameraPosition();
 		buf.cam_dir = buf.view(vec4(0, 0, 1, 0)).xyz();
-		buf.inv_transform = buf.transform;
+		buf.inv_transform = mat4();
+		buf.inv_transform.setTranslation(min + (max - min) / 2);
+		buf.inv_transform.setScale((max - min) / 2);
 		buf.inv_transform.inverse();
+		buf.screen_size = vec2(AppWindow::s_main->getClientWindowRect().right- AppWindow::s_main->getClientWindowRect().left, AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 		m_mb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &buf);
 
 		//-----------------------------------------------------------------------------//
@@ -111,6 +131,9 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 
 		// pass in our textures )
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_vol, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_blue, 1);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, AppWindow::s_main->everything->getDepthTexture(), 2);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, AppWindow::s_main->everything->getTexture(), 3);
 
 		// Draw the cube
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);
@@ -168,6 +191,30 @@ void CreateCube()
 	m_cubeIB = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&indices[0], 36);
 }
 
+float randomFloat() {
+	return (float)rand() / RAND_MAX;
+}
+
+void VolumetricRenderManager::updateWorleyPointsBuffer(StructuredBufferPtr buffer, int numCellsPerAxis) {
+	vec3* points = new vec3[numCellsPerAxis * numCellsPerAxis * numCellsPerAxis];
+	float cellSize = 1.f / numCellsPerAxis;
+
+	for (int x = 0; x < numCellsPerAxis; x++) {
+		for (int y = 0; y < numCellsPerAxis; y++) {
+			for (int z = 0; z < numCellsPerAxis; z++) {
+				float randomX = randomFloat();
+				float randomY = randomFloat();
+				float randomZ = randomFloat();
+				vec3 randomOffset = vec3(randomX, randomY, randomZ) * cellSize;
+				vec3 cellCorner = vec3(x, y, z) * cellSize;
+
+				int index = x + numCellsPerAxis * (y + z * numCellsPerAxis);
+				points[index] = cellCorner + randomOffset;
+			}
+		}
+	}
+	buffer->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), points);
+}
 
 void VolumetricRenderManager::init()
 {
@@ -192,6 +239,7 @@ void VolumetricRenderManager::init()
 
 	// load of the raw textures into a D3D11_TEXTURE3D_DESC 
 	m_vol = std::make_shared<Texture3D>(L"./Assets/cloud.raw", 256);
+	m_blue = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(L"./Assets/Textures/LDR_LLL1_0.png");
 
 	// create the volume/cube primitive
 	CreateCube();
@@ -205,4 +253,8 @@ void VolumetricRenderManager::init()
 void VolumetricRenderManager::render(std::vector<VolumeObjectPtr>& volumes)
 {
 	Render(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->m_device_context, volumes);
+}
+
+void VolumetricRenderManager::update()
+{
 }

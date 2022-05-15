@@ -187,6 +187,8 @@
     <ClCompile Include="NumberObject.cpp" />
     <ClCompile Include="PointLightObject.cpp" />
     <ClCompile Include="RWStructuredBuffer.cpp" />
+    <ClCompile Include="RWTexture.cpp" />
+    <ClCompile Include="RWTexture3D.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="Script.cpp" />
@@ -236,6 +238,8 @@
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="RWStructuredBuffer.h" />
+    <ClInclude Include="RWTexture.h" />
+    <ClInclude Include="RWTexture3D.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="Script.h" />

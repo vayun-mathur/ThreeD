@@ -109,9 +109,6 @@
     <Filter Include="Engine\SceneSystem\VolumeObject">
       <UniqueIdentifier>{c8b8f077-5b3f-453e-99d6-c50c746c4ff5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\GraphicsEngine\ResourceManager\Texture3DManager">
-      <UniqueIdentifier>{0eca5985-0d83-42da-94d3-c58ca69ed2d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="App\RenderManagers">
       <UniqueIdentifier>{80b6a2a1-0a6b-4a14-b469-f36313a89c12}</UniqueIdentifier>
     </Filter>
@@ -123,6 +120,15 @@
     </Filter>
     <Filter Include="Engine\GraphicsEngine\RenderSystem\RWStructuredBuffer">
       <UniqueIdentifier>{4a47cefd-a9e1-4543-87a0-d9097b7d5c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\Texture3D">
+      <UniqueIdentifier>{0437b84c-4a43-43dd-8607-8af4fd552707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\RWTexture3D">
+      <UniqueIdentifier>{c4061339-5931-452e-a626-3c6adc4003b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\RWTexture">
+      <UniqueIdentifier>{3b685556-a6dc-45b4-b5e1-2b73c61e01c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -243,9 +249,6 @@
     <ClCompile Include="VolumeObject.cpp">
       <Filter>Engine\SceneSystem\VolumeObject</Filter>
     </ClCompile>
-    <ClCompile Include="Texture3D.cpp">
-      <Filter>Engine\GraphicsEngine\ResourceManager\Texture3DManager</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
     </ClCompile>
@@ -269,6 +272,15 @@
     </ClCompile>
     <ClCompile Include="RWStructuredBuffer.cpp">
       <Filter>Engine\GraphicsEngine\RenderSystem\RWStructuredBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture3D.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\Texture3D</Filter>
+    </ClCompile>
+    <ClCompile Include="RWTexture3D.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\RWTexture3D</Filter>
+    </ClCompile>
+    <ClCompile Include="RWTexture.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\RWTexture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -410,9 +422,6 @@
     <ClInclude Include="VolumeObject.h">
       <Filter>Engine\SceneSystem\VolumeObject</Filter>
     </ClInclude>
-    <ClInclude Include="Texture3D.h">
-      <Filter>Engine\GraphicsEngine\ResourceManager\Texture3DManager</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
@@ -430,6 +439,15 @@
     </ClInclude>
     <ClInclude Include="RWStructuredBuffer.h">
       <Filter>Engine\GraphicsEngine\RenderSystem\RWStructuredBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture3D.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\Texture3D</Filter>
+    </ClInclude>
+    <ClInclude Include="RWTexture3D.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\RWTexture3D</Filter>
+    </ClInclude>
+    <ClInclude Include="RWTexture.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\RWTexture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

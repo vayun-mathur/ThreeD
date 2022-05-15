@@ -62,4 +62,6 @@ void RWStructuredBuffer::close_data(DeviceContextPtr context)
 RWStructuredBuffer::~RWStructuredBuffer()
 {
 	if (m_buffer) m_buffer->Release();
+	if (m_bufferCPU) m_bufferCPU->Release();
+	if (m_uav) m_uav->Release();
 }

@@ -60,7 +60,9 @@ private:
 	friend class PixelShader;
 	friend class ComputeShader;
 	friend class Texture;
+	friend class RWTexture;
 	friend class Texture3D;
+	friend class RWTexture3D;
 	friend class VolumetricRenderManager;
 	friend class FrameBuffer;
 	friend class DeviceContext;

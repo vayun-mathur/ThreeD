@@ -3,12 +3,12 @@
 
 // Textures and samplers
 Texture3D<float> txVolume : register(t0);
-Texture2D WeatherMap : register(t1);
-sampler samplerWeatherMap : register(s1);
-Texture2D NoiseTex : register(t2);
-sampler samplerNoiseTex : register(s2);
-Texture2D DetailNoiseTex : register(t2);
-sampler samplerDetailNoiseTex : register(s2);
+Texture2D<float4> BlueNoise : register(t1);
+sampler samplerBlueNoise : register(s1);
+Texture2D Depth : register(t2);
+sampler samplerDepth : register(s2);
+Texture2D Main : register(t3);
+sampler samplerMain : register(s3);
 
 SamplerState samplerLinear : register(s0);
 
@@ -32,6 +32,7 @@ cbuffer cbEveryFrame : register(b0)
 	float f4;
 	float3 cam_dirs;
 	float f5;
+	float2 screenSize;
 }
 
 cbuffer cloud : register(b1)
@@ -48,6 +49,7 @@ cbuffer cloud : register(b1)
 	float timeScale;
 	float baseSpeed;
 	float detailSpeed;
+	float rayOffsetStrength;
 }
 
 // Structures
@@ -107,59 +109,6 @@ float remap(float In, float inMin, float inMax, float outMin, float outMax)
 	return outMin + (In - inMin) * (outMax - outMin) / (inMax - inMin);
 }
 
-float sampleDensity2(float3 rayPos) {
-	// Constants:
-	const int mipLevel = 0;
-	const float baseScale = 1 / 1000.0;
-	const float offsetSpeed = 1 / 100.0;
-
-	// Calculate texture sample positions
-	//float time = _Time.x * timeScale;
-	float time = 0;
-	float3 size = bounds_max - bounds_min;
-	float3 boundsCentre = (bounds_min + bounds_max) * .5;
-	float3 uvw = (size * .5 + rayPos) * baseScale * scale;
-	float3 shapeSamplePos = uvw + shapeOffset * offsetSpeed + float3(time, time * 0.1, time * 0.2) * baseSpeed;
-
-	// Calculate falloff at along x/z edges of the cloud container
-	const float containerEdgeFadeDst = 50;
-	float dstFromEdgeX = min(containerEdgeFadeDst, min(rayPos.x - bounds_min.x, bounds_max.x - rayPos.x));
-	float dstFromEdgeZ = min(containerEdgeFadeDst, min(rayPos.z - bounds_min.z, bounds_max.z - rayPos.z));
-	float edgeWeight = min(dstFromEdgeZ, dstFromEdgeX) / containerEdgeFadeDst;
-
-	// Calculate height gradient from weather map
-	float2 weatherUV = (size.xz * .5 + (rayPos.xz - boundsCentre.xz)) / max(size.x, size.z);
-	float weatherMap = WeatherMap.SampleLevel(samplerWeatherMap, weatherUV, mipLevel).x;
-	float gMin = remap(weatherMap, 0, 1, 0.1, 0.5);
-	float gMax = remap(weatherMap, 0, 1, gMin, 0.9);
-	float heightPercent = (rayPos.y - bounds_min.y) / size.y;
-	float heightGradient = saturate(remap(heightPercent, 0.0, gMin, 0, 1)) * saturate(remap(heightPercent, 1, gMax, 0, 1));
-	heightGradient *= edgeWeight;
-
-	// Calculate base shape density
-	float4 shapeNoise = NoiseTex.SampleLevel(samplerNoiseTex, shapeSamplePos, mipLevel);
-	float4 normalizedShapeWeights = shapeNoiseWeights / dot(shapeNoiseWeights, 1);
-	float shapeFBM = dot(shapeNoise, normalizedShapeWeights) * heightGradient;
-	float baseShapeDensity = shapeFBM + densityOffset * .1;
-
-	// Save sampling from detail tex if shape density <= 0
-	if (baseShapeDensity > 0) {
-		// Sample detail noise
-		float3 detailSamplePos = uvw * detailNoiseScale + detailOffset * offsetSpeed + float3(time * .4, -time, time * 0.1) * detailSpeed;
-		float4 detailNoise = DetailNoiseTex.SampleLevel(samplerDetailNoiseTex, detailSamplePos, mipLevel);
-		float3 normalizedDetailWeights = detailWeights / dot(detailWeights, 1);
-		float detailFBM = dot(detailNoise, normalizedDetailWeights);
-
-		// Subtract detail noise from base shape (weighted by inverse density so that edges get eroded more than centre)
-		float oneMinusShape = 1 - shapeFBM;
-		float detailErodeWeight = oneMinusShape * oneMinusShape * oneMinusShape;
-		float cloudDensity = baseShapeDensity - (1 - detailFBM) * detailErodeWeight * detailNoiseWeight;
-
-		return cloudDensity * densityMultiplier * 0.1;
-	}
-	return 0;
-}
-
 float rfunc(float2 uv)
 {
 	float2 noise = (frac(sin(dot(uv, float2(12.9898, 78.233) * 2.0)) * 43758.5453));
@@ -212,6 +161,15 @@ float brightness(float depth) {
 	return t * s;
 }
 
+float linearDepth(float depthSample)
+{
+	float zNear = 0.1f;
+	float zFar = 1000;
+	depthSample = 2.0 * depthSample - 1.0;
+	float zLinear = 2.0 * zNear * zFar / (zFar + zNear - depthSample * (zFar - zNear));
+	return zLinear;
+}
+
 // Pixel shader
 float4 RayCastPS(PSInput input) : SV_TARGET
 {
@@ -223,10 +181,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	float3 pos_front = cam_pos + rayDir * intersections.x;
 	float3 pos_back = pos_front + rayDir * intersections.y;
 
-	float stepSize = length(pos_back - pos_front) / g_iMaxIterations;
-
-	// Single step: direction times delta step - stepSize is precaluclated
-	float3 step = stepSize * rayDir;
+	float stepSize = 0.1;
 
 
 	float3 light_dir = normalize(float3(1, 3, 1));
@@ -239,11 +194,17 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	float3 light_energy = float3(0, 0, 0);
 	float transmittance = 1;
 
+	float randomOffset = BlueNoise.SampleLevel(samplerBlueNoise, pos_front.xz, 0).r;
+	randomOffset *= rayOffsetStrength;
+
+	float dstTravelled = randomOffset;
+	float dstLimit = intersections.y;
+
 	// iterate for the volume, sampling along the way at equidistant steps 
 	[loop]
-	for (uint i = 0; i < g_iMaxIterations; ++i)
+	while(dstTravelled < dstLimit)
 	{
-		float3 v = pos_front + step * (i + 0.1*rfunc(float2(i, i)));
+		float3 v = pos_front + rayDir * dstTravelled;
 		// sample the texture accumlating the result as we step through the texture
 		float density = sampleDensity(v);
 
@@ -257,19 +218,24 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 				break;
 			}
 		}
+		dstTravelled += stepSize;
 	}
+
+	float2 realpos = (input.pos.xy) / screenSize;
 
 	float3 params = float3(1, 0, 0);
 	float3 colA = float3(226, 236, 235) / 255;
 	float3 colB = float3(135, 206, 235) / 255;
-	float depth = 10000;
+	float depth = linearDepth(Depth.Sample(samplerDepth, realpos).r);
 
 	// Composite sky + background
 	float3 skyColBase = lerp(colA, colB, sqrt(abs(saturate(rayDir.y))));
-	float3 backgroundCol = float3(0, 0, 0);// = tex2D(_MainTex, i.uv);
-	float dstFog = 1 - exp(-max(0, depth) * 8 * .0001);
-	float3 sky = dstFog * skyColBase;
-	backgroundCol = backgroundCol *( 1 - dstFog) + sky;
+	float dstFog = 1 - exp(-max(0, depth) * 8 * .001); //increase
+	// exp(-max(0, depth) * 8 * .0001) decrease
+	// -max(0, depth) * 8 * .0001 decrease
+	// max(0, depth) * 8 * .0001 increase
+	// depth * 8 * .0001 increase
+	float3 backgroundCol = lerp(Main.Sample(samplerMain, realpos).rgb, skyColBase, saturate(dstFog));
 
 	// Sun
 	float focusedEyeCos = pow(saturate(cosAngle), params.x);

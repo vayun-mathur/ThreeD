@@ -57,7 +57,7 @@ void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
 	}
 }
 
-void AppWindow::renderScene(ConstantBufferPtr cb) {
+void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 	std::vector<MeshObjectPtr> meshes;
 	std::vector<TerrainObjectPtr> terrains;
 	std::vector<WaterTileObjectPtr> waters;
@@ -79,19 +79,30 @@ void AppWindow::renderScene(ConstantBufferPtr cb) {
 		cc.plight[i].attenuation = plights[i]->getAttenuation();
 	}
 	cc.m_plight_count = (int)plights.size();
+
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(everything, 0, 0, 0, 0);
 	mesh_manager->render(meshes, m_cb, cc);
-	mesh_manager->render_skybox(skybox, m_cb, cc);
+	//mesh_manager->render_skybox(skybox, m_cb, cc);
 
 	terrain_manager->render(terrains, m_cb, cc);
 
 	water_manager->render(waters, m_cb, cc);
-	volumes.push_back(std::make_shared<VolumeObject>(vec3(0, 30, 0), vec3(20, 20, 20)));
-	volumetric_manager->render(volumes);
+	volumes.push_back(std::make_shared<VolumeObject>(vec3(-10, 10, -10), vec3(10, 30, 10)));
+	if (toRender == nullptr) {
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
+		volumetric_manager->render(volumes);
+	}
+	else {
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(toRender, 0, 0, 0, 0);
+		mesh_manager->render(meshes, m_cb, cc);
+
+		terrain_manager->render(terrains, m_cb, cc);
+	}
 }
 
 void AppWindow::render()
 {
-	cc.fog_color = vec4(0.2, 0.2, 0.2, 1);
+	cc.fog_color = vec4(135 / 255.f, 206 / 255.f, 235 / 255.f, 1);
 
 	//camera
 	CameraObjectPtr cam = m_scene->getCamera();
@@ -107,8 +118,7 @@ void AppWindow::render()
 	cam->updateMatrices();
 	cc.m_view = cam->getViewMatrix();
 	cc.m_clip = vec4(0, 1, 0, 0);
-	water_manager->setReflectionTexture();
-	renderScene(m_cb);
+	renderScene(m_cb, water_manager->getReflectionTexture());
 
 	cc.m_camera_position.y += distance;
 	cam->setCameraPosition(cc.m_camera_position.xyz());
@@ -116,8 +126,7 @@ void AppWindow::render()
 	cam->updateMatrices();
 	cc.m_view = cam->getViewMatrix();
 	cc.m_clip = vec4(0, -1, 0, 0);
-	water_manager->setRefractionTexture();
-	renderScene(m_cb);
+	renderScene(m_cb, water_manager->getRefractionTexture());
 
 	cc.m_clip = vec4(0, 0, 0, 100000);
 	//CLEAR THE RENDER TARGET
@@ -125,7 +134,7 @@ void AppWindow::render()
 	//SET VIEWPORT OF RENDER TARGET IN WHICH WE HAVE TO DRAW
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
-	renderScene(m_cb);
+	renderScene(m_cb, nullptr);
 
 
 	m_swap_chain->present(true);
@@ -144,15 +153,12 @@ void AppWindow::update()
 	skybox->setScale(vec3(10000, 10000, 10000));
 
 	water_manager->update(m_delta_time);
+
 }
 
 AppWindow::~AppWindow()
 {
 }
-
-ID3D11Buffer* input1, * input2, * output, * outputCPU;
-ID3D11ShaderResourceView* iv1, * iv2;
-ID3D11UnorderedAccessView* ov;
 
 void AppWindow::onCreate()
 {
@@ -179,46 +185,9 @@ void AppWindow::onCreate()
 	volumetric_manager->init();
 
 	onFocus();
+	volumetric_manager->update();
 
-	float* i1 = new float[1024], * i2 = new float[1024], * o = new float[1024];
-	for (int i = 0; i < 128; i++) {
-		i2[i] = i1[i] = i + 1;
-	}
-
-	StructuredBufferPtr in1 = GraphicsEngine::get()->getRenderSystem()->createStructuredBuffer(i1, sizeof(float), 128);
-	StructuredBufferPtr in2 = GraphicsEngine::get()->getRenderSystem()->createStructuredBuffer(i2, sizeof(float), 128);
-
-	RWStructuredBufferPtr out = GraphicsEngine::get()->getRenderSystem()->createRWStructuredBuffer(o, sizeof(float), 128);
-
-	auto mDeviceContext = GraphicsEngine::get()->getRenderSystem()->m_imm_context;
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-
-	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"addTwoVectors.hlsl", "main", &shader_byte_code, &size_shader);
-	ComputeShaderPtr cs = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
-	// Enable Compute Shader
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(cs);
-
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(in1, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(in2, 1);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(out, 0);
-
-	// Dispatch
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(128, 1, 1);
-
-	// Copy result
-	out->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
-
-	void* d = out->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
-	float* data = reinterpret_cast<float*>(d);
-
-	for (int i = 0; i < 128; i++) {
-		std::cout << data[i] << std::endl;
-	}
-	out->close_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
+	everything = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 }
 
 void AppWindow::onUpdate()
@@ -232,7 +201,7 @@ void AppWindow::onUpdate()
 	//std::cout << v.x << " " << v.y << " " << v.z << std::endl;
 
 	update();
-	//render();
+	render();
 }
 
 void AppWindow::onDestroy()
