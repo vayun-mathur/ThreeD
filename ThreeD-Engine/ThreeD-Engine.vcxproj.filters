@@ -475,9 +475,6 @@
     <FxCompile Include="PhongLighting.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="addTwoVectors.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="MarchingCubes.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
