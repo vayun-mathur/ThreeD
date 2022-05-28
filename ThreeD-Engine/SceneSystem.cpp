@@ -71,23 +71,6 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components[parent]->addChild(water);
 			components.insert({ id, water });
 		}
-		else if (type == "SKYBOX") {
-			std::wstring obj;
-			std::wstring tex;
-			vec3 position;
-			readString(scene_file, obj);
-			readString(scene_file, tex);
-			scene_file >> position.x >> position.y >> position.z;
-			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, this, obj);
-			mesh->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::FRONT);
-			mesh->getMesh()->getMaterials()[0].material->getTextures().insert({0,
-				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });
-			mesh->getMesh()->getMaterials()[0].material->getTextures().insert({ 1,
-				GraphicsEngine::get()->getTextureManager()->createTextureFromFile(tex.c_str()) });
-			mesh->setPosition(position);
-			components[parent]->addChild(mesh);
-			components.insert({ id, mesh });
-		}
 		else if (type == "CAMERA") {
 			float clip_dist, speed;
 			scene_file >> clip_dist >> speed;

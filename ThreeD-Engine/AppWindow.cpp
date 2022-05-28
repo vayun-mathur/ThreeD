@@ -31,14 +31,9 @@ void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
 	std::vector<TerrainObjectPtr>& terrains,
 	std::vector<WaterTileObjectPtr>& waters,
 	std::vector<DirectionalLightObjectPtr>& dlights,
-	std::vector<PointLightObjectPtr>& plights, MeshObjectPtr* skybox) {
+	std::vector<PointLightObjectPtr>& plights) {
 	if (obj->getType() == SceneObjectType::MeshObject) {
-		if (obj->getName() == "skybox") {
-			*skybox = std::dynamic_pointer_cast<MeshObject>(obj);
-		}
-		else {
-			meshes.push_back(std::dynamic_pointer_cast<MeshObject>(obj));
-		}
+		meshes.push_back(std::dynamic_pointer_cast<MeshObject>(obj));
 	}
 	if (obj->getType() == SceneObjectType::TerrainObject) {
 		terrains.push_back(std::dynamic_pointer_cast<TerrainObject>(obj));
@@ -53,7 +48,7 @@ void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
 		plights.push_back(std::dynamic_pointer_cast<PointLightObject>(obj));
 	}
 	for (auto&& [_, child] : obj->getChildren()) {
-		find(child, meshes, terrains, waters, dlights, plights, skybox);
+		find(child, meshes, terrains, waters, dlights, plights);
 	}
 }
 
@@ -64,8 +59,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 	std::vector<DirectionalLightObjectPtr> dlights;
 	std::vector<PointLightObjectPtr> plights;
 	std::vector<VolumeObjectPtr> volumes;
-	MeshObjectPtr skybox;
-	find(m_scene->getRoot(), meshes, terrains, waters, dlights, plights, &skybox);
+	find(m_scene->getRoot(), meshes, terrains, waters, dlights, plights);
 
 	//set lights
 	for (int i = 0; i < dlights.size(); i++) {
@@ -82,7 +76,6 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(everything, 0, 0, 0, 0);
 	mesh_manager->render(meshes, m_cb, cc);
-	//mesh_manager->render_skybox(skybox, m_cb, cc);
 
 	terrain_manager->render(terrains, m_cb, cc);
 
@@ -147,13 +140,7 @@ void AppWindow::render()
 
 void AppWindow::update()
 {
-	CameraObjectPtr cam = m_scene->getCamera();
-	MeshObjectPtr skybox = m_scene->getRoot()->getChild<MeshObject>("skybox");
-	skybox->setPosition(vec3(cam->getCameraPosition().x, cam->getCameraPosition().y, cam->getCameraPosition().z));
-	skybox->setScale(vec3(10000, 10000, 10000));
-
 	water_manager->update(m_delta_time);
-
 }
 
 AppWindow::~AppWindow()

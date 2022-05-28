@@ -454,9 +454,6 @@
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
       <Filter>Engine\GraphicsEngine</Filter>
     </FxCompile>
-    <FxCompile Include="SkyboxShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="MeshShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
