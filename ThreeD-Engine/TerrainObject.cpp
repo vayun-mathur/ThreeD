@@ -128,32 +128,7 @@ struct compareVector {
 
 __declspec(align(16))
 struct cbuf {
-	float boundsSize = 1;
-	vec3 centre = vec3(0, 0, 0);
-	vec3 offset = vec3(0, 0, 0);
-	float spacing = boundsSize / (33.f - 1);
-	vec3 worldSize = vec3(1, 1, 1);
-
-
-	int octaves = 4;
-	float lacunarity = 2;
-	float persistence = 0.5;
-	float noiseScale = 1;
-	float noiseWeight = 1;
-	float floorOffset = 1;
-	float weightMultiplier = 1;
-	bool closeEdges = true;
-	float hardFloor = 6;
-	float hardFloorWeight = 40;
-
-	vec4 params = vec4(1, 1, 0, 0);
-	
-	vec3 offsets[4] = {
-		vec3(randomFloat() * 2 - 1, randomFloat() * 2 - 1, randomFloat() * 2 - 1) * 1000,
-		vec3(randomFloat() * 2 - 1, randomFloat() * 2 - 1, randomFloat() * 2 - 1) * 1000,
-		vec3(randomFloat() * 2 - 1, randomFloat() * 2 - 1, randomFloat() * 2 - 1) * 1000,
-		vec3(randomFloat() * 2 - 1, randomFloat() * 2 - 1, randomFloat() * 2 - 1) * 1000
-	};
+	vec3 start_position;
 };
 
 cbuf cb;
@@ -169,7 +144,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
 
-
+	cb.start_position = opos;
 
 	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"TerrainDensityCompute.hlsl", "Density", &shader_byte_code, &size_shader);
 	ComputeShaderPtr pointshader = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);

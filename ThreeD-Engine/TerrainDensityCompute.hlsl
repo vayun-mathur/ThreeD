@@ -99,27 +99,7 @@ static const int numPointsPerAxisXZ = 65;
 
 cbuffer consts : register(b0)
 {
-    float boundsSize;
-    float3 centre;
-    float3 offset;
-    float spacing;
-    float3 worldSize;
-
-
-    int octaves;
-    float lacunarity;
-    float persistence;
-    float noiseScale;
-    float noiseWeight;
-    float floorOffset;
-    float weightMultiplier;
-    bool closeEdges;
-    float hardFloor;
-    float hardFloorWeight;
-
-    float4 params;
-
-    float3 offsets[4];
+    float3 start_position;
 }
 
 int indexFromCoord(uint x, uint y, uint z) {
@@ -135,7 +115,7 @@ void Density(int3 id : SV_DispatchThreadID)
         return;
     }
 
-    float3 pos = id;
+    float3 pos = id + start_position;
     pos.y -= 16;
     float finalVal = -pos.y + 5;
 
