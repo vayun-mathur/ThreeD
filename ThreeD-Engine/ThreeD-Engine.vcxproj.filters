@@ -478,6 +478,15 @@
     <FxCompile Include="addTwoVectors.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="MarchingCubes.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MarchTables.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainDensityCompute.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="scene.txt">

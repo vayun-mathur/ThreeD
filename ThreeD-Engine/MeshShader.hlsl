@@ -54,11 +54,11 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	float3 light = ambient_light;
 
 	for (int i = 0; i < m_dlight_count; i++) {
-		light += calculateDirectional(material, dlight[i], input.world_pos, input.normal) * 0.5;
+		light += calculateDirectional(material, dlight[i], input.world_pos, input.normal);
 	}
 	for (int i = 0; i < m_plight_count; i++) {
 		light += calculatePoint(material, plight[i], input.world_pos, input.normal);
 	}
 
-	return float4(light, 1.0) * input.visibility + fog_color * (1 - input.visibility);
+	return float4(light, 1.0);
 }

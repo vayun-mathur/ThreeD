@@ -18,6 +18,7 @@ public:
 	IndexBufferPtr createIndexBuffer(void* list_indices, UINT size_list);
 	ConstantBufferPtr createConstantBuffer(void* buffer, UINT size_buffer);
 	StructuredBufferPtr createStructuredBuffer(void* buffer, UINT size_unit, UINT count);
+	RWStructuredBufferPtr createAppendStructuredBuffer(void* buffer, UINT size_unit, UINT count);
 	RWStructuredBufferPtr createRWStructuredBuffer(void* buffer, UINT size_unit, UINT count);
 	VertexShaderPtr createVertexShader(void* shader_byte_code, size_t byte_code_size);
 	PixelShaderPtr createPixelShader(void* shader_byte_code, size_t byte_code_size);

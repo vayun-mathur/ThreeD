@@ -25,6 +25,11 @@ vec2 vec2::lerp(const vec2& start, const vec2& end, float delta)
 	return start * (1 - delta) + end * delta;
 }
 
+vec2 vec2::lerp_bounds(const vec2& start, const vec2& end, float delta_start, float delta_end, float delta)
+{
+	return lerp(start, end, (delta - delta_start) / (delta_end - delta_start));
+}
+
 float vec2::dot(const vec2& v1, const vec2& v2)
 {
 	return v1.x * v2.x + v1.y * v2.y;
@@ -143,6 +148,11 @@ vec3::vec3(const vec3& vector)
 vec3 vec3::lerp(const vec3& start, const vec3& end, float delta)
 {
 	return start * (1 - delta) + end * delta;
+}
+
+vec3 vec3::lerp_bounds(const vec3& start, const vec3& end, float delta_start, float delta_end, float delta)
+{
+	return lerp(start, end, (delta - delta_start) / (delta_end - delta_start));
 }
 
 float vec3::dot(const vec3& v1, const vec3& v2)
@@ -320,9 +330,19 @@ vec4::vec4(const vec4&& vector) noexcept
 {
 }
 
+vec4::vec4(const vec4& vector)
+	: x(vector.x), y(vector.y), z(vector.z), w(vector.w)
+{
+}
+
 vec4 vec4::lerp(const vec4& start, const vec4& end, float delta)
 {
 	return start * (1 - delta) + end * delta;
+}
+
+vec4 vec4::lerp_bounds(const vec4& start, const vec4& end, float delta_start, float delta_end, float delta)
+{
+	return lerp(start, end, (delta - delta_start) / (delta_end - delta_start));
 }
 
 float vec4::dot(const vec4& v1, const vec4& v2)
@@ -433,4 +453,39 @@ vec4& vec4::normalize()
 vec3 vec4::xyz()
 {
 	return vec3(x, y, z);
+}
+
+vec2 vec4::xy()
+{
+	return vec2(x, y);
+}
+
+vec2 vec4::yz()
+{
+	return vec2(y, z);
+}
+
+vec2 vec4::xz()
+{
+	return vec2(x, z);
+}
+
+vec2 vec4::yx()
+{
+	return vec2(y, x);
+}
+
+vec2 vec4::zy()
+{
+	return vec2(z, y);
+}
+
+vec2 vec4::zx()
+{
+	return vec2(z, x);
+}
+
+vec2 vec4::zw()
+{
+	return vec2(z, w);
 }

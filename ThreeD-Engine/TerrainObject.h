@@ -6,7 +6,7 @@ class TerrainObject
 	: public SceneObject
 {
 public:
-	TerrainObject(std::string name, SceneSystem* system);
+	TerrainObject(std::string name, SceneSystem* system, vec3 position);
 
 	~TerrainObject();
 

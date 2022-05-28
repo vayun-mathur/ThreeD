@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#undef min
+#undef max
 
 class vec2 {
 public:
@@ -9,6 +11,7 @@ public:
 	vec2(const vec2& vector);
 
 	static vec2 lerp(const vec2& start, const vec2& end, float delta);
+	static vec2 lerp_bounds(const vec2& start, const vec2& end, float delta_start, float delta_end, float delta);
 	static float dot(const vec2& v1, const vec2& v2);
 	static float angle(const vec2& v1, const vec2& v2);
 
@@ -49,6 +52,7 @@ public:
 	vec3(const vec3& vector);
 
 	static vec3 lerp(const vec3& start, const vec3& end, float delta);
+	static vec3 lerp_bounds(const vec3& start, const vec3& end, float delta_start, float delta_end, float delta);
 	static float dot(const vec3& v1, const vec3& v2);
 	static vec3 cross(const vec3& v1, const vec3& v2);
 	static float angle(const vec3& v1, const vec3& v2);
@@ -87,47 +91,6 @@ public:
 	};
 };
 
-/*
-class vec4 {
-public:
-	vec4() : x(0), y(0), z(0), w(0) {}
-	vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-	vec4(const vec4& vector) : x(vector.x), y(vector.y), z(vector.z), w(vector.w) {}
-	vec4(const vec3& vector) : x(vector.x), y(vector.y), z(vector.z), w(1) {}
-	vec4(const vec3& vector, float w) : x(vector.x), y(vector.y), z(vector.z), w(w) {}
-
-	void cross(vec4& v1, vec4& v2, vec4& v3)
-	{
-		this->x = v1.y * (v2.z * v3.w - v3.z * v2.w) - v1.z * (v2.y * v3.w - v3.y * v2.w) + v1.w * (v2.y * v3.z - v2.z * v3.y);
-		this->y = -(v1.x * (v2.z * v3.w - v3.z * v2.w) - v1.z * (v2.x * v3.w - v3.x * v2.w) + v1.w * (v2.x * v3.z - v3.x * v2.z));
-		this->z = v1.x * (v2.y * v3.w - v3.y * v2.w) - v1.y * (v2.x * v3.w - v3.x * v2.w) + v1.w * (v2.x * v3.y - v3.x * v2.y);
-		this->w = -(v1.x * (v2.y * v3.z - v3.y * v2.z) - v1.y * (v2.x * v3.z - v3.x * v2.z) + v1.z * (v2.x * v3.y - v3.x * v2.y));
-	}
-
-	vec3 xyz() {
-		return vec3(x, y, z);
-	}
-
-	vec4 operator*(float scalar)
-	{
-		return vec4(x * scalar, y * scalar, z * scalar, w * scalar);
-	}
-
-	~vec4() {
-
-	}
-public:
-	union {
-		struct {
-			float x, y, z, w;
-		};
-		float m[4];
-	};
-};
-*/
-
-
-
 class vec4 {
 public:
 	vec4();
@@ -139,8 +102,10 @@ public:
 	vec4(const vec3& xyz, float w);
 	vec4(float x, const vec3& yzw);
 	vec4(const vec4&& vector) noexcept;
+	vec4(const vec4& vector);
 
 	static vec4 lerp(const vec4& start, const vec4& end, float delta);
+	static vec4 lerp_bounds(const vec4& start, const vec4& end, float delta_start, float delta_end, float delta);
 	static float dot(const vec4& v1, const vec4& v2);
 	static vec4 cross(const vec4& v1, const vec4& v2, const vec4& v3);
 	static float angle(const vec4& v1, const vec4& v2);
@@ -166,6 +131,14 @@ public:
 	vec3 xyz();
 	//TODO: add rest of subvectors
 
+	vec2 xy();
+	vec2 yz();
+	vec2 xz();
+	vec2 yx();
+	vec2 zy();
+	vec2 zx();
+	vec2 zw();
+
 public:
 	union {
 		struct {
@@ -174,6 +147,15 @@ public:
 		float m[4];
 	};
 };
+
+
+
+inline vec3 min(vec3 v1, vec3 v2) {
+	return vec3(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+}
+inline vec3 max(vec3 v1, vec3 v2) {
+	return vec3(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
+}
 
 
 class mat4 {

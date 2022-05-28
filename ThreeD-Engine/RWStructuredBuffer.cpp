@@ -3,7 +3,7 @@
 #include "DeviceContext.h"
 #include <exception>
 
-RWStructuredBuffer::RWStructuredBuffer(void* buffer, UINT size_unit, UINT count, RenderSystem* system)
+RWStructuredBuffer::RWStructuredBuffer(void* buffer, UINT size_unit, UINT count, RenderSystem* system, UINT uav_flags)
 	: m_system(system)
 {
 	D3D11_BUFFER_DESC outputDesc;
@@ -24,7 +24,7 @@ RWStructuredBuffer::RWStructuredBuffer(void* buffer, UINT size_unit, UINT count,
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.Flags = 0;
+	uavDesc.Buffer.Flags = uav_flags;
 	uavDesc.Buffer.NumElements = count;
 	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;

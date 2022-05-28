@@ -87,7 +87,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 	terrain_manager->render(terrains, m_cb, cc);
 
 	water_manager->render(waters, m_cb, cc);
-	volumes.push_back(std::make_shared<VolumeObject>(vec3(-10, 10, -10), vec3(10, 30, 10)));
+	volumes.push_back(std::make_shared<VolumeObject>(vec3(-20, 20, -20), vec3(20, 60, 20)));
 	if (toRender == nullptr) {
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
 		volumetric_manager->render(volumes);
@@ -213,13 +213,15 @@ void AppWindow::onDestroy()
 void AppWindow::onFocus()
 {
 	InputSystem::get()->addListener(this);
-	InputSystem::get()->addListener(m_scene->getCamera().get());
+	if (m_scene != nullptr)
+		InputSystem::get()->addListener(m_scene->getCamera().get());
 }
 
 void AppWindow::onKillFocus()
 {
 	InputSystem::get()->removeListener(this);
-	InputSystem::get()->removeListener(m_scene->getCamera().get());
+	if(m_scene != nullptr)
+		InputSystem::get()->removeListener(m_scene->getCamera().get());
 }
 
 void AppWindow::onSize()

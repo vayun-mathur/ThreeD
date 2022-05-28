@@ -24,9 +24,9 @@ struct MatrixBuffer
 	mat4 projection;
 	mat4 inv_transform;
 	vec3 cam_box_coords;
-	float lightAbsorptionThroughCloud = 0.75;
+	float lightAbsorptionThroughCloud = 0.85;
 	vec3 bounds_min;
-	float lightAbsorptionTowardSun = 0.84;
+	float lightAbsorptionTowardSun = 0.94;
 	vec3 bounds_max;
 	float f3;
 	vec3 cam_pos;
@@ -67,13 +67,6 @@ ConstantBufferPtr m_mb;
 ConstantBufferPtr m_cb;
 
 ID3D11RasterizerState* m_frontFaceCull;
-
-vec3 min(vec3 v1, vec3 v2) {
-	return vec3(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
-}
-vec3 max(vec3 v1, vec3 v2) {
-	return vec3(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
-}
 
 
 void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, std::vector<VolumeObjectPtr>& volumes)

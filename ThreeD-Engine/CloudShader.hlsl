@@ -200,11 +200,20 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	float dstTravelled = randomOffset;
 	float dstLimit = intersections.y;
 
+
+	float2 realpos = (input.pos.xy) / screenSize;
+
+	float depth = linearDepth(Depth.Sample(samplerDepth, realpos).r);
+
 	// iterate for the volume, sampling along the way at equidistant steps 
 	[loop]
 	while(dstTravelled < dstLimit)
 	{
 		float3 v = pos_front + rayDir * dstTravelled;
+
+		if (length(v - cam_pos) >= depth) {
+			break;
+		}
 		// sample the texture accumlating the result as we step through the texture
 		float density = sampleDensity(v);
 
@@ -221,12 +230,9 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		dstTravelled += stepSize;
 	}
 
-	float2 realpos = (input.pos.xy) / screenSize;
-
 	float3 params = float3(1, 0, 0);
 	float3 colA = float3(226, 236, 235) / 255;
 	float3 colB = float3(135, 206, 235) / 255;
-	float depth = linearDepth(Depth.Sample(samplerDepth, realpos).r);
 
 	// Composite sky + background
 	float3 skyColBase = lerp(colA, colB, sqrt(abs(saturate(rayDir.y))));

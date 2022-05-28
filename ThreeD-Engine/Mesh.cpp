@@ -113,7 +113,7 @@ Mesh::Mesh(std::vector<TerrainMesh> list_vertices, std::vector<unsigned int> lis
 	size_t size_shader = 0;
 	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader, 1);
 	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(TerrainMesh),
-		list_vertices.size(), shader_byte_code, size_shader, true);
+		list_vertices.size(), shader_byte_code, size_shader, 1);
 	m_index_buffer = GraphicsEngine::get()->getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 	m_materials = materials;
 }

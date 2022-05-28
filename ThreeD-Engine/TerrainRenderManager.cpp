@@ -5,10 +5,14 @@
 #include "AppWindow.h"
 #include "TerrainObject.h"
 
+TexturePtr tex;
+
 void TerrainRenderManager::init()
 {
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
+
+	tex = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(L"./Assets/Textures/terrain.png");
 
 	GraphicsEngine::get()->getRenderSystem()->compileVertexShader(L"TerrainShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	m_vs = GraphicsEngine::get()->getRenderSystem()->createVertexShader(shader_byte_code, size_shader);
@@ -33,6 +37,7 @@ void TerrainRenderManager::render(std::vector<TerrainObjectPtr>& terrains, Const
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, tex, 0);
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(terrain->getMesh()->getVertexBuffer());
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(terrain->getMesh()->getIndexBuffer());

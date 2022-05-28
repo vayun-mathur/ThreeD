@@ -55,10 +55,11 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components.insert({ id, mesh });
 		}
 		else if (type == "TERRAIN") {
-			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this);
+			vec3 position;
+			scene_file >> position.x >> position.y >> position.z;
+			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, position);
 			components[parent]->addChild(terrain);
 			components.insert({ id, terrain });
-			terrain->getMesh()->getMaterials()[0].material->setCullMode(CULL_MODE::BACK);
 		}
 		else if (type == "WATER") {
 			vec3 position, scale;
@@ -98,6 +99,7 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			vec3 color;
 			vec3 direction;
 			scene_file >> color.x >> color.y >> color.z >> direction.x >> direction.y >> direction.z;
+			direction.normalize();
 			DirectionalLightObjectPtr light = std::make_shared<DirectionalLightObject>(name, this, color, direction);
 			components[parent]->addChild(light);
 			components.insert({ id, light });
