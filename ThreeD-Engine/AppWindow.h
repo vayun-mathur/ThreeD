@@ -19,6 +19,7 @@
 #include "TerrainRenderManager.h"
 #include "MeshRenderManager.h"
 #include "VolumetricRenderManager.h"
+#include "PhysicsSystem.h"
 
 struct dlight {
 	vec4 light_direction;
@@ -87,6 +88,7 @@ public:
 	TerrainRenderManager* terrain_manager;
 	MeshRenderManager* mesh_manager;
 	VolumetricRenderManager* volumetric_manager;
+	PhysicsSystem* physics_system;
 
 	SceneSystem* m_scene = nullptr;
 

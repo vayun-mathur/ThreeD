@@ -188,27 +188,6 @@ float randomFloat() {
 	return (float)rand() / RAND_MAX;
 }
 
-void VolumetricRenderManager::updateWorleyPointsBuffer(StructuredBufferPtr buffer, int numCellsPerAxis) {
-	vec3* points = new vec3[numCellsPerAxis * numCellsPerAxis * numCellsPerAxis];
-	float cellSize = 1.f / numCellsPerAxis;
-
-	for (int x = 0; x < numCellsPerAxis; x++) {
-		for (int y = 0; y < numCellsPerAxis; y++) {
-			for (int z = 0; z < numCellsPerAxis; z++) {
-				float randomX = randomFloat();
-				float randomY = randomFloat();
-				float randomZ = randomFloat();
-				vec3 randomOffset = vec3(randomX, randomY, randomZ) * cellSize;
-				vec3 cellCorner = vec3(x, y, z) * cellSize;
-
-				int index = x + numCellsPerAxis * (y + z * numCellsPerAxis);
-				points[index] = cellCorner + randomOffset;
-			}
-		}
-	}
-	buffer->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), points);
-}
-
 void VolumetricRenderManager::init()
 {
 	void* shader_byte_code = nullptr;
@@ -246,8 +225,4 @@ void VolumetricRenderManager::init()
 void VolumetricRenderManager::render(std::vector<VolumeObjectPtr>& volumes)
 {
 	Render(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->m_device_context, volumes);
-}
-
-void VolumetricRenderManager::update()
-{
 }

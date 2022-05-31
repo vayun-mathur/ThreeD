@@ -2,6 +2,7 @@
 #include "GraphicsEngine.h"
 #include "DeviceContext.h"
 #include "ConstantBuffer.h"
+#include "PhysicalObject.h"
 #include "AppWindow.h"
 #include "MeshObject.h"
 
@@ -29,6 +30,45 @@ void MeshRenderManager::render(std::vector<MeshObjectPtr>& meshes, ConstantBuffe
 		cc.m_transform.setIdentity();
 		cc.m_transform.setTranslation(mesh->getPosition());
 		cc.m_transform.setScale(mesh->getScale());
+		cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
+
+
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(mesh->getMesh()->getVertexBuffer());
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(mesh->getMesh()->getIndexBuffer());
+
+		for (MaterialIndexRange mir : mesh->getMesh()->getMaterials()) {
+			MaterialPtr material = mir.material;
+
+			//SET MATERIAL
+			GraphicsEngine::get()->getRenderSystem()->setRasterizerState(material->getCullMode());
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, material->getConstantBuffer(), 1);
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, material->getConstantBuffer(), 1);
+
+			for (auto&& [index, texture] : material->getTextures()) {
+				GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, texture, index);
+			}
+
+
+			// FINALLY DRAW THE TRIANGLE
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(mir.high - mir.low, 0, mir.low);
+		}
+	}
+}
+
+void MeshRenderManager::render(std::vector<PhysicalObjectPtr>& meshes, ConstantBufferPtr cb, constant& cc)
+{
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
+
+
+	for (PhysicalObjectPtr mesh : meshes) {
+		cc.m_transform.setIdentity();
+		cc.m_transform.setTranslation(mesh->getLinearPosition());
+		mat4 rot = mat4(mesh->getAngularPosition());
+		cc.m_transform = cc.m_transform(rot);
 		cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);

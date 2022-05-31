@@ -28,7 +28,7 @@ public:
 	vec2& operator=(const vec2& v);
 
 	bool operator==(const vec2& v) const;
-	
+
 	float mag() const;
 	vec2 normal() const;
 	vec2& normalize();
@@ -158,10 +158,151 @@ inline vec3 max(vec3 v1, vec3 v2) {
 }
 
 
+class mat3 {
+public:
+	mat3() {
+		setIdentity();
+	}
+
+	void setIdentity()
+	{
+		::memset(mat, 0, sizeof(float) * 9);
+		mat[0][0] = 1;
+		mat[1][1] = 1;
+		mat[2][2] = 1;
+	}
+
+	void setScale(const vec3& scale) {
+		mat[0][0] = scale.x;
+		mat[1][1] = scale.y;
+		mat[2][2] = scale.z;
+	}
+
+	void setRotationX(float x)
+	{
+		mat[1][1] = cosf(x);
+		mat[1][2] = sinf(x);
+		mat[2][1] = -sinf(x);
+		mat[2][2] = cosf(x);
+	}
+
+	void setRotationY(float y)
+	{
+		mat[0][0] = cosf(y);
+		mat[0][2] = -sinf(y);
+		mat[2][0] = sinf(y);
+		mat[2][2] = cosf(y);
+	}
+
+	void setRotationZ(float z)
+	{
+		mat[0][0] = cosf(z);
+		mat[0][1] = sinf(z);
+		mat[1][0] = -sinf(z);
+		mat[1][1] = cosf(z);
+	}
+
+	float getDeterminant()
+	{
+		float x = mat[1][1] * mat[2][2] - mat[2][1] * mat[1][2];
+		float y = mat[1][0] * mat[2][2] - mat[2][0] * mat[1][2];
+		float z = mat[1][0] * mat[2][1] - mat[2][0] * mat[1][1];
+
+		return (mat[0][0] * x - mat[0][1] * y + mat[0][2] * z);
+	}
+
+	mat3& inverse() {
+		double det = getDeterminant();
+		if (!det) return *this;
+		double invdet = 1 / det;
+		mat3 out;
+		out.mat[0][0] = (mat[1][1] * mat[2][2] - mat[2][1] * mat[1][2]) * invdet;
+		out.mat[0][1] = (mat[0][2] * mat[2][1] - mat[0][1] * mat[2][2]) * invdet;
+		out.mat[0][2] = (mat[0][1] * mat[1][2] - mat[0][2] * mat[1][1]) * invdet;
+		out.mat[1][0] = (mat[1][2] * mat[2][0] - mat[1][0] * mat[2][2]) * invdet;
+		out.mat[1][1] = (mat[0][0] * mat[2][2] - mat[0][2] * mat[2][0]) * invdet;
+		out.mat[1][2] = (mat[1][0] * mat[0][2] - mat[0][0] * mat[1][2]) * invdet;
+		out.mat[2][0] = (mat[1][0] * mat[2][1] - mat[2][0] * mat[1][1]) * invdet;
+		out.mat[2][1] = (mat[2][0] * mat[0][1] - mat[0][0] * mat[2][1]) * invdet;
+		out.mat[2][2] = (mat[0][0] * mat[1][1] - mat[1][0] * mat[0][1]) * invdet;
+		this->setMatrix(out);
+		return *this;
+	}
+
+	void setMatrix(const mat3& matrix)
+	{
+		::memcpy(mat, matrix.mat, sizeof(float) * 9);
+	}
+
+	vec3 getZDirection()
+	{
+		return vec3(mat[2][0], mat[2][1], mat[2][2]);
+	}
+
+	vec3 getXDirection()
+	{
+		return vec3(mat[0][0], mat[0][1], mat[0][2]);
+	}
+
+	mat3 operator()(const mat3& matrix)
+	{
+		mat3 out;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				out.mat[j][i] =
+					mat[0][i] * matrix.mat[j][0]
+					+ mat[1][i] * matrix.mat[j][1]
+					+ mat[2][i] * matrix.mat[j][2];
+			}
+		}
+		return out;
+	}
+
+	vec3 operator()(const vec3& vector)
+	{
+		vec3 out;
+		for (int i = 0; i < 3; i++) {
+			out.m[i] =
+				mat[0][i] * vector.m[0]
+				+ mat[1][i] * vector.m[1]
+				+ mat[2][i] * vector.m[2];
+		}
+		return out;
+	}
+
+	~mat3()
+	{
+
+	}
+private:
+	float mat[3][3] = {};
+};
+
+
 class mat4 {
 public:
 	mat4() {
 		setIdentity();
+	}
+
+	mat4(vec4 Q) {
+		setIdentity();
+		float q0 = Q.m[0];
+		float q1 = Q.m[1];
+		float q2 = Q.m[2];
+		float q3 = Q.m[3];
+
+		mat[0][0] = 2 * (q0 * q0 + q1 * q1) - 1;
+		mat[0][1] = 2 * (q1 * q2 - q0 * q3);
+		mat[0][2] = 2 * (q1 * q3 + q0 * q2);
+
+		mat[1][0] = 2 * (q1 * q2 + q0 * q3);
+		mat[1][1] = 2 * (q0 * q0 + q2 * q2) - 1;
+		mat[1][2] = 2 * (q2 * q3 - q0 * q1);
+
+		mat[2][0] = 2 * (q1 * q3 - q0 * q2);
+		mat[2][1] = 2 * (q2 * q3 + q0 * q1);
+		mat[2][2] = 2 * (q0 * q0 + q3 * q3) - 1;
 	}
 
 	void setIdentity()
@@ -225,7 +366,7 @@ public:
 		return det;
 	}
 
-	void inverse()
+	mat4& inverse()
 	{
 		int a, i, j;
 		mat4 out;
@@ -233,7 +374,7 @@ public:
 		float det = 0.0f;
 
 		det = this->getDeterminant();
-		if (!det) return;
+		if (!det) return *this;
 		for (i = 0; i < 4; i++)
 		{
 			for (j = 0; j < 4; j++)
@@ -257,6 +398,7 @@ public:
 		}
 
 		this->setMatrix(out);
+		return *this;
 	}
 
 	void setMatrix(const mat4& matrix)
@@ -278,7 +420,7 @@ public:
 	{
 		return vec3(mat[3][0], mat[3][1], mat[3][2]);
 	}
-	
+
 	mat4 operator()(const mat4& matrix)
 	{
 		mat4 out;
@@ -293,7 +435,7 @@ public:
 		}
 		return out;
 	}
-	
+
 	vec4 operator()(const vec4& vector)
 	{
 		vec4 out;

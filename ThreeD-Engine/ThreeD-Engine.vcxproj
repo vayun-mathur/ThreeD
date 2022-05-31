@@ -185,6 +185,8 @@
     <ClCompile Include="MeshObject.cpp" />
     <ClCompile Include="MeshRenderManager.cpp" />
     <ClCompile Include="NumberObject.cpp" />
+    <ClCompile Include="PhysicalObject.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="PointLightObject.cpp" />
     <ClCompile Include="RWStructuredBuffer.cpp" />
     <ClCompile Include="RWTexture.cpp" />
@@ -233,6 +235,8 @@
     <ClInclude Include="MeshRenderManager.h" />
     <ClInclude Include="NumberObject.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="PhysicalObject.h" />
+    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PointLightObject.h" />
     <ClInclude Include="prerequisites.h" />
     <ClInclude Include="InputListener.h" />

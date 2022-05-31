@@ -1,15 +1,10 @@
-13
+8
 2 0 6 camera 6 CAMERA 1000 10
 3 0 6 dlight 17 DIRECTIONAL_LIGHT 0.2 0.2 0.2 -1 -3 -1
 5 0 6 plight 11 POINT_LIGHT 0.2 0.2 0.2 0 3 0 8 1 1 1
 101 0 7 terrain 7 TERRAIN 0 0 0
-201 0 6 water2 5 WATER 32 0 96 32 32 32
-202 0 6 water3 5 WATER 96 0 32 32 32 32
-203 0 6 water4 5 WATER 96 0 96 32 32 32
 105 0 5 water 5 WATER 32 0 32 32 32 32
-102 0 8 terrain2 7 TERRAIN 0 0 64
-103 0 8 terrain3 7 TERRAIN 64 0 0
-104 0 8 terrain4 7 TERRAIN 64 0 64
 12 0 5 audio 12 AUDIO_SOURCE 0 0 0
 13 0 2 sc 6 SCRIPT 25 Assets\Scripts\script.txt
+124 0 3 phy 8 PHYSICAL 23 Assets\Meshes\house.obj 1
 2

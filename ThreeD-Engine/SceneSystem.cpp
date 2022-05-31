@@ -13,6 +13,7 @@
 #include "InputSystem.h"
 #include "ResourceManager.h"
 #include "Mesh.h"
+#include "PhysicalObject.h"
 #include <unordered_map>
 
 #include <fstream>
@@ -51,6 +52,15 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			MeshObjectPtr mesh = std::make_shared<MeshObject>(name, this, obj);
 			mesh->setPosition(position);
 			mesh->setScale(scale);
+			components[parent]->addChild(mesh);
+			components.insert({ id, mesh });
+		}
+		else if (type == "PHYSICAL") {
+			std::wstring obj;
+			float mass;
+			readString(scene_file, obj);
+			scene_file >> mass;
+			PhysicalObjectPtr mesh = std::make_shared<PhysicalObject>(name, this, obj, mass);
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
 		}

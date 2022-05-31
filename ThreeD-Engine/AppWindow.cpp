@@ -16,6 +16,7 @@
 #include "ComputeShader.h"
 #include "StructuredBuffer.h"
 #include "RWStructuredBuffer.h"
+#include "PhysicalObject.h"
 #include <iostream>
 
 AppWindow* AppWindow::s_main;
@@ -28,12 +29,16 @@ AppWindow::AppWindow()
 constant cc;
 
 void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
+	std::vector<PhysicalObjectPtr>& physicals,
 	std::vector<TerrainObjectPtr>& terrains,
 	std::vector<WaterTileObjectPtr>& waters,
 	std::vector<DirectionalLightObjectPtr>& dlights,
 	std::vector<PointLightObjectPtr>& plights) {
 	if (obj->getType() == SceneObjectType::MeshObject) {
 		meshes.push_back(std::dynamic_pointer_cast<MeshObject>(obj));
+	}
+	if (obj->getType() == SceneObjectType::PhysicalObject) {
+		physicals.push_back(std::dynamic_pointer_cast<PhysicalObject>(obj));
 	}
 	if (obj->getType() == SceneObjectType::TerrainObject) {
 		terrains.push_back(std::dynamic_pointer_cast<TerrainObject>(obj));
@@ -48,18 +53,19 @@ void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
 		plights.push_back(std::dynamic_pointer_cast<PointLightObject>(obj));
 	}
 	for (auto&& [_, child] : obj->getChildren()) {
-		find(child, meshes, terrains, waters, dlights, plights);
+		find(child, meshes, physicals, terrains, waters, dlights, plights);
 	}
 }
 
 void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 	std::vector<MeshObjectPtr> meshes;
+	std::vector<PhysicalObjectPtr> physicals;
 	std::vector<TerrainObjectPtr> terrains;
 	std::vector<WaterTileObjectPtr> waters;
 	std::vector<DirectionalLightObjectPtr> dlights;
 	std::vector<PointLightObjectPtr> plights;
 	std::vector<VolumeObjectPtr> volumes;
-	find(m_scene->getRoot(), meshes, terrains, waters, dlights, plights);
+	find(m_scene->getRoot(), meshes, physicals, terrains, waters, dlights, plights);
 
 	//set lights
 	for (int i = 0; i < dlights.size(); i++) {
@@ -76,6 +82,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(everything, 0, 0, 0, 0);
 	mesh_manager->render(meshes, m_cb, cc);
+	mesh_manager->render(physicals, m_cb, cc);
 
 	terrain_manager->render(terrains, m_cb, cc);
 
@@ -88,6 +95,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 	else {
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(toRender, 0, 0, 0, 0);
 		mesh_manager->render(meshes, m_cb, cc);
+		mesh_manager->render(physicals, m_cb, cc);
 
 		terrain_manager->render(terrains, m_cb, cc);
 	}
@@ -141,6 +149,21 @@ void AppWindow::render()
 void AppWindow::update()
 {
 	water_manager->update(m_delta_time);
+
+	m_scene->update(m_delta_time);
+
+	std::vector<MeshObjectPtr> meshes;
+	std::vector<PhysicalObjectPtr> physicals;
+	std::vector<TerrainObjectPtr> terrains;
+	std::vector<WaterTileObjectPtr> waters;
+	std::vector<DirectionalLightObjectPtr> dlights;
+	std::vector<PointLightObjectPtr> plights;
+	std::vector<VolumeObjectPtr> volumes;
+	find(m_scene->getRoot(), meshes, physicals, terrains, waters, dlights, plights);
+
+	physics_system->update(physicals, m_delta_time);
+
+	PhysicalObjectPtr obj = m_scene->getRoot()->getChild<PhysicalObject>("phy");
 }
 
 AppWindow::~AppWindow()
@@ -162,6 +185,9 @@ void AppWindow::onCreate()
 
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 
+	PhysicalObjectPtr obj = m_scene->getRoot()->getChild<PhysicalObject>("phy");
+	obj->setLinearPosition(vec3(0, 10, 0));
+
 	water_manager = new WaterRenderManager();
 	water_manager->init(rc);
 	terrain_manager = new TerrainRenderManager();
@@ -170,9 +196,9 @@ void AppWindow::onCreate()
 	mesh_manager->init();
 	volumetric_manager = new VolumetricRenderManager();
 	volumetric_manager->init();
+	physics_system = new PhysicsSystem();
 
 	onFocus();
-	volumetric_manager->update();
 
 	everything = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 }
@@ -182,10 +208,6 @@ void AppWindow::onUpdate()
 	Window::onUpdate();
 
 	InputSystem::get()->update();
-	m_scene->update(m_delta_time);
-
-	vec3 v = m_scene->getCamera()->getCameraPosition();
-	//std::cout << v.x << " " << v.y << " " << v.z << std::endl;
 
 	update();
 	render();

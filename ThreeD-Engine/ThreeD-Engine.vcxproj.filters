@@ -130,6 +130,12 @@
     <Filter Include="Engine\GraphicsEngine\RenderSystem\RWTexture">
       <UniqueIdentifier>{3b685556-a6dc-45b4-b5e1-2b73c61e01c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SceneSystem\PhysicalObject">
+      <UniqueIdentifier>{0101b3f3-733e-477c-9202-1a5680f4a798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysicsSystem">
+      <UniqueIdentifier>{481446a7-d6a9-4fb3-8d3a-741753bf2816}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -281,6 +287,12 @@
     </ClCompile>
     <ClCompile Include="RWTexture.cpp">
       <Filter>Engine\GraphicsEngine\RenderSystem\RWTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicalObject.cpp">
+      <Filter>Engine\SceneSystem\PhysicalObject</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsSystem.cpp">
+      <Filter>Engine\PhysicsSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -448,6 +460,12 @@
     </ClInclude>
     <ClInclude Include="RWTexture.h">
       <Filter>Engine\GraphicsEngine\RenderSystem\RWTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicalObject.h">
+      <Filter>Engine\SceneSystem\PhysicalObject</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsSystem.h">
+      <Filter>Engine\PhysicsSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
