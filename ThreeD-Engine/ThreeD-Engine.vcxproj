@@ -167,6 +167,7 @@
     <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="DirectionalLightObject.cpp" />
+    <ClCompile Include="EditableMesh.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
+    <ClCompile Include="SoftBody.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="TerrainRenderManager.cpp" />
@@ -227,6 +229,7 @@
     <ClInclude Include="CameraObject.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DirectionalLightObject.h" />
+    <ClInclude Include="EditableMesh.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -249,6 +252,7 @@
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="ScriptSystem.h" />
+    <ClInclude Include="SoftBody.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="TerrainRenderManager.h" />
@@ -312,6 +316,18 @@
     <FxCompile Include="MeshShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="SoftBody.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

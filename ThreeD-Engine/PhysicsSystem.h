@@ -10,5 +10,8 @@ public:
 	void update(std::vector<PhysicalObjectPtr>& objects, double dt);
 private:
 	std::vector<PhysicalObjectPtr> physicals;
+
+	ComputeShaderPtr soft_body;
+	ConstantBufferPtr cbuf;
 };
 

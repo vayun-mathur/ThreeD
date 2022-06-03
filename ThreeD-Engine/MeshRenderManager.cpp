@@ -5,6 +5,7 @@
 #include "PhysicalObject.h"
 #include "AppWindow.h"
 #include "MeshObject.h"
+#include "EditableMesh.h"
 
 void MeshRenderManager::init()
 {
@@ -76,12 +77,10 @@ void MeshRenderManager::render(std::vector<PhysicalObjectPtr>& meshes, ConstantB
 
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(mesh->getMesh()->getVertexBuffer());
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(mesh->getMesh()->getIndexBuffer());
 
-		for (MaterialIndexRange mir : mesh->getMesh()->getMaterials()) {
+		for (MIR mir : mesh->getMesh()->getMaterialIterable()) {
 			MaterialPtr material = mir.material;
 
-			//SET MATERIAL
 			GraphicsEngine::get()->getRenderSystem()->setRasterizerState(material->getCullMode());
 			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, material->getConstantBuffer(), 1);
 			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, material->getConstantBuffer(), 1);
@@ -90,9 +89,7 @@ void MeshRenderManager::render(std::vector<PhysicalObjectPtr>& meshes, ConstantB
 				GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, texture, index);
 			}
 
-
-			// FINALLY DRAW THE TRIANGLE
-			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(mir.high - mir.low, 0, mir.low);
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawTriangleList(mir.high - mir.low, mir.low);
 		}
 	}
 }

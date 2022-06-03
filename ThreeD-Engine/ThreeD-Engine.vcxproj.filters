@@ -136,6 +136,9 @@
     <Filter Include="Engine\PhysicsSystem">
       <UniqueIdentifier>{481446a7-d6a9-4fb3-8d3a-741753bf2816}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\GraphicsEngine\RenderSystem\EditableMesh">
+      <UniqueIdentifier>{093ec958-2f04-4427-9d25-8f316fad182a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -294,6 +297,12 @@
     <ClCompile Include="PhysicsSystem.cpp">
       <Filter>Engine\PhysicsSystem</Filter>
     </ClCompile>
+    <ClCompile Include="EditableMesh.cpp">
+      <Filter>Engine\GraphicsEngine\RenderSystem\EditableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftBody.cpp">
+      <Filter>Engine\PhysicsSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -428,9 +437,6 @@
     <ClInclude Include="FrameBuffer.h">
       <Filter>Engine\GraphicsEngine\RenderSystem\FrameBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRenderManager.h">
-      <Filter>App</Filter>
-    </ClInclude>
     <ClInclude Include="VolumeObject.h">
       <Filter>Engine\SceneSystem\VolumeObject</Filter>
     </ClInclude>
@@ -467,6 +473,15 @@
     <ClInclude Include="PhysicsSystem.h">
       <Filter>Engine\PhysicsSystem</Filter>
     </ClInclude>
+    <ClInclude Include="EditableMesh.h">
+      <Filter>Engine\GraphicsEngine\RenderSystem\EditableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderManager.h">
+      <Filter>App\RenderManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftBody.h">
+      <Filter>Engine\PhysicsSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -497,6 +512,9 @@
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="TerrainDensityCompute.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SoftBody.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

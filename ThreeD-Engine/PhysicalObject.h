@@ -29,11 +29,11 @@ public:
 		return SceneObjectType::PhysicalObject;
 	}
 
-	inline MeshPtr getMesh() { return m_mesh; }
+	inline EditableMeshPtr getMesh() { return m_mesh; }
 
 	virtual ScriptValue* dot(std::string);
 private:
-	MeshPtr m_mesh;
+	EditableMeshPtr m_mesh;
 
 public:
 	inline vec3 getLinearPosition() { return m_lin_position; }
