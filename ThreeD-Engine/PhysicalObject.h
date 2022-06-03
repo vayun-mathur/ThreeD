@@ -21,7 +21,7 @@ class PhysicalObject
 	: public SceneObject
 {
 public:
-	PhysicalObject(std::string name, SceneSystem* system, std::wstring mesh_location);
+	PhysicalObject(std::string name, SceneSystem* system);
 
 	~PhysicalObject();
 

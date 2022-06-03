@@ -18,7 +18,7 @@ struct Triangle {
 
 class EditableMesh {
 public:
-	EditableMesh(const wchar_t* full_path);
+	EditableMesh();
 	const VertexBufferPtr& getVertexBuffer();
 	const std::vector<MIR> getMaterialIterable();
 
