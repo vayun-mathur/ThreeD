@@ -57,10 +57,8 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		}
 		else if (type == "PHYSICAL") {
 			std::wstring obj;
-			float mass;
 			readString(scene_file, obj);
-			scene_file >> mass;
-			PhysicalObjectPtr mesh = std::make_shared<PhysicalObject>(name, this, obj, mass);
+			PhysicalObjectPtr mesh = std::make_shared<PhysicalObject>(name, this, obj);
 			components[parent]->addChild(mesh);
 			components.insert({ id, mesh });
 		}

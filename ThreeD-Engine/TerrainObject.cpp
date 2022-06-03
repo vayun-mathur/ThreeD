@@ -158,7 +158,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(pointshader);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(pointsbuffer, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBufferCS(cbu, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(size, height, size);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(size/8+1, height / 8 + 1, size / 8 + 1);
 
 
 
@@ -179,7 +179,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(pts, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(buf, 0);
 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(size-1, height-1, size-1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute((size-1)/8, (height-1) / 8, (size-1) / 8);
 
 	buf->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	Triangle* tris = (Triangle*)buf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());

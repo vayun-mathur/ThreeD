@@ -15,12 +15,9 @@ cbuffer cbuf : register(b0) {
 RWStructuredBuffer<node> nodes : register(u0);
 
 float3 force(uint index_from, uint index_by, float rest_length, float ks, float kd) {
-	float3 dir = nodes[index_by].pos - nodes[index_from].pos;
-	float dirl = length(dir);
-	float3 dirn = normalize(dir);
-
-	float3 f = dirn * ((dirl - rest_length) * ks
-		+ dot(dir, nodes[index_by].vel - nodes[index_from].vel) * kd);
+	float3 dir = (nodes[index_by].pos - nodes[index_from].pos);
+	float3 f = (dir - normalize(dir) * rest_length) * ks
+		+ normalize(dir) * dot(normalize(dir), nodes[index_by].vel - nodes[index_from].vel) * kd;
 	return f;
 }
 
@@ -28,7 +25,8 @@ uint index(uint x, uint y, uint z) {
 	return x * size * size + y * size + z;
 }
 
-const static float kmul = 1;
+const static float kmul1 = 0.666;
+const static float kmul2 = 0.1;
 
 [numthreads(8, 8, 8)]
 void UpdateSprings(uint3 id : SV_DispatchThreadID)
@@ -54,8 +52,8 @@ void UpdateSprings(uint3 id : SV_DispatchThreadID)
 	if (y0) nodes[idx0].f += force(idx0, index(id.x, id.y - 1, id.z), rl, KS, KD);
 	if (z0) nodes[idx0].f += force(idx0, index(id.x, id.y, id.z - 1), rl, KS, KD);
 	rl = rest_length * sqrt(2);
-	KS *= kmul;
-	KD *= kmul;
+	KS *= kmul1;
+	KD *= kmul1;
 	if (x0 && y0) nodes[idx0].f += force(idx0, index(id.x - 1, id.y - 1, id.z), rl, KS, KD);
 	if (x0 && z0) nodes[idx0].f += force(idx0, index(id.x - 1, id.y, id.z - 1), rl, KS, KD);
 	if (y0 && z0) nodes[idx0].f += force(idx0, index(id.x, id.y - 1, id.z - 1), rl, KS, KD);
@@ -70,8 +68,8 @@ void UpdateSprings(uint3 id : SV_DispatchThreadID)
 	if (y1 && z1) nodes[idx0].f += force(idx0, index(id.x, id.y + 1, id.z + 1), rl, KS, KD);
 
 	rl = rest_length * sqrt(3);
-	KS *= kmul;
-	KD *= kmul;
+	KS *= kmul2;
+	KD *= kmul2;
 
 	if (x0 && y0 && z0) nodes[idx0].f += force(idx0, index(id.x - 1, id.y - 1, id.z - 1), rl, KS, KD);
 	if (x0 && y0 && z1) nodes[idx0].f += force(idx0, index(id.x - 1, id.y - 1, id.z + 1), rl, KS, KD);
@@ -82,9 +80,8 @@ void UpdateSprings(uint3 id : SV_DispatchThreadID)
 	if (x1 && y1 && z0) nodes[idx0].f += force(idx0, index(id.x + 1, id.y + 1, id.z - 1), rl, KS, KD);
 	if (x1 && y1 && z1) nodes[idx0].f += force(idx0, index(id.x + 1, id.y + 1, id.z + 1), rl, KS, KD);
 
-	if (nodes[idx0].pos.y <= -2) {
-		nodes[idx0].vel.y = 0;
-		nodes[idx0].f.y = 0;
+	if (nodes[idx0].pos.y-nodes[idx0].pos.x <= 18) {
+		nodes[idx0].vel = reflect(nodes[idx0].vel, normalize(float3(-1, 1, 0)));
 	}
 	nodes[idx0].vel += nodes[idx0].f * dt / nodes[idx0].mass;
 	nodes[idx0].pos += nodes[idx0].vel * dt;

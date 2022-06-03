@@ -2,8 +2,21 @@
 #include "PhysicalObject.h"
 #include "EditableMesh.h"
 #include "SoftBody.h"
+#include "GraphicsEngine.h"
+#include "DeviceContext.h"
 
-SoftBody body;
+SoftBody* body;
+
+__declspec(align(16))
+struct cbufC
+{
+	float ks = 10, kd = 0.2;
+	float rest_length = 0.1;
+	float dt = 0.001;
+	uint32_t size = 8;
+};
+
+cbufC buf;
 
 void updateMesh(EditableMeshPtr mesh, SoftBody* body) {
 	body->editMesh(mesh);
@@ -11,6 +24,16 @@ void updateMesh(EditableMeshPtr mesh, SoftBody* body) {
 
 PhysicsSystem::PhysicsSystem()
 {
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+
+	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"SoftBody.hlsl", "UpdateSprings", &shader_byte_code, &size_shader);
+	soft_body = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+	cbuf = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(cbufC));
+
+	body = new SoftBody(vec3(0, 20, 0));
 }
 /*
 
@@ -73,10 +96,12 @@ void PhysicsSystem::update(std::vector<PhysicalObjectPtr>& objects, double dt)
 {
 	this->physicals = objects;
 
-	body.update(dt);
-	updateMesh(physicals[0]->getMesh(), &body);
-	//TODO: collisions below
-	/*physicals[0]->update({
-		Force{vec3(0, -9.81, 0), physicals[0]->getLinearPosition()}
-		}, dt);*/
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(soft_body);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBufferCS(cbuf, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(body->getNodeBuffer(), 0);
+	
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(1, 1, 1);
+
+	body->update(dt);
+	updateMesh(physicals[0]->getMesh(), body);
 }

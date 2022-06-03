@@ -64,16 +64,13 @@ void MeshRenderManager::render(std::vector<PhysicalObjectPtr>& meshes, ConstantB
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
 
+	cc.m_transform.setIdentity();
+	cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
+
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
 
 	for (PhysicalObjectPtr mesh : meshes) {
-		cc.m_transform.setIdentity();
-		cc.m_transform.setTranslation(mesh->getLinearPosition());
-		mat4 rot = mat4(mesh->getAngularPosition());
-		cc.m_transform = cc.m_transform(rot);
-		cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
-
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb, 0);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
 
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(mesh->getMesh()->getVertexBuffer());

@@ -185,11 +185,6 @@ void AppWindow::onCreate()
 
 	m_cb = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 
-	PhysicalObjectPtr obj = m_scene->getRoot()->getChild<PhysicalObject>("phy");
-	obj->setLinearPosition(vec3(0, 20, 0));
-	obj = m_scene->getRoot()->getChild<PhysicalObject>("phy2");
-	obj->setLinearPosition(vec3(0, 5, 0));
-
 	water_manager = new WaterRenderManager();
 	water_manager->init(rc);
 	terrain_manager = new TerrainRenderManager();

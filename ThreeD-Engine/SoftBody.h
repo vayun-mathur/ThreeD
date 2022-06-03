@@ -10,24 +10,22 @@ struct node {
 	vec3 f;
 };
 
-struct spring {
-	node* e1, * e2;
-	float ks, kd;
-	float rest_length;
-};
-
 struct surface {
-	node* p1, *p2, *p3;
+	int p1, p2, p3;
 };
 
 class SoftBody {
 public:
-	SoftBody();
+	SoftBody(vec3 position);
 
 	void update(float dt);
 	void editMesh(EditableMeshPtr mesh);
+	RWStructuredBufferPtr getNodeBuffer();
+private:
+	vec3 force(int index_from, int index_by, float rest_length, float ks, float kd);
 private:
 	std::vector<node> nodes;
-	std::vector<spring> springs;
 	std::vector<surface> triangles;
+
+	RWStructuredBufferPtr nodebuf;
 };
