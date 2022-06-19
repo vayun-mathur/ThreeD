@@ -27,7 +27,6 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	std::ifstream scene_file(full_path);
 
 	std::unordered_map<int, SceneObjectPtr> components;
-	std::unordered_map<int, std::string> component_type;
 	components.insert({ 0, m_root });
 	int component_count;
 	scene_file >> component_count;
@@ -38,7 +37,6 @@ SceneSystem::SceneSystem(std::wstring file_path)
 		std::string type;
 		readString(scene_file, name);
 		readString(scene_file, type);
-		component_type.insert({ id, type });
 		if (type == "OBJECT") {
 			SceneObjectPtr obj = std::make_shared<SceneObject>(name, this);
 			components[parent]->addChild(obj);
