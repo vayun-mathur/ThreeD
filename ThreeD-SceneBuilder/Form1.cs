@@ -57,7 +57,7 @@ namespace ThreeD_SceneBuilder
 
             int component_count = s.nextInt();
 
-            for(int i=0;i<component_count; i++)
+            for (int i = 0; i < component_count; i++)
             {
                 int id = s.nextInt();
                 int parent = s.nextInt();
@@ -68,7 +68,7 @@ namespace ThreeD_SceneBuilder
                 Vec3 position, scale, color;
                 string path;
 
-                switch(type)
+                switch (type)
                 {
                     case "OBJECT":
                         obj = new SceneObject(name, id);
@@ -153,6 +153,50 @@ namespace ThreeD_SceneBuilder
         {
             return new Vec3(s.nextDouble(), s.nextDouble(), s.nextDouble());
         }
+
+        private void saveSceneButton_Click(object sender, EventArgs e)
+        {
+            saveSceneDialog.ShowDialog();
+        }
+
+        private void saveSceneDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                var filePath = saveSceneDialog.FileName;
+                using (Stream str = saveSceneDialog.OpenFile())
+                {
+                    saveScene(str);
+                }
+            }
+            catch (SecurityException ex)
+            {
+                MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
+                $"Details:\n\n{ex.StackTrace}");
+            }
+        }
+        private void saveScene(Stream s)
+        {
+            List<SceneObject> objects = new List<SceneObject>();
+            root.getChildrenRecursive(objects);
+            objects.Remove(root);
+
+            char[] c = objects.Count.ToString().ToCharArray();
+            byte[] arr = System.Text.Encoding.UTF8.GetBytes(c);
+            s.Write(arr, 0, arr.Length);
+            s.WriteByte((byte)'\n');
+
+
+            foreach(SceneObject obj in objects)
+            {
+                c = obj.ToSaveString().ToCharArray();
+                arr = System.Text.Encoding.UTF8.GetBytes(c);
+                s.Write(arr, 0, arr.Length);
+                s.WriteByte((byte)'\n');
+            }
+
+            s.Close();
+        }
     }
 
     public class Vec3
@@ -202,11 +246,25 @@ namespace ThreeD_SceneBuilder
             TreeNode node = new TreeNode();
             node.Text = name;
             node.Tag = this;
-            foreach(SceneObject child in children)
+            foreach (SceneObject child in children)
             {
                 node.Nodes.Add(child.MakeNode());
             }
             return node;
+        }
+
+        public void getChildrenRecursive(List<SceneObject> objects)
+        {
+            objects.Add(this);
+            foreach (SceneObject child in children)
+            {
+                child.getChildrenRecursive(objects);
+            }
+        }
+
+        public string ToSaveString()
+        {
+            return string.Format("{0} {1} {2} {3} 6 OBJECT", id, parent.id, name.Length, name);
         }
     }
 }

@@ -32,6 +32,7 @@
             this.sceneTree = new System.Windows.Forms.TreeView();
             this.loadSceneButton = new System.Windows.Forms.Button();
             this.saveSceneButton = new System.Windows.Forms.Button();
+            this.saveSceneDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // loadSceneDialog
@@ -65,6 +66,11 @@
             this.saveSceneButton.TabIndex = 2;
             this.saveSceneButton.Text = "Save Scene";
             this.saveSceneButton.UseVisualStyleBackColor = true;
+            this.saveSceneButton.Click += new System.EventHandler(this.saveSceneButton_Click);
+            // 
+            // saveSceneDialog
+            // 
+            this.saveSceneDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveSceneDialog_FileOk);
             // 
             // Form1
             // 
@@ -87,6 +93,7 @@
         private System.Windows.Forms.Button loadSceneButton;
         private System.Windows.Forms.Button saveSceneButton;
         private System.Windows.Forms.OpenFileDialog loadSceneDialog;
+        private System.Windows.Forms.SaveFileDialog saveSceneDialog;
     }
 }
 
