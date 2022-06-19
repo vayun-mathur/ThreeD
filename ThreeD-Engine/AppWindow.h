@@ -19,6 +19,7 @@
 #include "TerrainRenderManager.h"
 #include "MeshRenderManager.h"
 #include "VolumetricRenderManager.h"
+#include "GUIRenderManager.h"
 #include "PhysicsSystem.h"
 
 struct dlight {
@@ -88,6 +89,7 @@ public:
 	TerrainRenderManager* terrain_manager;
 	MeshRenderManager* mesh_manager;
 	VolumetricRenderManager* volumetric_manager;
+	GUIRenderManager* gui_manager;
 	PhysicsSystem* physics_system;
 
 	SceneSystem* m_scene = nullptr;

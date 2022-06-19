@@ -303,6 +303,9 @@
     <ClCompile Include="SoftBody.cpp">
       <Filter>Engine\PhysicsSystem</Filter>
     </ClCompile>
+    <ClCompile Include="GUIRenderManager.cpp">
+      <Filter>App\RenderManagers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -482,6 +485,9 @@
     <ClInclude Include="SoftBody.h">
       <Filter>Engine\PhysicsSystem</Filter>
     </ClInclude>
+    <ClInclude Include="GUIRenderManager.h">
+      <Filter>App\RenderManagers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -515,6 +521,9 @@
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="SoftBody.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GUIShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

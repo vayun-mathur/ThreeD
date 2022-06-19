@@ -137,6 +137,9 @@ void AppWindow::render()
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 	renderScene(m_cb, nullptr);
 
+	std::vector<GUI> guis = { {nullptr, vec2(0.5, 0.5), vec2(0.25, 0.25), 0.5} };
+	gui_manager->render(guis);
+
 
 	m_swap_chain->present(true);
 
@@ -162,8 +165,6 @@ void AppWindow::update()
 	find(m_scene->getRoot(), meshes, physicals, terrains, waters, dlights, plights);
 
 	physics_system->update(physicals, m_delta_time);
-
-	PhysicalObjectPtr obj = m_scene->getRoot()->getChild<PhysicalObject>("phy");
 }
 
 AppWindow::~AppWindow()
@@ -193,6 +194,8 @@ void AppWindow::onCreate()
 	mesh_manager->init();
 	volumetric_manager = new VolumetricRenderManager();
 	volumetric_manager->init();
+	gui_manager = new GUIRenderManager();
+	gui_manager->init();
 	physics_system = new PhysicsSystem();
 
 	onFocus();
@@ -234,6 +237,7 @@ void AppWindow::onSize()
 {
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain->resize(rc.right, rc.bottom);
+	everything->resize(rc.right, rc.bottom);
 	m_scene->getCamera()->updateProjectionMatrix();
 	render();
 }

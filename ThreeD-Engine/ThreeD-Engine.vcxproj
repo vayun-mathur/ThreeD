@@ -82,12 +82,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>Libs\tinyobjloader\include;Libs\DirectXTex\include;Libs\openal\include;$(IncludePath)</IncludePath>
+    <IncludePath>Libs\convhull_3d\;Libs\tinyobjloader\include;Libs\DirectXTex\include;Libs\openal\include;$(IncludePath)</IncludePath>
     <LibraryPath>Libs\openal\libs\Win64;Libs\DirectXTex\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>Libs\tinyobjloader\include;Libs\DirectXTex\include;Libs\openal\include;$(IncludePath)</IncludePath>
+    <IncludePath>Libs\convhull_3d\;Libs\tinyobjloader\include;Libs\DirectXTex\include;Libs\openal\include;$(IncludePath)</IncludePath>
     <LibraryPath>Libs\openal\libs\Win64;Libs\DirectXTex\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -172,6 +172,7 @@
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
+    <ClCompile Include="GUIRenderManager.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="main.cpp">
@@ -231,6 +232,7 @@
     <ClInclude Include="DirectionalLightObject.h" />
     <ClInclude Include="EditableMesh.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GUIRenderManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
@@ -282,6 +284,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CloudShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GUIShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

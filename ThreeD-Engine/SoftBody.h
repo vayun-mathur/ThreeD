@@ -8,6 +8,7 @@ struct node {
 	vec3 pos;
 	vec3 vel;
 	vec3 f;
+	int exists;
 };
 
 struct surface {
@@ -16,16 +17,16 @@ struct surface {
 
 class SoftBody {
 public:
-	SoftBody(vec3 position);
+	SoftBody(vec3 position, int body_size);
 
 	void update(float dt);
 	void editMesh(EditableMeshPtr mesh);
 	RWStructuredBufferPtr getNodeBuffer();
 private:
-	vec3 force(int index_from, int index_by, float rest_length, float ks, float kd);
-private:
 	std::vector<node> nodes;
 	std::vector<surface> triangles;
 
 	RWStructuredBufferPtr nodebuf;
+
+	int size;
 };

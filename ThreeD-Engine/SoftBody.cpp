@@ -2,16 +2,39 @@
 #include "EditableMesh.h"
 #include "GraphicsEngine.h"
 #include "RWStructuredBuffer.h"
+#define CONVHULL_3D_ENABLE
+#include <convhull_3d.h>
 
-SoftBody::SoftBody(vec3 position)
+SoftBody::SoftBody(vec3 position, int body_size)
 {
-	int size = 8;
+	std::vector<ch_vertex> vertices;
+	std::vector<int> vertex_indices;
+
+	double density = 1;
+
+	double total_size = 2;
+
+	this->size = body_size;
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 			for (int k = 0; k < size; k++) {
-				nodes.push_back(node{ 0.001, vec3(i, j, k) * 0.1 + position });
+				node n = node{ (float)(density * pow(total_size / size, 3)), vec3(i, j, k) / size * total_size + position};
+				n.exists = true;// (vec3(i, j, k) - vec3(0, size - 1, 0)).mag() < size - 1;
+				nodes.push_back(n);
+				if (n.exists) {
+					vertices.push_back(ch_vertex{ (double)i, (double)j, (double)k });
+					vertex_indices.push_back(i * size * size + j * size + k);
+				}
 			}
 		}
+	}
+
+	int* faceIndices = NULL;
+	int nFaces;
+	convhull_3d_build(vertices.data(), vertices.size(), &faceIndices, &nFaces);
+
+	for (int i = 0; i < nFaces; i++) {
+		triangles.push_back(surface{ vertex_indices[faceIndices[i * 3]], vertex_indices[faceIndices[i * 3 + 1]] , vertex_indices[faceIndices[i * 3 + 2]] });
 	}
 
 	nodebuf = GraphicsEngine::get()->getRenderSystem()->createRWStructuredBuffer(&nodes[0], sizeof(node), nodes.size());
@@ -21,8 +44,8 @@ SoftBody::SoftBody(vec3 position)
 	nodebuf->close_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	nodebuf->toGPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 
-	auto getNode = [this, size](float i, float j, float k)->int{return i * size * size + j * size + k; };
-
+	auto getNode = [this](float i, float j, float k)->int{return i * size * size + j * size + k; };
+	/*
 	for (int i = 0; i < size - 1; i++) {
 		for (int j = 0; j < size - 1; j++) {
 			triangles.push_back(surface{ getNode(i, j, 0), getNode(i, j + 1, 0) , getNode(i + 1, j, 0) });
@@ -47,18 +70,18 @@ SoftBody::SoftBody(vec3 position)
 			triangles.push_back(surface{ getNode(size - 1, j + 1, k + 1), getNode(size - 1, j, k + 1), getNode(size - 1, j + 1, k) });
 		}
 	}
-}
-
-
-vec3 SoftBody::force(int index_from, int index_by, float ks, float kd, float rest_length) {
-	vec3 dir = (nodes[index_by].pos - nodes[index_from].pos);
-	vec3 f = (dir - dir.normal() * rest_length) * ks
-		+ dir.normal() * vec3::dot(dir.normal(), nodes[index_by].vel - nodes[index_from].vel) * kd;
-	return f * -1;
+	*/
 }
 
 void SoftBody::update(float dt)
 {
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			for (int k = 0; k < size; k++) {
+				
+			}
+		}
+	}
 	nodebuf->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	node* ptr = (node*)nodebuf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	nodes = std::vector<node>(ptr, ptr+nodes.size());
