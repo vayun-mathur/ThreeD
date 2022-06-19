@@ -6,7 +6,9 @@ This is a 3D game engine for Windows.
 3. Input 
 4. Scene System
 5. 3D Audio
-6. Basic Scripting System
+6. Scripting System
+7. GUI System
+8. Soft-Body Physics
 
 ### Currently Working On
 #### 3D Graphics Engine
@@ -24,6 +26,7 @@ This is a 3D game engine for Windows.
 11. Skybox
 12. Point Light
 13. Loading .mtl files
+14. Clouds
 ##### TODO
 1. Spot Light
 2. 3rd Person Camera
@@ -75,8 +78,24 @@ Nothing for now
     - Key listener
     - Click listener for meshes
 
+#### Physics Engine
+##### Completed
+1. Soft Body Physics w/ Spring & Mass
+2. Euler-Cromer Method
+2. GPU calculations
+##### TODO
+1. Soft Body Physics w/ Finite Element Method
+2. Fluid Dynamics
+
+#### GUI System
+##### Completed
+1. Render White Rectangle
+2. Rounded Rectangles
+##### TODO
+1. Different Colors / Textures on elements
+
 ### Features to come
-1. GUI System
+1. Scene Creation Tool
 
 ## Getting Started
 ### Installation
