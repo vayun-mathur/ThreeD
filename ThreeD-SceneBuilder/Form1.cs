@@ -47,6 +47,7 @@ namespace ThreeD_SceneBuilder
         }
 
         private SceneObject root;
+        private int main_cam;
 
         private void loadScene(Scanner s)
         {
@@ -78,32 +79,32 @@ namespace ThreeD_SceneBuilder
                         position = readVec(s);
                         scale = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new MeshObject(name, id, path, position, scale);
                         break;
                     case "PHYSICAL":
-                        obj = new SceneObject(name, id);
+                        obj = new PhysicalObject(name, id);
                         break;
                     case "TERRAIN":
                         position = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new TerrainObject(name, id, position);
                         break;
                     case "WATER":
                         position = readVec(s);
                         scale = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new WaterObject(name, id, position, scale);
                         break;
                     case "CAMERA":
                         double clip_dist = s.nextDouble();
                         double speed = s.nextDouble();
-                        obj = new SceneObject(name, id);
+                        obj = new CameraObject(name, id, clip_dist, speed);
                         break;
                     case "DIRECTIONAL_LIGHT":
                         color = readVec(s);
                         Vec3 direction = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new DirectionalLightObject(name, id, color, direction);
                         break;
                     case "POINT_LIGHT":
                         color = readVec(s);
@@ -111,33 +112,34 @@ namespace ThreeD_SceneBuilder
                         double radius = s.nextDouble();
                         Vec3 attenuation = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new PointLightObject(name, id, color, position, radius, attenuation);
                         break;
                     case "AUDIO_SOURCE":
                         position = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new AudioSourceObject(name, id, position);
                         break;
                     case "NUMBER_VALUE":
                         double val_num = s.nextDouble();
 
-                        obj = new SceneObject(name, id);
+                        obj = new NumberValueObject(name, id, val_num);
                         break;
                     case "VECTOR_VALUE":
                         Vec3 val_vec = readVec(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new Vec3ValueObject(name, id, val_vec);
                         break;
                     case "SCRIPT":
                         path = readString(s);
 
-                        obj = new SceneObject(name, id);
+                        obj = new ScriptObject(name, id, path);
                         break;
                 }
 
                 components[parent].addChild(obj);
                 components.Add(id, obj);
             }
+            main_cam = s.nextInt();
 
             sceneTree.Nodes.Clear();
             sceneTree.Nodes.Add(root.MakeNode());
@@ -175,25 +177,31 @@ namespace ThreeD_SceneBuilder
                 $"Details:\n\n{ex.StackTrace}");
             }
         }
+
+        private void write(Stream s, string str)
+        {
+            char[] c = str.ToCharArray();
+            byte[] arr = System.Text.Encoding.UTF8.GetBytes(c);
+            s.Write(arr, 0, arr.Length);
+        }
+
         private void saveScene(Stream s)
         {
             List<SceneObject> objects = new List<SceneObject>();
             root.getChildrenRecursive(objects);
             objects.Remove(root);
 
-            char[] c = objects.Count.ToString().ToCharArray();
-            byte[] arr = System.Text.Encoding.UTF8.GetBytes(c);
-            s.Write(arr, 0, arr.Length);
+            write(s, objects.Count.ToString());
             s.WriteByte((byte)'\n');
 
 
-            foreach(SceneObject obj in objects)
+            foreach (SceneObject obj in objects)
             {
-                c = obj.ToSaveString().ToCharArray();
-                arr = System.Text.Encoding.UTF8.GetBytes(c);
-                s.Write(arr, 0, arr.Length);
+                write(s, obj.ToSaveString());
                 s.WriteByte((byte)'\n');
             }
+
+            write(s, main_cam.ToString());
 
             s.Close();
         }
@@ -209,62 +217,10 @@ namespace ThreeD_SceneBuilder
             this.y = y;
             this.z = z;
         }
-    }
-
-    public class SceneObject
-    {
-        private string name;
-        private int id;
-        private SceneObject parent;
-        private List<SceneObject> children = new List<SceneObject>();
-
-        public SceneObject(string name, int id)
-        {
-            this.name = name;
-            this.id = id;
-        }
-
-        public void removeChild(SceneObject child)
-        {
-            children.Remove(child);
-            child.parent = null;
-        }
-
-        public void addChild(SceneObject child)
-        {
-            children.Add(child);
-            child.parent = this;
-        }
 
         public override string ToString()
         {
-            return name;
-        }
-
-        public TreeNode MakeNode()
-        {
-            TreeNode node = new TreeNode();
-            node.Text = name;
-            node.Tag = this;
-            foreach (SceneObject child in children)
-            {
-                node.Nodes.Add(child.MakeNode());
-            }
-            return node;
-        }
-
-        public void getChildrenRecursive(List<SceneObject> objects)
-        {
-            objects.Add(this);
-            foreach (SceneObject child in children)
-            {
-                child.getChildrenRecursive(objects);
-            }
-        }
-
-        public string ToSaveString()
-        {
-            return string.Format("{0} {1} {2} {3} 6 OBJECT", id, parent.id, name.Length, name);
+            return x + " " + y + " " + z;
         }
     }
 }

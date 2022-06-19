@@ -7,7 +7,7 @@ using System.IO;
 
 namespace ThreeD_SceneBuilder
 {
-    internal class Scanner : System.IO.StreamReader
+    public class Scanner : System.IO.StreamReader
     {
         string currentWord;
 
