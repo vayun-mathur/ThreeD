@@ -4,13 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace ThreeD_SceneBuilder
 {
+    [DefaultPropertyAttribute("id")]
     public class SceneObject
     {
-        public string name;
-        public int id;
+        [CategoryAttribute("Data"), DescriptionAttribute("ID Number of this component")]
+        public int id { get; set; }
+
+        [CategoryAttribute("Data"), DescriptionAttribute("Name of this component")]
+        public string name { get; set; }
+
         public SceneObject parent;
         private List<SceneObject> children = new List<SceneObject>();
 
@@ -66,9 +72,12 @@ namespace ThreeD_SceneBuilder
 
     public class MeshObject : SceneObject
     {
-        public string path;
-        public Vec3 position;
-        public Vec3 scale;
+        [CategoryAttribute("Data"), DescriptionAttribute("Mesh file to use for this object")]
+        public string path { get; set; }
+        [CategoryAttribute("Transform"), DescriptionAttribute("Position of this mesh")]
+        public Vec3 position { get; set; }
+        [CategoryAttribute("Transform"), DescriptionAttribute("Scale of this mesh")]
+        public Vec3 scale { get; set; }
 
         public MeshObject(string name, int id, string path, Vec3 position, Vec3 scale)
             : base(name, id)
@@ -100,7 +109,8 @@ namespace ThreeD_SceneBuilder
 
     public class TerrainObject : SceneObject
     {
-        public Vec3 position;
+        [CategoryAttribute("Transform"), DescriptionAttribute("Position of this terrain")]
+        public Vec3 position { get; set; }
 
         public TerrainObject(string name, int id, Vec3 position)
             : base(name, id)
@@ -116,8 +126,10 @@ namespace ThreeD_SceneBuilder
 
     public class WaterObject : SceneObject
     {
-        public Vec3 position;
-        public Vec3 scale;
+        [CategoryAttribute("Transform"), DescriptionAttribute("Position of this mesh")]
+        public Vec3 position { get; set; }
+        [CategoryAttribute("Transform"), DescriptionAttribute("Scale of this mesh")]
+        public Vec3 scale { get; set; }
 
         public WaterObject(string name, int id, Vec3 position, Vec3 scale)
             : base(name, id)
@@ -134,8 +146,10 @@ namespace ThreeD_SceneBuilder
 
     public class CameraObject : SceneObject
     {
-        public double clip_dist;
-        public double speed;
+        [CategoryAttribute("Camera"), DescriptionAttribute("Furthest distance that can be seen")]
+        public double clip_dist { get; set; }
+        [CategoryAttribute("Camera"), DescriptionAttribute("Speed of camera movement")]
+        public double speed { get; set; }
 
         public CameraObject(string name, int id, double clip_dist, double speed)
             : base(name, id)
@@ -152,8 +166,10 @@ namespace ThreeD_SceneBuilder
 
     public class DirectionalLightObject : SceneObject
     {
-        public Vec3 color;
-        public Vec3 direction;
+        [CategoryAttribute("Light"), DescriptionAttribute("Light color")]
+        public Vec3 color { get; set; }
+        [CategoryAttribute("Light"), DescriptionAttribute("Light direction")]
+        public Vec3 direction { get; set; }
 
         public DirectionalLightObject(string name, int id, Vec3 color, Vec3 direction)
             : base(name, id)
@@ -170,10 +186,14 @@ namespace ThreeD_SceneBuilder
 
     public class PointLightObject : SceneObject
     {
-        public Vec3 color;
-        public Vec3 position;
-        public double radius;
-        public Vec3 attenuation;
+        [CategoryAttribute("Light"), DescriptionAttribute("Light color")]
+        public Vec3 color { get; set; }
+        [CategoryAttribute("Light"), DescriptionAttribute("Light position")]
+        public Vec3 position { get; set; }
+        [CategoryAttribute("Light"), DescriptionAttribute("Light radius")]
+        public double radius { get; set; }
+        [CategoryAttribute("Light"), DescriptionAttribute("Light attenuation parameters")]
+        public Vec3 attenuation { get; set; }
 
         public PointLightObject(string name, int id, Vec3 color, Vec3 position, double radius, Vec3 attenuation)
             : base(name, id)
@@ -192,7 +212,8 @@ namespace ThreeD_SceneBuilder
 
     public class AudioSourceObject : SceneObject
     {
-        public Vec3 position;
+        [CategoryAttribute("Transform"), DescriptionAttribute("Audio Source position")]
+        public Vec3 position { get; set; }
 
         public AudioSourceObject(string name, int id, Vec3 position)
             : base(name, id)
@@ -208,7 +229,8 @@ namespace ThreeD_SceneBuilder
 
     public class NumberValueObject : SceneObject
     {
-        public double value;
+        [CategoryAttribute("Data"), DescriptionAttribute("Numerical value")]
+        public double value { get; set; }
 
         public NumberValueObject(string name, int id, double value)
             : base(name, id)
@@ -224,7 +246,8 @@ namespace ThreeD_SceneBuilder
 
     public class Vec3ValueObject : SceneObject
     {
-        public Vec3 value;
+        [CategoryAttribute("Data"), DescriptionAttribute("Vector value")]
+        public Vec3 value { get; set; }
 
         public Vec3ValueObject(string name, int id, Vec3 value)
             : base(name, id)
@@ -240,7 +263,8 @@ namespace ThreeD_SceneBuilder
 
     public class ScriptObject : SceneObject
     {
-        public string path;
+        [CategoryAttribute("Data"), DescriptionAttribute("File to read script from")]
+        public string path { get; set; }
 
         public ScriptObject(string name, int id, string path)
             : base(name, id)

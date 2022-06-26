@@ -46,7 +46,7 @@ namespace ThreeD_SceneBuilder
             }
         }
 
-        private SceneObject root;
+        public SceneObject root;
         private int main_cam;
 
         private void loadScene(Scanner s)
@@ -143,6 +143,7 @@ namespace ThreeD_SceneBuilder
 
             sceneTree.Nodes.Clear();
             sceneTree.Nodes.Add(root.MakeNode());
+            propertyGrid1.SelectedObject = root;
         }
 
         private string readString(Scanner s)
@@ -205,11 +206,19 @@ namespace ThreeD_SceneBuilder
 
             s.Close();
         }
+
+        private void sceneTree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            propertyGrid1.SelectedObject = e.Node.Tag;
+        }
     }
 
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class Vec3
     {
-        public double x, y, z;
+        public double x { get; set; }
+        public double y { get; set; }
+        public double z { get; set; }
 
         public Vec3(double x, double y, double z)
         {

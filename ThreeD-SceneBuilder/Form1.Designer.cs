@@ -33,6 +33,7 @@
             this.loadSceneButton = new System.Windows.Forms.Button();
             this.saveSceneButton = new System.Windows.Forms.Button();
             this.saveSceneDialog = new System.Windows.Forms.SaveFileDialog();
+            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
             // loadSceneDialog
@@ -47,6 +48,7 @@
             this.sceneTree.Name = "sceneTree";
             this.sceneTree.Size = new System.Drawing.Size(364, 540);
             this.sceneTree.TabIndex = 0;
+            this.sceneTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sceneTree_AfterSelect);
             // 
             // loadSceneButton
             // 
@@ -72,11 +74,19 @@
             // 
             this.saveSceneDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveSceneDialog_FileOk);
             // 
+            // propertyGrid1
+            // 
+            this.propertyGrid1.Location = new System.Drawing.Point(668, 12);
+            this.propertyGrid1.Name = "propertyGrid1";
+            this.propertyGrid1.Size = new System.Drawing.Size(429, 540);
+            this.propertyGrid1.TabIndex = 3;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1109, 642);
+            this.Controls.Add(this.propertyGrid1);
             this.Controls.Add(this.saveSceneButton);
             this.Controls.Add(this.loadSceneButton);
             this.Controls.Add(this.sceneTree);
@@ -94,6 +104,7 @@
         private System.Windows.Forms.Button saveSceneButton;
         private System.Windows.Forms.OpenFileDialog loadSceneDialog;
         private System.Windows.Forms.SaveFileDialog saveSceneDialog;
+        private System.Windows.Forms.PropertyGrid propertyGrid1;
     }
 }
 
