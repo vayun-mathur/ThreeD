@@ -79,17 +79,34 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 		cc.plight[i].attenuation = plights[i]->getAttenuation();
 	}
 	cc.m_plight_count = (int)plights.size();
-
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(everything, 0, 0, 0, 0);
-	mesh_manager->render(meshes, m_cb, cc);
-	mesh_manager->render(physicals, m_cb, cc);
-
-	terrain_manager->render(terrains, m_cb, cc);
-
-	water_manager->render(waters, m_cb, cc);
 	volumes.push_back(std::make_shared<VolumeObject>(vec3(-20, 20, -20), vec3(20, 60, 20)));
+
 	if (toRender == nullptr) {
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
+
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(sky_texture, 0, 1, 0, 0);
+
+		sky_manager->render(m_scene->getCamera());
+
+
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(everything, 0, 0, 0, 0);
+
+		sky_manager->render(m_scene->getCamera());
+		mesh_manager->render(meshes, m_cb, cc);
+		mesh_manager->render(physicals, m_cb, cc);
+
+		terrain_manager->render(terrains, m_cb, cc);
+
+		water_manager->render(waters, m_cb, cc);
+
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 1, 0, 0);
+		sky_manager->render(m_scene->getCamera());
+		mesh_manager->render(meshes, m_cb, cc);
+		mesh_manager->render(physicals, m_cb, cc);
+
+		terrain_manager->render(terrains, m_cb, cc);
+
+		water_manager->render(waters, m_cb, cc);
+
 		volumetric_manager->render(volumes);
 	}
 	else {
@@ -104,6 +121,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 void AppWindow::render()
 {
 	cc.fog_color = vec4(135 / 255.f, 206 / 255.f, 235 / 255.f, 1);
+	cc.screensize = vec2(getClientWindowRect().right - getClientWindowRect().left, getClientWindowRect().bottom - getClientWindowRect().top);
 
 	//camera
 	CameraObjectPtr cam = m_scene->getCamera();
@@ -131,7 +149,7 @@ void AppWindow::render()
 
 	cc.m_clip = vec4(0, 0, 0, 100000);
 	//CLEAR THE RENDER TARGET
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 0, 0, 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 1, 0, 1);
 	//SET VIEWPORT OF RENDER TARGET IN WHICH WE HAVE TO DRAW
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
@@ -194,6 +212,8 @@ void AppWindow::onCreate()
 	mesh_manager->init();
 	volumetric_manager = new VolumetricRenderManager();
 	volumetric_manager->init();
+	sky_manager = new SkyRenderManager();
+	sky_manager->init();
 	gui_manager = new GUIRenderManager();
 	gui_manager->init();
 	physics_system = new PhysicsSystem();
@@ -201,6 +221,7 @@ void AppWindow::onCreate()
 	onFocus();
 
 	everything = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
+	sky_texture = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 }
 
 void AppWindow::onUpdate()
@@ -238,6 +259,7 @@ void AppWindow::onSize()
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain->resize(rc.right, rc.bottom);
 	everything->resize(rc.right, rc.bottom);
+	sky_texture->resize(rc.right, rc.bottom);
 	m_scene->getCamera()->updateProjectionMatrix();
 	render();
 }

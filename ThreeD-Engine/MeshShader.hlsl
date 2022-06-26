@@ -60,5 +60,5 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 		light += calculatePoint(material, plight[i], input.world_pos, input.normal);
 	}
 
-	return float4(light, 1.0);
+	return float4(fog(light, length(input.world_pos- m_camera_position.xyz), input.position.xy / screen_size), 1.0);
 }

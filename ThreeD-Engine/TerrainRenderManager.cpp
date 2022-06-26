@@ -52,6 +52,7 @@ void TerrainRenderManager::render(std::vector<TerrainObjectPtr>& terrains, Const
 			for (auto&& [index, texture] : material->getTextures()) {
 				GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, texture, index);
 			}
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->sky_texture->getTexture(), 3);
 
 			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(mir.high - mir.low, 0, mir.low);
 		}

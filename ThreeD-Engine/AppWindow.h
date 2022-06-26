@@ -21,6 +21,7 @@
 #include "VolumetricRenderManager.h"
 #include "GUIRenderManager.h"
 #include "PhysicsSystem.h"
+#include "SkyRenderManager.h"
 
 struct dlight {
 	vec4 light_direction;
@@ -42,8 +43,7 @@ struct constant
 	vec4 m_clip;
 	int m_dlight_count = 0;
 	int m_plight_count = 0;
-	int v = 0;
-	int x = 0;
+	vec2 screensize;
 	dlight dlight[5];
 	plight plight[5];
 	vec4 fog_color;
@@ -90,11 +90,12 @@ public:
 	MeshRenderManager* mesh_manager;
 	VolumetricRenderManager* volumetric_manager;
 	GUIRenderManager* gui_manager;
+	SkyRenderManager* sky_manager;
 	PhysicsSystem* physics_system;
 
 	SceneSystem* m_scene = nullptr;
 
-	FrameBufferPtr everything;
+	FrameBufferPtr everything, everything2, sky_texture;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;

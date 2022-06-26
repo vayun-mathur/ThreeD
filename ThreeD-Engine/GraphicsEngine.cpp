@@ -48,6 +48,11 @@ GraphicsEngine::GraphicsEngine()
 	::memcpy(m_mesh_layout_byte_code[4], shader_byte_code, size_shader);
 	m_mesh_layout_size[4] = size_shader;
 	m_render_system->releaseCompiledShader();
+
+	m_render_system->compileVertexShader(L"SkyShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
+	::memcpy(m_mesh_layout_byte_code[5], shader_byte_code, size_shader);
+	m_mesh_layout_size[5] = size_shader;
+	m_render_system->releaseCompiledShader();
 }
 
 RenderSystem* GraphicsEngine::getRenderSystem()

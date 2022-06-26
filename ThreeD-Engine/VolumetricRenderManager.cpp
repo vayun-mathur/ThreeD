@@ -84,8 +84,8 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		buf.projection = AppWindow::s_main->m_scene->getCamera()->getProjectionMatrix();
 		buf.view = AppWindow::s_main->m_scene->getCamera()->getViewMatrix();
 		buf.transform = mat4();
-		vec3 tmin = min(volume->getMin(), AppWindow::s_main->m_scene->getCamera()->getCameraPosition() - 2);
-		vec3 tmax = max(volume->getMax(), AppWindow::s_main->m_scene->getCamera()->getCameraPosition() + 2);
+		vec3 tmin = volume->getMin();// min(volume->getMin(), AppWindow::s_main->m_scene->getCamera()->getCameraPosition() - 2);
+		vec3 tmax = volume->getMax();//max(volume->getMax(), AppWindow::s_main->m_scene->getCamera()->getCameraPosition() + 2);
 		buf.transform.setTranslation(tmin + (tmax - tmin)/2);
 		buf.transform.setScale((tmax - tmin)/2);
 

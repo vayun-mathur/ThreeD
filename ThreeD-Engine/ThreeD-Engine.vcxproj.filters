@@ -306,6 +306,9 @@
     <ClCompile Include="GUIRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
     </ClCompile>
+    <ClCompile Include="SkyRenderManager.cpp">
+      <Filter>App\RenderManagers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -488,6 +491,9 @@
     <ClInclude Include="GUIRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
+    <ClInclude Include="SkyRenderManager.h">
+      <Filter>App\RenderManagers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -524,6 +530,9 @@
       <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="GUIShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyShader.hlsl">
       <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

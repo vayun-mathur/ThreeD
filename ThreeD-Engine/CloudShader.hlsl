@@ -183,11 +183,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 
 	float stepSize = 0.1;
 
-
 	float3 light_dir = normalize(float3(1, 3, 1));
-
-	float cosAngle = dot(rayDir, light_dir);
-	float phaseVal = phase(rayDir, light_dir);
 
 	// Accumulate result: value and transparency (alpha)
 	float3 light_color = float3(1, 1, 1);
@@ -200,6 +196,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	float dstTravelled = randomOffset;
 	float dstLimit = intersections.y;
 
+	float phaseVal = phase(rayDir, light_dir);
 
 	float2 realpos = (input.pos.xy) / screenSize;
 
@@ -231,26 +228,11 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	}
 
 	float3 params = float3(1, 0, 0);
-	float3 colA = float3(226, 236, 235) / 255;
-	float3 colB = float3(135, 206, 235) / 255;
-
-	// Composite sky + background
-	float3 skyColBase = lerp(colA, colB, sqrt(abs(saturate(rayDir.y))));
-	float dstFog = 1 - exp(-max(0, depth) * 8 * .001); //increase
-	// exp(-max(0, depth) * 8 * .0001) decrease
-	// -max(0, depth) * 8 * .0001 decrease
-	// max(0, depth) * 8 * .0001 increase
-	// depth * 8 * .0001 increase
-	float3 backgroundCol = lerp(Main.Sample(samplerMain, realpos).rgb, skyColBase, saturate(dstFog));
-
-	// Sun
-	float focusedEyeCos = pow(saturate(cosAngle), params.x);
-	float sun = saturate(hg(focusedEyeCos, .9995)) * transmittance;
+	float3 backgroundCol = Main.Sample(samplerMain, realpos).rgb;
 
 	// Add clouds
 	float3 cloudCol = light_energy * light_color;
 	float3 col = backgroundCol * transmittance + cloudCol;
-	col = saturate(col) * (1 - sun) + light_color * sun;
 
 	return float4(col, 1);
 }
