@@ -15,6 +15,8 @@ struct _buf__ {
 	vec3 campos;
 	float f;
 	vec2 screenSize;
+	float f2, f3;
+	vec3 sun_dir;
 };
 
 _buf__ b;
@@ -91,7 +93,8 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_cubeIB);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-
+	double t = (float)::GetTickCount64()/10000;
+	b.sun_dir = vec3(0, sin(t), cos(t));
 	b.transform.setIdentity();
 	b.transform.setTranslation(cam->getCameraPosition());
 	b.transform.setScale(vec3(2000));

@@ -156,7 +156,7 @@ void AppWindow::render()
 	renderScene(m_cb, nullptr);
 
 	std::vector<GUI> guis = { {nullptr, vec2(0.5, 0.5), vec2(0.25, 0.25), 0.5} };
-	gui_manager->render(guis);
+	//gui_manager->render(guis);
 
 
 	m_swap_chain->present(true);
