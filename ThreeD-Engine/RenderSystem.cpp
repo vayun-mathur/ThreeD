@@ -128,23 +128,23 @@ StructuredBufferPtr RenderSystem::createStructuredBuffer(void* buffer, UINT size
 	return sb;
 }
 
-RWStructuredBufferPtr RenderSystem::createAppendStructuredBuffer(void* buffer, UINT size_unit, UINT count)
+RWStructuredBufferPtr RenderSystem::createAppendStructuredBuffer(UINT size_unit, UINT count)
 {
 	RWStructuredBufferPtr sb = nullptr;
 	try
 	{
-		sb = std::make_shared<RWStructuredBuffer>(buffer, size_unit, count, this, D3D11_BUFFER_UAV_FLAG_APPEND);
+		sb = std::make_shared<RWStructuredBuffer>( size_unit, count, this, D3D11_BUFFER_UAV_FLAG_APPEND);
 	}
 	catch (...) {}
 	return sb;
 }
 
-RWStructuredBufferPtr RenderSystem::createRWStructuredBuffer(void* buffer, UINT size_unit, UINT count)
+RWStructuredBufferPtr RenderSystem::createRWStructuredBuffer(UINT size_unit, UINT count)
 {
 	RWStructuredBufferPtr sb = nullptr;
 	try
 	{
-		sb = std::make_shared<RWStructuredBuffer>(buffer, size_unit, count, this);
+		sb = std::make_shared<RWStructuredBuffer>(size_unit, count, this);
 	}
 	catch (...) {}
 	return sb;

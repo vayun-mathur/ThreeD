@@ -92,41 +92,6 @@ private:
 	float roughness;
 	float amplitude;
 };
-/*
-#define clamp(value, minimum, maximum) max(min(value, maximum), minimum);
-
-class ColorGenerator {
-public:
-	ColorGenerator(vec3* biomeColors, int biomes, float spread)
-		: biomeColors(biomeColors), spread(spread), halfSpread(spread / 2), part(1 / (biomes - 1.f)) {
-	}
-
-	vec3** generateColours(float** heights, float gridSize, float amplitude) {
-		vec3** colors = new vec3 * [gridSize + 1];
-		for (int z = 0; z <= gridSize; z++) {
-			colors[z] = new vec3[gridSize + 1];
-			for (int x = 0; x <= gridSize; x++) {
-				colors[z][x] = calculateColour(heights[z][x], amplitude);
-			}
-		}
-		return colors;
-	}
-
-	vec3 calculateColour(float height, float amplitude) {
-		float value = (height + amplitude) / (amplitude * 2);
-		value = clamp((value - halfSpread) * (1.f / spread), 0.f, 0.9999f);
-		int firstBiome = (int)floor(value / part);
-		float blend = (value - (firstBiome * part)) / part;
-		return vec3::lerp(biomeColors[firstBiome], biomeColors[firstBiome + 1], blend);
-	}
-private:
-	float spread;
-	float halfSpread;
-
-	vec3* biomeColors;
-	float part;
-};
-*/
 inline vec3 floor(vec3 x) {
     return vec3(floor(x.x), floor(x.y), floor(x.z));
 }

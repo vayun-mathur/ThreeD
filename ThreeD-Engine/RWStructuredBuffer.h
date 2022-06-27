@@ -6,7 +6,7 @@
 class RWStructuredBuffer
 {
 public:
-	RWStructuredBuffer(void* buffer, UINT size_unit, UINT count, RenderSystem* system, UINT uav_flags = 0);
+	RWStructuredBuffer(UINT size_unit, UINT count, RenderSystem* system, UINT uav_flags = 0);
 	void update(DeviceContextPtr context, void* buffer);
 
 	void toCPU(DeviceContextPtr context);

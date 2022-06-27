@@ -37,7 +37,7 @@ SoftBody::SoftBody(vec3 position, int body_size)
 		triangles.push_back(surface{ vertex_indices[faceIndices[i * 3]], vertex_indices[faceIndices[i * 3 + 1]] , vertex_indices[faceIndices[i * 3 + 2]] });
 	}
 
-	nodebuf = GraphicsEngine::get()->getRenderSystem()->createRWStructuredBuffer(&nodes[0], sizeof(node), nodes.size());
+	nodebuf = GraphicsEngine::get()->getRenderSystem()->createRWStructuredBuffer( sizeof(node), nodes.size());
 
 	node* ptr = (node*)nodebuf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	memcpy(ptr, &nodes[0], sizeof(node) * nodes.size());

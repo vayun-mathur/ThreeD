@@ -8,21 +8,21 @@
 
 EditableMesh::EditableMesh()
 {
-	tinyobj::material_t* mat = new tinyobj::material_t();
-	mat->ambient[0] = 1;
-	mat->ambient[1] = 1;
-	mat->ambient[2] = 1;
-	mat->diffuse[0] = 0.2;
-	mat->diffuse[1] = 0.2;
-	mat->diffuse[2] = 0.2;
-	mat->specular[0] = 0;
-	mat->specular[1] = 0;
-	mat->specular[2] = 0;
-	mat->shininess = 1;
-	mat->ambient_texname = "";
-	mat->diffuse_texname = "";
-	mat->specular_texname = "";
-	m_material_indices.push_back({ 0, 588*3, std::make_shared<Material>(mat) });
+	tinyobj::material_t mat;
+	mat.ambient[0] = 1;
+	mat.ambient[1] = 1;
+	mat.ambient[2] = 1;
+	mat.diffuse[0] = 0.2;
+	mat.diffuse[1] = 0.2;
+	mat.diffuse[2] = 0.2;
+	mat.specular[0] = 0;
+	mat.specular[1] = 0;
+	mat.specular[2] = 0;
+	mat.shininess = 1;
+	mat.ambient_texname = "";
+	mat.diffuse_texname = "";
+	mat.specular_texname = "";
+	m_material_indices.push_back({ 0, 588*3, std::make_shared<Material>(&mat) });
 
 	VertexMesh list_vertices[588*3];
 

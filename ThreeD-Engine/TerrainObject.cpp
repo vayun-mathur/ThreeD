@@ -96,8 +96,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	ComputeShaderPtr pointshader = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
-	vec4* points = new vec4[size * height * size];
-	RWStructuredBufferPtr pointsbuffer = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(points, sizeof(vec4), size * height * size);
+	RWStructuredBufferPtr pointsbuffer = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(sizeof(vec4), size * height * size);
 	ConstantBufferPtr cbu = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cb, sizeof(cbuf));
 
 
@@ -112,11 +111,9 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	march = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
-	Triangle* t = new Triangle[size * height * size * 10];
-
-	RWStructuredBufferPtr buf = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(t, sizeof(Triangle), size * height * size * 10);
+	RWStructuredBufferPtr buf = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(sizeof(Triangle), size * height * size * 10);
 	pointsbuffer->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
-	points = (vec4*)pointsbuffer->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
+	vec4* points = (vec4*)pointsbuffer->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 
 	StructuredBufferPtr pts = GraphicsEngine::get()->getRenderSystem()->createStructuredBuffer(points, sizeof(vec4), size * height * size);
 
@@ -126,8 +123,6 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(buf, 0);
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute((size - 1) / 8, (height - 1) / 8, (size - 1) / 8);
-
-	delete[] t;
 
 	buf->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	Triangle* tris = (Triangle*)buf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());

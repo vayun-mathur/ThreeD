@@ -30,6 +30,7 @@ inline void readString(std::ifstream& stream, std::wstring& out) {
 	stream.read(str, len);
 	std::string s = std::string(str, len);
 	out = std::wstring(s.begin(), s.end());
+	delete[] str;
 }
 inline void readString(std::ifstream& stream, std::string& out) {
 	int len;
@@ -39,4 +40,5 @@ inline void readString(std::ifstream& stream, std::string& out) {
 	stream.read(&c, 1);
 	stream.read(str, len);
 	out = std::string(str, len);
+	delete[] str;
 }
