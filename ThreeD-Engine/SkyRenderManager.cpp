@@ -93,8 +93,8 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_cubeIB);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-	double t = (float)::GetTickCount64()/100000;
-	t = 1;
+	double t = (float)::GetTickCount64()/5000;
+	//t = 0.05;
 	b.sun_dir = vec3(0, sin(t), cos(t));
 	b.transform.setIdentity();
 	b.transform.setTranslation(cam->getCameraPosition());
@@ -107,8 +107,8 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb, 0);
-	//GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->everything->getDepthTexture(), 0);
-	//GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->everything->getTexture(), 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->everything->getDepthTexture(), 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, AppWindow::s_main->everything->getTexture(), 1);
 
 	// Draw the cube
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);

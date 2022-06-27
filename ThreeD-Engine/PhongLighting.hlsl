@@ -4,8 +4,6 @@ Texture2D map_kd : register(t1);
 sampler map_kd_sampler : register(s1);
 Texture2D map_ks : register(t2);
 sampler map_ks_sampler : register(s2);
-Texture2D Sky : register(t3);
-sampler samplerSky : register(s3);
 
 //Directional Light
 struct DLIGHT {
@@ -109,14 +107,4 @@ float3 calculatePoint(MATERIAL material, PLIGHT plight, float3 world_pos, float3
 	float3 final_light = diffuse_light + specular_light;
 
 	return final_light;
-}
-
-float3 fog(float3 light, float3 depth, float2 realpos) {
-	float dstFog = 1 - exp(-max(0, depth) * 8 * .0003); //increase
-	// exp(-max(0, depth) * 8 * .0001) decrease
-	// -max(0, depth) * 8 * .0001 decrease
-	// max(0, depth) * 8 * .0001 increase
-	// depth * 8 * .0001 increase
-
-	return lerp(light, Sky.Sample(samplerSky, realpos).rgb, saturate(dstFog));
 }

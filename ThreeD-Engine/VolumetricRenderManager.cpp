@@ -125,8 +125,8 @@ void VolumetricRenderManager::Render(ID3D11DeviceContext* const deviceContext, s
 		// pass in our textures )
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_vol, 0);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, m_blue, 1);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, AppWindow::s_main->everything->getDepthTexture(), 2);
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, AppWindow::s_main->everything->getTexture(), 3);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, AppWindow::s_main->sky_pp->getDepthTexture(), 2);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ray_ps, AppWindow::s_main->sky_pp->getTexture(), 3);
 
 		// Draw the cube
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);

@@ -95,7 +95,7 @@ public:
 
 	SceneSystem* m_scene = nullptr;
 
-	FrameBufferPtr everything, everything2, sky_texture;
+	FrameBufferPtr everything, sky_pp;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;

@@ -83,14 +83,9 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 
 	if (toRender == nullptr) {
 
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(sky_texture, 0, 1, 0, 0);
-
-		sky_manager->render(m_scene->getCamera());
-
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(everything, 0, 0, 0, 0);
 
-		sky_manager->render(m_scene->getCamera());
 		mesh_manager->render(meshes, m_cb, cc);
 		mesh_manager->render(physicals, m_cb, cc);
 
@@ -98,16 +93,22 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 
 		water_manager->render(waters, m_cb, cc);
 
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 1, 0, 0);
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
+
 		sky_manager->render(m_scene->getCamera());
+		/*
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
+
 		mesh_manager->render(meshes, m_cb, cc);
 		mesh_manager->render(physicals, m_cb, cc);
 
 		terrain_manager->render(terrains, m_cb, cc);
 
 		water_manager->render(waters, m_cb, cc);
+		sky_manager->render(m_scene->getCamera());
 
 		volumetric_manager->render(volumes);
+		*/
 	}
 	else {
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(toRender, 0, 0, 0, 0);
@@ -221,7 +222,7 @@ void AppWindow::onCreate()
 	onFocus();
 
 	everything = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
-	sky_texture = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
+	sky_pp = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 }
 
 void AppWindow::onUpdate()
@@ -259,7 +260,7 @@ void AppWindow::onSize()
 	RECT rc = this->getClientWindowRect();
 	m_swap_chain->resize(rc.right, rc.bottom);
 	everything->resize(rc.right, rc.bottom);
-	sky_texture->resize(rc.right, rc.bottom);
+	sky_pp->resize(rc.right, rc.bottom);
 	m_scene->getCamera()->updateProjectionMatrix();
 	render();
 }
