@@ -125,7 +125,7 @@ void Density(int3 id : SV_DispatchThreadID)
 
     float frequency = 0.02;
     float amplitude = 8;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 3; i++) {
         finalVal += snoise(pos * frequency) * amplitude;
         frequency *= 2;
         amplitude /= 2;

@@ -7,10 +7,6 @@
 #include <tiny_obj_loader.h>
 #include <map>
 
-vec3 calcNormal(float l, float r, float d, float u) {
-	return vec3(l - r, 2, d - u).normal();
-}
-
 vec3 color(float height, float amplitude) {
 	vec3 sand = vec3(201, 178, 99) / 255;
 	vec3 grass = vec3(135, 184, 82) / 255;
@@ -38,62 +34,6 @@ vec3 color(float height, float amplitude) {
 	return vec3::lerp_bounds(mountain, snow, 0.6, 1, norm);
 }
 
-MeshPtr createTerrain(PerlinNoise perlinNoise, float pointPerUnit, float size) {
-
-	std::vector<TerrainMesh> list_vertices;
-	std::vector<unsigned int> list_indices;
-	std::vector<MaterialIndexRange> materials;
-
-	int gridSize = (int)(pointPerUnit * size);
-
-	int count = gridSize * gridSize;
-	for (int i = 0; i < gridSize; i++) {
-		for (int j = 0; j < gridSize; j++) {
-			vec3 vertex = vec3(
-				(float)j / ((float)gridSize - 1) * size,
-				perlinNoise.getPerlinNoise(j, i, pointPerUnit),
-				(float)i / ((float)gridSize - 1) * size
-			);
-			vec3 normal = calcNormal(perlinNoise.getPerlinNoise(j - 1, i, pointPerUnit), perlinNoise.getPerlinNoise(j + 1, i, pointPerUnit), perlinNoise.getPerlinNoise(j, i - 1, pointPerUnit), perlinNoise.getPerlinNoise(j, i + 1, pointPerUnit));
-			vec2 texCoord = vec2(j, i) / ((float)gridSize - 1);
-			list_vertices.push_back(TerrainMesh(vertex, color(vertex.y, perlinNoise.getAmplitude()), normal));
-		}
-	}
-	int pointer = 0;
-	for (int gz = 0; gz < gridSize - 1; gz++) {
-		for (int gx = 0; gx < gridSize - 1; gx++) {
-			int topLeft = (gz * gridSize) + gx;
-			int topRight = topLeft + 1;
-			int bottomLeft = ((gz + 1) * gridSize) + gx;
-			int bottomRight = bottomLeft + 1;
-			list_indices.push_back(topLeft);
-			list_indices.push_back(bottomLeft);
-			list_indices.push_back(topRight);
-			list_indices.push_back(topRight);
-			list_indices.push_back(bottomLeft);
-			list_indices.push_back(bottomRight);
-		}
-	}
-
-	tinyobj::material_t* mat = new tinyobj::material_t();
-	mat->ambient[0] = 1;
-	mat->ambient[1] = 1;
-	mat->ambient[2] = 1;
-	mat->diffuse[0] = 0.2;
-	mat->diffuse[1] = 0.2;
-	mat->diffuse[2] = 0.2;
-	mat->specular[0] = 0;
-	mat->specular[1] = 0;
-	mat->specular[2] = 0;
-	mat->shininess = 1;
-	mat->ambient_texname = "terrain.png";
-	mat->diffuse_texname = "";
-	mat->specular_texname = "";
-	materials.push_back({ 0, (int)list_indices.size(), std::make_shared<Material>(mat) });
-
-	return std::make_shared<Mesh>(list_vertices, list_indices, materials);
-}
-
 struct Triangle {
 	vec3 v1, v2, v3;
 };
@@ -110,7 +50,13 @@ vec3 normal(Triangle& t) {
 ComputeShaderPtr march;
 
 struct compareVector {
-	bool operator()(const vec3& a, const vec3& b) const {
+	bool operator()(vec3 a, vec3 b) const {
+		a.x = floor(a.x * 10) / 10;
+		a.y = floor(a.y * 10) / 10;
+		a.z = floor(a.z * 10) / 10;
+		b.x = floor(b.x * 10) / 10;
+		b.y = floor(b.y * 10) / 10;
+		b.z = floor(b.z * 10) / 10;
 		if (a.x != b.x) {
 			return a.x < b.x;
 		}
@@ -139,7 +85,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	int height = 33;
 	int size = 65;
 
-	PerlinNoise p = PerlinNoise(2022, 9, height/2, 0.4);
+	PerlinNoise p = PerlinNoise(2022, 9, height / 2, 0.4);
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -158,7 +104,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(pointshader);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(pointsbuffer, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBufferCS(cbu, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(size/8+1, height / 8 + 1, size / 8 + 1);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(size / 8 + 1, height / 8 + 1, size / 8 + 1);
 
 
 
@@ -179,7 +125,9 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(pts, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(buf, 0);
 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute((size-1)/8, (height-1) / 8, (size-1) / 8);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute((size - 1) / 8, (height - 1) / 8, (size - 1) / 8);
+
+	delete[] t;
 
 	buf->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	Triangle* tris = (Triangle*)buf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
@@ -195,7 +143,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 		if (tris->v1.mag() < 0.001 && tris->v2.mag() < 0.001 && tris->v3.mag() < 0.001) {
 			break;
 		}
-		vertices.insert({ tris->v1, vertices.size()});
+		vertices.insert({ tris->v1, vertices.size() });
 		vertices.insert({ tris->v2, vertices.size() });
 		vertices.insert({ tris->v3, vertices.size() });
 		normals[tris->v1].first += normal(*tris);
@@ -211,7 +159,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 		tris++;
 	}
 	for (auto it = normals.begin(); it != normals.end(); ++it) {
-		it->second.first /= it->second.second;
+		it->second.first.normalize();
 	}
 	list_vertices.resize(vertices.size());
 	for (auto&& [vertex, id] : vertices) {
