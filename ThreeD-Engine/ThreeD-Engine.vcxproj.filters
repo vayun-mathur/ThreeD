@@ -139,6 +139,12 @@
     <Filter Include="Engine\GraphicsEngine\RenderSystem\EditableMesh">
       <UniqueIdentifier>{093ec958-2f04-4427-9d25-8f316fad182a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App\Shaders\Atmosphere">
+      <UniqueIdentifier>{2dd15664-17f6-4cd3-ae33-36c1c3d84fbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Shaders\Other">
+      <UniqueIdentifier>{ba1f3aca-8cff-4787-b8de-1e62d2825152}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -499,41 +505,44 @@
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
       <Filter>Engine\GraphicsEngine</Filter>
     </FxCompile>
-    <FxCompile Include="MeshShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="TerrainShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="WaterShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="VertexWaterLayoutShader.hlsl">
       <Filter>Engine\GraphicsEngine</Filter>
     </FxCompile>
     <FxCompile Include="CloudShader.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongLighting.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="MarchingCubes.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="MarchTables.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="TerrainDensityCompute.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="SoftBody.hlsl">
-      <Filter>App\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="GUIShader.hlsl">
-      <Filter>App\Shaders</Filter>
+      <Filter>App\Shaders\Atmosphere</Filter>
     </FxCompile>
     <FxCompile Include="SkyShader.hlsl">
-      <Filter>App\Shaders</Filter>
+      <Filter>App\Shaders\Atmosphere</Filter>
+    </FxCompile>
+    <FxCompile Include="GUIShader.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="MarchingCubes.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="MarchTables.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="MeshShader.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongLighting.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="SoftBody.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainDensityCompute.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainShader.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterShader.hlsl">
+      <Filter>App\Shaders\Other</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyboxShader.hlsl">
+      <Filter>App\Shaders\Atmosphere</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

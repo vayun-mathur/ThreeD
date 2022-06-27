@@ -21,7 +21,8 @@
 #include "VolumetricRenderManager.h"
 #include "GUIRenderManager.h"
 #include "PhysicsSystem.h"
-#include "SkyRenderManager.h"
+
+class SkyRenderManager;
 
 struct dlight {
 	vec4 light_direction;
@@ -95,7 +96,7 @@ public:
 
 	SceneSystem* m_scene = nullptr;
 
-	FrameBufferPtr everything, sky_pp;
+	FrameBufferPtr everything, sky_pp, stars;
 private:
 	float m_old_delta=0;
 	float m_new_delta=0;

@@ -13,6 +13,8 @@ Texture2D Depth : register(t0);
 sampler samplerDepth : register(s0);
 Texture2D Main : register(t1);
 sampler samplerMain : register(s1);
+Texture2D Stars : register(t2);
+sampler samplerStars : register(s2);
 
 
 // for vertex shader
@@ -170,21 +172,15 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	float2 realpos = (input.position.xy) / screenSize;
 
 	float3 skyColBase;
-	if (rayDir.y > 0)
+	if (rayDir.y > 0) {
 		skyColBase = calculateSkyColor(cam_pos, rayDir, Main.Sample(samplerMain, realpos).rgb, linearDepth(Depth.Sample(samplerDepth, realpos).r));
-	else
+		float darkness_thres = 0.05;
+		float star_factor = 1/ darkness_thres * saturate(darkness_thres - (skyColBase.x + skyColBase.y + skyColBase.z) / 3);
+		return float4(skyColBase * (1 - star_factor) + Stars.Sample(samplerStars, realpos).rgb * star_factor, 1);
+	}
+	else {
 		skyColBase = Main.Sample(samplerMain, realpos).rgb;
+		return float4(skyColBase, 1);
+	}
 
-	//float3 skyColBase = lerp(colA, colB, sqrt(abs(saturate(rayDir.y))));
-
-	float cosAngle = dot(rayDir, sun_dir);
-
-	float focusedEyeCos = pow(saturate(cosAngle), 1);
-	float sun = saturate(hg(focusedEyeCos, .9995)) * normalize(T(cam_pos, cam_pos + collisionDist(cam_pos, rayDir) * rayDir));
-
-	float3 col = skyColBase * (1 - sun) + sun_color * sun;
-
-	//if (rayDir.y < 0) return float4(0, 0, 0, 1);
-
-	return float4(skyColBase, 1);
 }

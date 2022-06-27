@@ -17,6 +17,7 @@
 #include "StructuredBuffer.h"
 #include "RWStructuredBuffer.h"
 #include "PhysicalObject.h"
+#include "SkyRenderManager.h"
 #include <iostream>
 
 AppWindow* AppWindow::s_main;
@@ -92,6 +93,10 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 		terrain_manager->render(terrains, m_cb, cc);
 
 		water_manager->render(waters, m_cb, cc);
+
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(stars, 0, 0, 0, 0);
+
+		sky_manager->render_stars(m_cb, cc, m_scene->getCamera());
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
 
@@ -223,6 +228,7 @@ void AppWindow::onCreate()
 
 	everything = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 	sky_pp = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
+	stars = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 }
 
 void AppWindow::onUpdate()
@@ -261,6 +267,7 @@ void AppWindow::onSize()
 	m_swap_chain->resize(rc.right, rc.bottom);
 	everything->resize(rc.right, rc.bottom);
 	sky_pp->resize(rc.right, rc.bottom);
+	stars->resize(rc.right, rc.bottom);
 	m_scene->getCamera()->updateProjectionMatrix();
 	render();
 }
