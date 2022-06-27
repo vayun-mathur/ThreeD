@@ -34,44 +34,9 @@ PS_INPUT vsmain(VS_INPUT input)
 	return output;
 }
 
-float hg(float a, float g) {
-	float g2 = g * g;
-	return (1 - g2) / (4 * 3.1415 * pow(1 + g2 - 2 * g * (a), 1.5));
-}
-
-float phase(float3 v1, float3 v2) {
-	float4 phaseParams = float4(.83f, .3f, .8f, .15f);
-	float a = dot(v1, v2) / length(v1) / length(v2);
-	float blend = .5;
-	float hgBlend = hg(a, phaseParams.x) * (1 - blend) + hg(a, -phaseParams.y) * blend;
-	return phaseParams.z + hgBlend * phaseParams.w;
-}
-
 float dist_from_center(float3 p) {
 	float3 c = float3(0, -6360000, 0);
 	return length(p - c);
-}
-
-float density_r(float3 p) {
-	float dist = dist_from_center(p);
-	dist -= 6360000;
-	if (dist < 0) return 0;
-	return exp(-dist / 8000);
-}
-
-float3 T(float3 Xa, float3 Xb) {
-	float3 scattering = float3(0, 0, 0);
-	float3 dx = (Xb - Xa) / 30;
-	for (int i = 0; i < 30; i++) {
-		float3 x = Xa + dx * i;
-		scattering += float3(5.802, 13.558, 33.1) / 1e6 * density_r(x) * length(dx);
-	}
-	return exp(-scattering);
-}
-
-float ph(float3 v, float3 li) {
-	float cosangle = dot(v, li);
-	return 3 * (1 + cosangle * cosangle) / (16 * 3.1415926);
 }
 
 float collisionDist(float3 o, float3 u) {
@@ -81,8 +46,77 @@ float collisionDist(float3 o, float3 u) {
 
 	float uoc = dot(u, o - c);
 	float del = uoc * uoc - (length(o - c) * length(o - c) - r * r);
-	if (del < 0) return 1000000;
+	//if (del < 0) return 1000000;
 	return -uoc + sqrt(del);
+}
+
+float hg(float a, float g) {
+	float g2 = g * g;
+	return (1 - g2) / (4 * 3.1415 * pow(1 + g2 - 2 * g * (a), 1.5));
+}
+
+float phase_m(float3 v1, float3 v2) {
+	float a = dot(v1, v2) / length(v1) / length(v2);
+	return hg(a, 0.8);
+}
+
+float phase_r(float3 v, float3 li) {
+	float cosangle = dot(v, li);
+	return 3 * (1 + cosangle * cosangle) / (16 * 3.1415926);
+}
+
+float density_r(float3 p) {
+	float dist = dist_from_center(p);
+	dist -= 6360000;
+	if (dist < 0) return 0;
+	return exp(-dist / 8000);
+}
+
+float density_m(float3 p) {
+	float dist = dist_from_center(p);
+	dist -= 6360000;
+	if (dist < 0) return 0;
+	return exp(-dist / 1200);
+}
+
+float density_o(float3 p) {
+	float dist = dist_from_center(p);
+	dist -= 6360000;
+	return max(0, 1 - abs(dist - 25000) / 15000);
+}
+
+float3 o_s_r(float3 x) {
+	return float3(5.802, 13.558, 33.1) / 1e6 * density_r(x);
+}
+
+float3 o_t_r(float3 x) {
+	return float3(5.802, 13.558, 33.1) / 1e6 * density_r(x);
+}
+
+float3 o_s_m(float3 x) {
+	return float3(3.996, 3.996, 3.996) / 1e6 * density_m(x);
+}
+
+float3 o_t_m(float3 x) {
+	return float3(8.396, 8.396, 8.396) / 1e6 * density_m(x);
+}
+
+float3 o_s_o(float3 x) {
+	return float3(0, 0, 0) / 1e6 * density_o(x);
+}
+
+float3 o_t_o(float3 x) {
+	return float3(0.650, 1.881, 0.085) / 1e6 * density_o(x);
+}
+
+float3 T(float3 Xa, float3 Xb) {
+	float3 scattering = float3(0, 0, 0);
+	float3 dx = (Xb - Xa) / 30;
+	for (int i = 0; i < 30; i++) {
+		float3 x = Xa + dx * i;
+		scattering += (o_t_r(x) + o_t_m(x) + o_t_o(x)) * length(dx);
+	}
+	return exp(-scattering);
 }
 
 float3 S(float3 x, float3 li) {
@@ -92,7 +126,7 @@ float3 S(float3 x, float3 li) {
 
 float3 Lscat(float3 c, float3 x, float3 v) {
 	float3 E = float3(1, 1, 1) * 10;
-	return float3(5.802, 13.558, 33.1) / 1e6 * T(c, x) * S(x, sun_dir) * ph(v, sun_dir) * E * density_r(x);
+	return (o_s_r(x) * phase_r(-v, sun_dir) + o_s_m(x) * phase_m(-v, sun_dir)) * T(c, x) * S(x, sun_dir) * E;
 }
 
 float3 L(float3 c, float3 v) {
@@ -126,7 +160,6 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	//float3 skyColBase = lerp(colA, colB, sqrt(abs(saturate(rayDir.y))));
 
 	float cosAngle = dot(rayDir, sun_dir);
-	float phaseVal = phase(rayDir, sun_dir);
 
 	float focusedEyeCos = pow(saturate(cosAngle), 1);
 	float sun = saturate(hg(focusedEyeCos, .9995)) * normalize(T(cam_pos, cam_pos + collisionDist(cam_pos, rayDir) * rayDir));
