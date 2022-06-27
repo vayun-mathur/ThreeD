@@ -24,12 +24,10 @@ void TerrainRenderManager::init()
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 }
 
-void TerrainRenderManager::render(std::vector<TerrainObjectPtr>& terrains, ConstantBufferPtr cb, constant& cc)
+void TerrainRenderManager::render(TerrainObjectPtr terrain, ConstantBufferPtr cb, constant& cc)
 {
-	for (TerrainObjectPtr terrain : terrains) {
+	for (auto&&[pos, mesh] : terrain->getMeshes()) {
 		cc.m_transform.setIdentity();
-		cc.m_transform.setTranslation(terrain->getPosition());
-		cc.m_transform.setScale(terrain->getScale());
 		cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
@@ -39,10 +37,10 @@ void TerrainRenderManager::render(std::vector<TerrainObjectPtr>& terrains, Const
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb, 0);
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, tex, 0);
 
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(terrain->getMesh()->getVertexBuffer());
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(terrain->getMesh()->getIndexBuffer());
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(mesh->getVertexBuffer());
+		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(mesh->getIndexBuffer());
 
-		for (MaterialIndexRange mir : terrain->getMesh()->getMaterials()) {
+		for (MaterialIndexRange mir : mesh->getMaterials()) {
 			MaterialPtr material = mir.material;
 
 			GraphicsEngine::get()->getRenderSystem()->setRasterizerState(material->getCullMode());

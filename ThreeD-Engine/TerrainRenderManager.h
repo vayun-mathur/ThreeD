@@ -8,7 +8,7 @@ class TerrainRenderManager
 {
 public:
 	void init();
-	void render(std::vector<TerrainObjectPtr>& terrains, ConstantBufferPtr cb, constant& cc);
+	void render(TerrainObjectPtr terrain, ConstantBufferPtr cb, constant& cc);
 private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;

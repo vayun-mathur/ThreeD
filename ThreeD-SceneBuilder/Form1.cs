@@ -85,9 +85,10 @@ namespace ThreeD_SceneBuilder
                         obj = new PhysicalObject(name, id);
                         break;
                     case "TERRAIN":
-                        position = readVec(s);
+                        int chunk_size = s.nextInt();
+                        int chunk_height = s.nextInt();
 
-                        obj = new TerrainObject(name, id, position);
+                        obj = new TerrainObject(name, id, chunk_size, chunk_height);
                         break;
                     case "WATER":
                         position = readVec(s);

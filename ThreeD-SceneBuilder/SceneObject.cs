@@ -109,18 +109,21 @@ namespace ThreeD_SceneBuilder
 
     public class TerrainObject : SceneObject
     {
-        [CategoryAttribute("Transform"), DescriptionAttribute("Position of this terrain")]
-        public Vec3 position { get; set; }
+        [CategoryAttribute("Chunks"), DescriptionAttribute("Number of subdivisions in each chunk in the x and z axis")]
+        public int chunk_size { get; set; }
+        [CategoryAttribute("Chunks"), DescriptionAttribute("Number of subdivisions in each chunk in the y axis")]
+        public int chunk_height { get; set; }
 
-        public TerrainObject(string name, int id, Vec3 position)
+        public TerrainObject(string name, int id, int chunk_size, int chunk_height)
             : base(name, id)
         {
-            this.position = position;
+            this.chunk_size = chunk_size;
+            this.chunk_height = chunk_height;
         }
 
         public override string ToSaveString()
         {
-            return string.Format("{0} {1} {2} {3} 7 TERRAIN {4}", id, parent.id, name.Length, name, position);
+            return string.Format("{0} {1} {2} {3} 7 TERRAIN {4} {5}", id, parent.id, name.Length, name, chunk_size, chunk_height);
         }
     }
 

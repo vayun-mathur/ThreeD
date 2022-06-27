@@ -59,9 +59,9 @@ SceneSystem::SceneSystem(std::wstring file_path)
 			components.insert({ id, mesh });
 		}
 		else if (type == "TERRAIN") {
-			vec3 position;
-			scene_file >> position.x >> position.y >> position.z;
-			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, position);
+			int chunk_size, chunk_height;
+			scene_file >> chunk_size >> chunk_height;
+			TerrainObjectPtr terrain = std::make_shared<TerrainObject>(name, this, chunk_size, chunk_height);
 			components[parent]->addChild(terrain);
 			components.insert({ id, terrain });
 		}

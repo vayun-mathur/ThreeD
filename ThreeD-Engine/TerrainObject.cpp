@@ -47,7 +47,6 @@ float saturate(float f) {
 vec3 normal(Triangle& t) {
 	return vec3::cross(t.v2 - t.v1, t.v3 - t.v1).normal();
 }
-ComputeShaderPtr march;
 
 struct compareVector {
 	bool operator()(vec3 a, vec3 b) const {
@@ -79,22 +78,11 @@ struct cbuf {
 
 cbuf cb;
 
-TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
-	: SceneObject(name, system)
-{
-	int height = 33;
-	int size = 65;
+MeshPtr TerrainObject::createTerrainMesh(PerlinNoise p, int x, int z) {
+	int height = chunk_height + 1;
+	int size = chunk_size + 1;
 
-	PerlinNoise p = PerlinNoise(2022, 9, height / 2, 0.4);
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-
-	cb.start_position = opos;
-
-	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"TerrainDensityCompute.hlsl", "Density", &shader_byte_code, &size_shader);
-	ComputeShaderPtr pointshader = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+	cb.start_position = vec3(x, 0, z) * chunk_size;
 
 	RWStructuredBufferPtr pointsbuffer = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(sizeof(vec4), size * height * size);
 	ConstantBufferPtr cbu = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&cb, sizeof(cbuf));
@@ -105,11 +93,6 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBufferCS(cbu, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(size / 8 + 1, height / 8 + 1, size / 8 + 1);
 
-
-
-	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"MarchingCubes.hlsl", "March", &shader_byte_code, &size_shader);
-	march = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
-	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
 	RWStructuredBufferPtr buf = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(sizeof(Triangle), size * height * size * 10);
 	pointsbuffer->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
@@ -122,7 +105,7 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(pts, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(buf, 0);
 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute((size - 1) / 8, (height - 1) / 8, (size - 1) / 8);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(chunk_size / 8, chunk_height / 8, chunk_size / 8);
 
 	buf->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	Triangle* tris = (Triangle*)buf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
@@ -178,7 +161,31 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, vec3 opos)
 	mat->specular_texname = "";
 	materials.push_back({ 0, (int)list_indices.size(), std::make_shared<Material>(mat) });
 
-	m_mesh = std::make_shared<Mesh>(list_vertices, list_indices, materials);
+	return std::make_shared<Mesh>(list_vertices, list_indices, materials);
+}
+
+TerrainObject::TerrainObject(std::string name, SceneSystem* system, int chunk_size, int chunk_height)
+	: SceneObject(name, system), chunk_size(chunk_size), chunk_height(chunk_height)
+{
+
+	PerlinNoise p = PerlinNoise(2022, 9, 33 / 2, 0.4);
+
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+
+	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"TerrainDensityCompute.hlsl", "Density", &shader_byte_code, &size_shader);
+	pointshader = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"MarchingCubes.hlsl", "March", &shader_byte_code, &size_shader);
+	march = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
+
+	for (int x = 0; x < 3; x++) {
+		for (int z = 0; z < 3; z++) {
+			m_meshes[c2{ x, z }] = createTerrainMesh(p, x, z);
+		}
+	}
 }
 
 TerrainObject::~TerrainObject()
@@ -188,7 +195,7 @@ TerrainObject::~TerrainObject()
 ScriptValue* TerrainObject::dot(std::string s)
 {
 	if (s == "parent") return m_parent.get();
-	if (s == "position") return new Vec3ScriptValue(&m_position);
-	if (s == "scale") return new Vec3ScriptValue(&m_scale);
+	if (s == "chunk_size") return new NumberScriptValue(&chunk_size);
+	if (s == "chunk_height") return new NumberScriptValue(&chunk_height);
 	return nullptr;
 }

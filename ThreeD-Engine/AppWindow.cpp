@@ -90,7 +90,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 		mesh_manager->render(meshes, m_cb, cc);
 		mesh_manager->render(physicals, m_cb, cc);
 
-		terrain_manager->render(terrains, m_cb, cc);
+		terrain_manager->render(terrains[0], m_cb, cc);
 
 		water_manager->render(waters, m_cb, cc);
 
@@ -120,7 +120,7 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 		mesh_manager->render(meshes, m_cb, cc);
 		mesh_manager->render(physicals, m_cb, cc);
 
-		terrain_manager->render(terrains, m_cb, cc);
+		terrain_manager->render(terrains[0], m_cb, cc);
 	}
 }
 
@@ -189,6 +189,8 @@ void AppWindow::update()
 	find(m_scene->getRoot(), meshes, physicals, terrains, waters, dlights, plights);
 
 	physics_system->update(physicals, m_delta_time);
+	double t = (float)::GetTickCount64() / 5000;
+	dlights[0]->setDirection(vec3(0, sin(t), cos(t)));
 }
 
 AppWindow::~AppWindow()
