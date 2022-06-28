@@ -82,7 +82,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>Libs\convhull_3d\;Libs\tinyobjloader\include;Libs\DirectXTex\include;Libs\openal\include;$(IncludePath)</IncludePath>
+    <IncludePath>Eigen\;Libs\convhull_3d\;Libs\tinyobjloader\include;Libs\DirectXTex\include;Libs\openal\include;$(IncludePath)</IncludePath>
     <LibraryPath>Libs\openal\libs\Win64;Libs\DirectXTex\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -168,6 +168,7 @@
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="DirectionalLightObject.cpp" />
     <ClCompile Include="EditableMesh.cpp" />
+    <ClCompile Include="FEA.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
@@ -199,10 +200,10 @@
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="SkyRenderManager.cpp" />
-    <ClCompile Include="SoftBody.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="TerrainRenderManager.cpp" />
+    <ClCompile Include="TetrahedralMesh.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="Vec3Object.cpp" />
     <ClCompile Include="Vector.cpp" />
@@ -232,10 +233,12 @@
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DirectionalLightObject.h" />
     <ClInclude Include="EditableMesh.h" />
+    <ClInclude Include="FEA.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GUIRenderManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh2.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshObject.h" />
     <ClInclude Include="MeshRenderManager.h" />
@@ -256,10 +259,10 @@
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="ScriptSystem.h" />
     <ClInclude Include="SkyRenderManager.h" />
-    <ClInclude Include="SoftBody.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="TerrainRenderManager.h" />
+    <ClInclude Include="TetrahedralMesh.h" />
     <ClInclude Include="Texture3D.h" />
     <ClInclude Include="Vec3Object.h" />
     <ClInclude Include="Vector.h" />

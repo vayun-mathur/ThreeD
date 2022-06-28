@@ -24,13 +24,13 @@ EditableMesh::EditableMesh()
 	mat.specular_texname = "";
 	m_material_indices.push_back({ 0, 588*3, std::make_shared<Material>(&mat) });
 
-	VertexMesh list_vertices[588*3];
+	VertexMesh list_vertices[5000*3];
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
 	GraphicsEngine::get()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader, 0);
 	m_vertex_buffer = GraphicsEngine::get()->getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh),
-		588*3, shader_byte_code, size_shader, 0);
+		5000 *3, shader_byte_code, size_shader, 0);
 }
 
 const VertexBufferPtr& EditableMesh::getVertexBuffer()

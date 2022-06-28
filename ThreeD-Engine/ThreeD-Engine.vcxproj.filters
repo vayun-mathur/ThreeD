@@ -145,6 +145,9 @@
     <Filter Include="App\Shaders\Other">
       <UniqueIdentifier>{ba1f3aca-8cff-4787-b8de-1e62d2825152}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\PhysicsSystem\SoftBody">
+      <UniqueIdentifier>{74dcfd06-77cf-4bb2-8d65-2997c4e43627}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -306,14 +309,17 @@
     <ClCompile Include="EditableMesh.cpp">
       <Filter>Engine\GraphicsEngine\RenderSystem\EditableMesh</Filter>
     </ClCompile>
-    <ClCompile Include="SoftBody.cpp">
-      <Filter>Engine\PhysicsSystem</Filter>
-    </ClCompile>
     <ClCompile Include="GUIRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
     </ClCompile>
     <ClCompile Include="SkyRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="FEA.cpp">
+      <Filter>Engine\PhysicsSystem\SoftBody</Filter>
+    </ClCompile>
+    <ClCompile Include="TetrahedralMesh.cpp">
+      <Filter>Engine\PhysicsSystem\SoftBody</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,14 +497,20 @@
     <ClInclude Include="MeshRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
-    <ClInclude Include="SoftBody.h">
-      <Filter>Engine\PhysicsSystem</Filter>
-    </ClInclude>
     <ClInclude Include="GUIRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
     <ClInclude Include="SkyRenderManager.h">
       <Filter>App\RenderManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="FEA.h">
+      <Filter>Engine\PhysicsSystem\SoftBody</Filter>
+    </ClInclude>
+    <ClInclude Include="TetrahedralMesh.h">
+      <Filter>Engine\PhysicsSystem\SoftBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh2.h">
+      <Filter>Engine\PhysicsSystem\SoftBody</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,10 @@
 #include "PhysicsSystem.h"
 #include "PhysicalObject.h"
-#include "EditableMesh.h"
-#include "SoftBody.h"
 #include "GraphicsEngine.h"
 #include "DeviceContext.h"
-
-SoftBody* body;
+#include "TetrahedralMesh.h"
+#include "EditableMesh.h"
+#include "FEA.h"
 
 __declspec(align(16))
 struct cbufC
@@ -18,9 +17,8 @@ struct cbufC
 
 cbufC buf;
 
-void updateMesh(EditableMeshPtr mesh, SoftBody* body) {
-	body->editMesh(mesh);
-}
+std::shared_ptr<FEA> m_fea;
+std::shared_ptr<TetrahedralMesh> m_tetrahedral_mesh;
 
 PhysicsSystem::PhysicsSystem()
 {
@@ -33,13 +31,17 @@ PhysicsSystem::PhysicsSystem()
 
 	cbuf = GraphicsEngine::get()->getRenderSystem()->createConstantBuffer(&buf, sizeof(cbufC));
 
-	body = new SoftBody(vec3(0, 20, 0), buf.size);
+	m_tetrahedral_mesh = std::make_shared<TetrahedralMesh>();
+	m_fea = std::make_shared<FEA>(m_tetrahedral_mesh, 0.1, 0.0001);
+
+	auto force_node_index = (8 * 10) + (4 * 2) + 0;
+	m_fea->SetForce(force_node_index, vec3(0.002f, -0.04f, 0.08f));
 }
 
 void PhysicsSystem::update(std::vector<PhysicalObjectPtr>& objects, double dt)
 {
 	this->physicals = objects;
-
+	/*
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(soft_body);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBufferCS(cbuf, 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(body->getNodeBuffer(), 0);
@@ -47,7 +49,23 @@ void PhysicsSystem::update(std::vector<PhysicalObjectPtr>& objects, double dt)
 	for (int i = 0; i < 10; i++) {
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(4, 4, 4);
 	}
-	
-	body->update(dt);
-	updateMesh(physicals[0]->getMesh(), body);
+	for (int i = 0; i < 10; i++) {
+		body->update(0.00002);
+	}
+	*/
+	//;
+	for (int i = 0; i < 10; i++) {
+		m_fea->Update();
+	}
+	auto new_tetrahedral_mesh = m_tetrahedral_mesh->GetMesh();
+
+	EditableMeshPtr ptr = physicals[0]->getMesh();
+	std::vector<Triangle>& tris = ptr->getTriangles();
+	tris.clear();
+	for (int i = 0; i < new_tetrahedral_mesh.m_indices.size();i+=3) {
+		tris.push_back(Triangle{ new_tetrahedral_mesh.m_vertex_positions[new_tetrahedral_mesh.m_indices[i]],
+			new_tetrahedral_mesh.m_vertex_positions[new_tetrahedral_mesh.m_indices[i+1]] ,
+			new_tetrahedral_mesh.m_vertex_positions[new_tetrahedral_mesh.m_indices[i+2]] });
+	}
+	ptr->updateMesh();
 }

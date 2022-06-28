@@ -163,6 +163,17 @@ public:
 	mat3() {
 		setIdentity();
 	}
+	mat3(vec3 x, vec3 y, vec3 z) {
+		mat[0][0] = x.x;
+		mat[0][1] = x.y;
+		mat[0][2] = x.z;
+		mat[1][0] = y.x;
+		mat[1][1] = y.y;
+		mat[1][2] = y.z;
+		mat[2][0] = z.x;
+		mat[2][1] = z.y;
+		mat[2][2] = z.z;
+	}
 
 	void setIdentity()
 	{
@@ -200,6 +211,36 @@ public:
 		mat[0][1] = sinf(z);
 		mat[1][0] = -sinf(z);
 		mat[1][1] = cosf(z);
+	}
+
+	mat3 transposed() {
+		mat3 o;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				o.mat[j][i] = mat[i][j];
+			}
+		}
+		return o;
+	}
+
+	mat3 operator+(const mat3& other) {
+		mat3 o;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				o.mat[i][j] = mat[i][j] + other.mat[i][j];
+			}
+		}
+		return o;
+	}
+
+	mat3 operator*(float other) {
+		mat3 o;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				o.mat[i][j] = mat[i][j] * other;
+			}
+		}
+		return o;
 	}
 
 	float getDeterminant()
@@ -242,6 +283,11 @@ public:
 	vec3 getXDirection()
 	{
 		return vec3(mat[0][0], mat[0][1], mat[0][2]);
+	}
+
+	vec3 getYDirection()
+	{
+		return vec3(mat[1][0], mat[1][1], mat[1][2]);
 	}
 
 	mat3 operator()(const mat3& matrix)

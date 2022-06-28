@@ -181,11 +181,6 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, int chunk_si
 	march = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
 
-	for (int x = 0; x < 3; x++) {
-		for (int z = 0; z < 3; z++) {
-			m_meshes[c2{ x, z }] = createTerrainMesh(p, x, z);
-		}
-	}
 }
 
 TerrainObject::~TerrainObject()

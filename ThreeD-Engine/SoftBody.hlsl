@@ -27,6 +27,10 @@ uint index(uint x, uint y, uint z) {
 	return x * size * size + y * size + z;
 }
 
+uint index(uint3 v) {
+	return v.x * size * size + v.y * size + v.z;
+}
+
 const static float kmul1 = 0.666;
 const static float kmul2 = 0.1;
 
@@ -44,6 +48,26 @@ void UpdateSprings(uint3 id : SV_DispatchThreadID)
 	bool z1 = id.z != size - 1;
 	nodes[idx0].f = float3(0, -9.81 * nodes[idx0].mass, 0);
 
+	float3 dux, duy, duz;
+	if (x0 && x1) dux = nodes[index(id) + uint3(1, 0, 0)].pos - nodes[index(id) + uint3(-1, 0, 0)].pos / 0.2;
+	else if (x0) dux = nodes[index(id)].pos - nodes[index(id) + uint3(-1, 0, 0)].pos / 0.1;
+	else if (x1) dux = nodes[index(id) + uint3(1, 0, 0)].pos - nodes[index(id)].pos / 0.1;
+
+	if (y0 && y1) duy = nodes[index(id) + uint3(0, 1, 0)].pos - nodes[index(id) + uint3(0, -1, 0)].pos / 0.2;
+	else if (y0) duy = nodes[index(id)].pos - nodes[index(id) + uint3(0, -1, 0)].pos / 0.1;
+	else if (y1) duy = nodes[index(id) + uint3(0, 1, 0)].pos - nodes[index(id)].pos / 0.1;
+
+	if (z0 && z1) duz = nodes[index(id) + uint3(0, 0, 1)].pos - nodes[index(id) + uint3(0, 0, -1)].pos / 0.2;
+	else if (z0) duz = nodes[index(id)].pos - nodes[index(id) + uint3(0, 0, -1)].pos / 0.1;
+	else if (z1) duz = nodes[index(id) + uint3(0, 0, 1)].pos - nodes[index(id)].pos / 0.1;
+
+	float3x3 du = float3x3(dux, duy, duz);
+	float3x3 e = 0.5 * (du + transpose(du));
+
+	float3x3 o;
+
+
+	/*
 	float rl = rest_length;
 	float KS = ks;
 	float KD = kd;
@@ -86,6 +110,7 @@ void UpdateSprings(uint3 id : SV_DispatchThreadID)
 	if (nodes[idx0].pos.y <= 19.5) {
 		nodes[idx0].vel = reflect(nodes[idx0].vel, normalize(float3(0, 1, 0)));
 	}
+	*/
 	nodes[idx0].vel += nodes[idx0].f * dt / nodes[idx0].mass;
 	nodes[idx0].pos += nodes[idx0].vel * dt;
 }
