@@ -3,7 +3,23 @@
 
 #include <memory>
 #include <vector>
-#include "Mesh2.h"
+#include "Vector.h"
+
+struct Mesh
+{
+public:
+	Mesh(std::vector<vec3> vertex_positions,
+		std::vector<short> indices)
+	{
+		m_vertex_positions = vertex_positions;
+		m_indices = indices;
+	}
+
+	std::vector<vec3> m_vertex_positions;
+	std::vector<short> m_indices;
+};
+
+
 
 struct TetrahedralElementIndices
 {

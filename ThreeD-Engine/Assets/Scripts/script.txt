@@ -2,8 +2,5 @@ this.parent.audio.pitch = 1;
 this.parent.audio.gain = 1;
 this.parent.onclick = [button]{
 	this.audio.play("Assets/Audio/CantinaBand60.wav");
-	this.onupdate = [dt]{
-		this.audio.position.x += 1 * dt;
-	};
 };
 

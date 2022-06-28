@@ -6,6 +6,9 @@
 #include "EditableMesh.h"
 #include "FEA.h"
 
+#include <chrono>
+#include <iostream>
+
 __declspec(align(16))
 struct cbufC
 {
@@ -40,23 +43,16 @@ PhysicsSystem::PhysicsSystem()
 
 void PhysicsSystem::update(std::vector<PhysicalObjectPtr>& objects, double dt)
 {
+
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 	this->physicals = objects;
-	/*
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(soft_body);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setConstantBufferCS(cbuf, 0);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(body->getNodeBuffer(), 0);
-	
-	for (int i = 0; i < 10; i++) {
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(4, 4, 4);
-	}
-	for (int i = 0; i < 10; i++) {
-		body->update(0.00002);
-	}
-	*/
-	//;
+
 	for (int i = 0; i < 10; i++) {
 		m_fea->Update();
 	}
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 	auto new_tetrahedral_mesh = m_tetrahedral_mesh->GetMesh();
 
 	EditableMeshPtr ptr = physicals[0]->getMesh();

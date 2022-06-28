@@ -107,12 +107,6 @@ Mesh TetrahedralMesh::GetMesh()
 	std::vector<vec3> m_vertex_positions;
 	m_vertex_positions.reserve(m_elements.size() * 12);
 
-	std::vector<vec3> m_vertex_colors;
-	m_vertex_colors.reserve(m_elements.size() * 12);
-
-	std::vector<vec3> m_vertex_normals;
-	m_vertex_normals.reserve(m_elements.size() * 12);
-
 	std::vector<short> m_indices;
 	m_indices.reserve(m_elements.size() * 12);
 
@@ -144,35 +138,6 @@ Mesh TetrahedralMesh::GetMesh()
 			}
 		);
 
-		// Inefficient to colour each vertex the same colour - could simply pass the colour to the shaders
-		//  - but this keeps the flexibility to eventually allow each vertex to be a different colour
-		auto color = blue;
-		m_vertex_colors.insert(end(m_vertex_colors),
-			{
-				color, color, color,
-				color, color, color,
-				color, color, color,
-				color, color, color
-			});
-
-		// TODO: check that the normals are pointing in the right direction.
-		// Can't really check programmatically?
-		// push the responsiblity onto the the model building
-		//  but want a mode to graphically visualise the normals?
-		auto bottom_normal = vec3::cross(back - left, back - right);
-		auto front_normal = vec3::cross(right - top, right - left) * -1;
-		auto back_left_normal = vec3::cross(back - top, back - left);
-		auto back_right_normal = vec3::cross(back - top, back - right);
-
-		// duplicate points as have normals perpendicular to each face, not interpolated
-		m_vertex_normals.insert(end(m_vertex_normals),
-			{
-				bottom_normal, bottom_normal, bottom_normal,
-				front_normal, front_normal, front_normal,
-				back_left_normal, back_left_normal, back_left_normal,
-				back_right_normal, back_right_normal, back_right_normal
-			});
-
 		std::array<short, 12> elementTriangleIndices =
 		{ {
 				// bottom
@@ -196,5 +161,5 @@ Mesh TetrahedralMesh::GetMesh()
 		}
 	}
 
-	return Mesh(m_vertex_positions, m_vertex_colors, m_vertex_normals, m_indices);
+	return Mesh(m_vertex_positions, m_indices);
 }

@@ -172,15 +172,10 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	float2 realpos = (input.position.xy) / screenSize;
 
 	float3 skyColBase;
-	if (rayDir.y > 0) {
-		skyColBase = calculateSkyColor(cam_pos, rayDir, Main.Sample(samplerMain, realpos).rgb, linearDepth(Depth.Sample(samplerDepth, realpos).r));
-		float darkness_thres = 0.05;
-		float star_factor = 1/ darkness_thres * saturate(darkness_thres - (skyColBase.x + skyColBase.y + skyColBase.z) / 3);
-		return float4(skyColBase * (1 - star_factor) + Stars.Sample(samplerStars, realpos).rgb * star_factor, 1);
-	}
-	else {
-		skyColBase = Main.Sample(samplerMain, realpos).rgb;
-		return float4(skyColBase, 1);
-	}
+
+	skyColBase = calculateSkyColor(cam_pos, rayDir, Main.Sample(samplerMain, realpos).rgb, linearDepth(Depth.Sample(samplerDepth, realpos).r));
+	float darkness_thres = 0.05;
+	float star_factor = 1/ darkness_thres * saturate(darkness_thres - (skyColBase.x + skyColBase.y + skyColBase.z) / 3);
+	return float4(skyColBase * (1 - star_factor) + Stars.Sample(samplerStars, realpos).rgb * star_factor, 1);
 
 }

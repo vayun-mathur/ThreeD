@@ -509,9 +509,6 @@
     <ClInclude Include="TetrahedralMesh.h">
       <Filter>Engine\PhysicsSystem\SoftBody</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh2.h">
-      <Filter>Engine\PhysicsSystem\SoftBody</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">

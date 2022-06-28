@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <array>
 
-FEA::FEA(std::shared_ptr<TetrahedralMesh> mesh, double total_mass, double dt)
+FEA::FEA(std::shared_ptr<TetrahedralMesh> mesh, float total_mass, float dt)
 	: m_mesh(mesh),
 	m_delta_time(dt)
 {
@@ -22,7 +22,7 @@ FEA::FEA(std::shared_ptr<TetrahedralMesh> mesh, double total_mass, double dt)
 
 	CreateLumpedMassMatrix(m_xdim, total_mass);
 
-	auto x0 = Eigen::MatrixXd(m_xdim, 1);
+	auto x0 = Eigen::MatrixXf(m_xdim, 1);
 	for (auto node_index = 0; node_index < nodes.size(); ++node_index)
 	{
 		auto target_node_index = m_original_node_indices_mapped_to_non_fixed[node_index];
@@ -37,7 +37,7 @@ FEA::FEA(std::shared_ptr<TetrahedralMesh> mesh, double total_mass, double dt)
 	}
 	m_x0 = x0;
 
-	m_v = Eigen::MatrixXd(m_xdim, 1);
+	m_v = Eigen::MatrixXf(m_xdim, 1);
 	m_v.setZero();
 
 	m_x = m_x0;
@@ -45,7 +45,7 @@ FEA::FEA(std::shared_ptr<TetrahedralMesh> mesh, double total_mass, double dt)
 	m_A = m_lumped_mass_matrix + /*delta_time * damping +*/ (m_delta_time * m_delta_time) * m_floating_node_stiffness_matrix;
 
 	// In case user doesn't set a force
-	m_force = Eigen::MatrixXd(m_xdim, 1);
+	m_force = Eigen::MatrixXf(m_xdim, 1);
 	m_force.setZero();
 }
 
@@ -55,7 +55,7 @@ FEA::~FEA()
 
 void FEA::SetForce(int node_index, vec3 force)
 {
-	m_force = Eigen::MatrixXd(m_xdim, 1);
+	m_force = Eigen::MatrixXf(m_xdim, 1);
 	m_force.setZero();
 
 	auto resulting_index = m_original_node_indices_mapped_to_non_fixed[node_index];
@@ -81,11 +81,11 @@ void FEA::Update()
 	auto Kf = m_floating_node_stiffness_matrix * displacement;
 
 	// Explicitly specify type to avoid auto-template expression problem
-	Eigen::MatrixXd B = (m_lumped_mass_matrix * m_v) - (m_delta_time * (Kf - m_force));
+	Eigen::MatrixXf B = (m_lumped_mass_matrix * m_v) - (m_delta_time * (Kf - m_force));
 
-	Eigen::ConjugateGradient<Eigen::MatrixXd> cg_inner;
+	Eigen::ConjugateGradient<Eigen::MatrixXf> cg_inner;
 	cg_inner.compute(m_A);
-	Eigen::MatrixXd v_new = cg_inner.solve(B);
+	Eigen::MatrixXf v_new = cg_inner.solve(B);
 
 	m_v = v_new;
 	m_x = m_x + (m_delta_time * v_new);
@@ -106,21 +106,21 @@ void FEA::Update()
 	}
 }
 
-void FEA::CreateLumpedMassMatrix(int num_nodes, double total_mass)
+void FEA::CreateLumpedMassMatrix(int num_nodes, float total_mass)
 {
 	auto mass = total_mass / num_nodes;
 
-	m_lumped_mass_matrix = Eigen::MatrixXd::Identity(num_nodes, num_nodes) * mass;
+	m_lumped_mass_matrix = Eigen::MatrixXf::Identity(num_nodes, num_nodes) * mass;
 }
 
-Eigen::MatrixXd FEA::BuildDampingMatrix(int num_nodes, double damping)
+Eigen::MatrixXf FEA::BuildDampingMatrix(int num_nodes, float damping)
 {
-	return Eigen::MatrixXd::Identity(num_nodes, num_nodes) * damping;
+	return Eigen::MatrixXf::Identity(num_nodes, num_nodes) * damping;
 }
 
-Eigen::Matrix4d FEA::BuildBarycentricMatrix(vec3 x1, vec3 x2, vec3 x3, vec3 x4)
+Eigen::Matrix4f FEA::BuildBarycentricMatrix(vec3 x1, vec3 x2, vec3 x3, vec3 x4)
 {
-	Eigen::Matrix4d Pe;
+	Eigen::Matrix4f Pe;
 
 	Pe.setOnes();
 
@@ -137,9 +137,9 @@ Eigen::Matrix4d FEA::BuildBarycentricMatrix(vec3 x1, vec3 x2, vec3 x3, vec3 x4)
 
 // Displacement-deformation matrix
 // Pe is barycentric matrix
-Eigen::Matrix<double, 6, 12> FEA::BuildBe(Eigen::Matrix4d Pe)
+Eigen::Matrix<float, 6, 12> FEA::BuildBe(Eigen::Matrix4f Pe)
 {
-	Eigen::Matrix<double, 6, 12> be;
+	Eigen::Matrix<float, 6, 12> be;
 
 	be.setZero();
 
@@ -176,7 +176,7 @@ Eigen::Matrix<double, 6, 12> FEA::BuildBe(Eigen::Matrix4d Pe)
 	return be;
 }
 
-Eigen::Matrix<double, 12, 12> FEA::BuildKe(vec3 x1, vec3 x2, vec3 x3, vec3 x4, double mu, double lambda)
+Eigen::Matrix<float, 12, 12> FEA::BuildKe(vec3 x1, vec3 x2, vec3 x3, vec3 x4, float mu, float lambda)
 {
 	auto Pe = BuildBarycentricMatrix(x1, x2, x3, x4); // H matrix in PBR
 
@@ -186,7 +186,7 @@ Eigen::Matrix<double, 12, 12> FEA::BuildKe(vec3 x1, vec3 x2, vec3 x3, vec3 x4, d
 
 	auto Be = BuildBe(Pe); // Displacement-deformation matrix (B matrix in PBR)
 
-	Eigen::Matrix<double, 6, 6> E; // isotropic elasticity matrix (PBR calls this D matrix, is E matrix in GPP)
+	Eigen::Matrix<float, 6, 6> E; // isotropic elasticity matrix (PBR calls this D matrix, is E matrix in GPP)
 	E.setZero();
 
 	auto mr = 2 * mu + lambda;
@@ -201,14 +201,14 @@ Eigen::Matrix<double, 12, 12> FEA::BuildKe(vec3 x1, vec3 x2, vec3 x3, vec3 x4, d
 	return Ke;
 }
 
-void FEA::AssembleGlobalStiffnessMatrix(double mu, double lambda)
+void FEA::AssembleGlobalStiffnessMatrix(float mu, float lambda)
 {
 	auto elements = m_mesh->GetElements();
 	auto nodes = m_mesh->GetNodes();
 
 	auto result_matrix_size = 3 * nodes.size();
 
-	Eigen::MatrixXd K(result_matrix_size, result_matrix_size);
+	Eigen::MatrixXf K(result_matrix_size, result_matrix_size);
 	K.setZero();
 
 	for (auto element : elements)
@@ -251,7 +251,7 @@ void FEA::CreateFloatingNodeStiffnessMatrix()
 
 	auto matrix_size = nodes_count * 3;
 	auto resulting_size = matrix_size - (fixed_nodes.size() * 3);
-	Eigen::MatrixXd resulting(resulting_size, resulting_size);
+	Eigen::MatrixXf resulting(resulting_size, resulting_size);
 	resulting.setZero();
 
 	auto non_fixed_node_num = 0;
