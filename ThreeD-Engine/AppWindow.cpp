@@ -101,19 +101,6 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
 
 		sky_manager->render(m_scene->getCamera());
-		/*
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(m_swap_chain, 0, 0, 0, 0);
-
-		mesh_manager->render(meshes, m_cb, cc);
-		mesh_manager->render(physicals, m_cb, cc);
-
-		terrain_manager->render(terrains, m_cb, cc);
-
-		water_manager->render(waters, m_cb, cc);
-		sky_manager->render(m_scene->getCamera());
-
-		volumetric_manager->render(volumes);
-		*/
 	}
 	else {
 		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(toRender, 0, 0, 0, 0);
@@ -218,8 +205,6 @@ void AppWindow::onCreate()
 	terrain_manager->init();
 	mesh_manager = new MeshRenderManager();
 	mesh_manager->init();
-	volumetric_manager = new VolumetricRenderManager();
-	volumetric_manager->init();
 	sky_manager = new SkyRenderManager();
 	sky_manager->init();
 	gui_manager = new GUIRenderManager();

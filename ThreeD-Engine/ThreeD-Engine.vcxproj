@@ -209,7 +209,6 @@
     <ClCompile Include="Vec3Object.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="VolumeObject.cpp" />
-    <ClCompile Include="VolumetricRenderManager.cpp" />
     <ClCompile Include="WaterRenderManager.cpp" />
     <ClCompile Include="WaterTileObject.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -268,7 +267,6 @@
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexMesh.h" />
     <ClInclude Include="VolumeObject.h" />
-    <ClInclude Include="VolumetricRenderManager.h" />
     <ClInclude Include="WaterRenderManager.h" />
     <ClInclude Include="WaterTileObject.h" />
     <ClInclude Include="Window.h" />
@@ -288,10 +286,6 @@
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="CloudShader.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="GUIShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

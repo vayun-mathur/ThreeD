@@ -5,6 +5,7 @@
 #include "AppWindow.h"
 #include "CameraObject.h"
 #include "Mesh.h"
+#include "Texture3D.h"
 
 
 __declspec(align(16))
@@ -12,12 +13,19 @@ struct _buf__ {
 	mat4 transform;
 	mat4 view;
 	mat4 projection;
+	mat4 inv_transform;
 	vec3 campos;
 	float f;
 	vec2 screenSize;
 	float f2, f3;
 	vec3 sun_dir;
+	float f4;
+	vec3 bounds_min;
+	float f5;
+	vec3 bounds_max;
 };
+
+Texture3DPtr m_vol2;
 
 _buf__ b;
 
@@ -96,6 +104,8 @@ void SkyRenderManager::init()
 
 	m_mesh = GraphicsEngine::get()->getMeshManager()->createMeshFromFile(L"Assets/Meshes/sphere.obj");
 	texture = GraphicsEngine::get()->getTextureManager()->createTextureFromFile(L"Assets/Textures/stars_map.jpg");
+
+	m_vol2 = std::make_shared<Texture3D>(L"./Assets/cloud.raw", 256);
 }
 
 void SkyRenderManager::render(CameraObjectPtr cam)
@@ -105,7 +115,13 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs_sky);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps_sky);
 	double t = (float)::GetTickCount64() / 5000;
-	//t = 0.05;
+	t = 1;
+	vec3 min = vec3(-10, 20, -10);
+	vec3 max = vec3(10, 40, 10);
+	b.inv_transform = mat4();
+	b.inv_transform.setTranslation(min + (max - min) / 2);
+	b.inv_transform.setScale((max - min) / 2);
+	b.inv_transform.inverse();
 	b.sun_dir = vec3(0, sin(t), cos(t));
 	b.transform.setIdentity();
 	b.transform.setTranslation(cam->getCameraPosition());
@@ -113,6 +129,8 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 	b.campos = cam->getCameraPosition();
 	b.view = cam->getViewMatrix();
 	b.projection = cam->getProjectionMatrix();
+	b.bounds_max = max;
+	b.bounds_min = min;
 	b.screenSize = vec2(AppWindow::s_main->getClientWindowRect().right - AppWindow::s_main->getClientWindowRect().left, AppWindow::s_main->getClientWindowRect().bottom - AppWindow::s_main->getClientWindowRect().top);
 	m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &b);
 
@@ -121,6 +139,7 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps_sky, AppWindow::s_main->everything->getDepthTexture(), 0);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps_sky, AppWindow::s_main->everything->getTexture(), 1);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps_sky, AppWindow::s_main->stars->getTexture(), 2);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps_sky, m_vol2, 3);
 
 	// Draw the cube
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(36, 0, 0);

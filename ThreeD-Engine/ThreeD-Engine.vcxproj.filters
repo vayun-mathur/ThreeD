@@ -270,9 +270,6 @@
     <ClCompile Include="TerrainRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
     </ClCompile>
-    <ClCompile Include="VolumetricRenderManager.cpp">
-      <Filter>App\RenderManagers</Filter>
-    </ClCompile>
     <ClCompile Include="WaterRenderManager.cpp">
       <Filter>App\RenderManagers</Filter>
     </ClCompile>
@@ -461,9 +458,6 @@
     <ClInclude Include="TerrainRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
-    <ClInclude Include="VolumetricRenderManager.h">
-      <Filter>App\RenderManagers</Filter>
-    </ClInclude>
     <ClInclude Include="WaterRenderManager.h">
       <Filter>App\RenderManagers</Filter>
     </ClInclude>
@@ -516,9 +510,6 @@
     </FxCompile>
     <FxCompile Include="VertexWaterLayoutShader.hlsl">
       <Filter>Engine\GraphicsEngine</Filter>
-    </FxCompile>
-    <FxCompile Include="CloudShader.hlsl">
-      <Filter>App\Shaders\Atmosphere</Filter>
     </FxCompile>
     <FxCompile Include="SkyShader.hlsl">
       <Filter>App\Shaders\Atmosphere</Filter>

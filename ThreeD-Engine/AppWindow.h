@@ -18,7 +18,6 @@
 #include "WaterRenderManager.h"
 #include "TerrainRenderManager.h"
 #include "MeshRenderManager.h"
-#include "VolumetricRenderManager.h"
 #include "GUIRenderManager.h"
 #include "PhysicsSystem.h"
 
@@ -89,7 +88,6 @@ public:
 	WaterRenderManager* water_manager;
 	TerrainRenderManager* terrain_manager;
 	MeshRenderManager* mesh_manager;
-	VolumetricRenderManager* volumetric_manager;
 	GUIRenderManager* gui_manager;
 	SkyRenderManager* sky_manager;
 	PhysicsSystem* physics_system;
