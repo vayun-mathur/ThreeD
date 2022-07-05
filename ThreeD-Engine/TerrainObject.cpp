@@ -192,7 +192,7 @@ TerrainObject::~TerrainObject()
 
 const std::vector<MeshPtr> TerrainObject::getMeshes(vec3 pos, bool generate)
 {
-	int view_chunk_dist = 3;
+	int view_chunk_dist = 0;
 
 	if (generate_off) generate = false;
 	int x = floor(pos.x / chunk_size);

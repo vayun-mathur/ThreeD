@@ -13,6 +13,8 @@ struct PS_INPUT
 cbuffer cbuf : register(b0) {
 	float2 center;
 	float2 size;
+	float4 color;
+	float z;
 	float radius;
 };
 
@@ -21,7 +23,7 @@ PS_INPUT vsmain(VS_INPUT input)
 	PS_INPUT output = (PS_INPUT)0;
 
 	//WORLD SPACE
-	output.position = float4(input.position * size + center, 0, 1);
+	output.position = float4(input.position * size + center, 1-z, 1);
 	output.pos_init = input.position;
 
 	output.texcoord = input.position / 2 + 0.5;
@@ -35,8 +37,7 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	float2 dr = radius - de;
 	if (dr.x < 0) dr.x = 0;
 	if (dr.y < 0) dr.y = 0;
-	if (length(dr) > radius) {
+	if (length(dr) > radius)
 		clip(-1);
-}
-	return float4(1, 1, 1, 1);
+	return color;
 }

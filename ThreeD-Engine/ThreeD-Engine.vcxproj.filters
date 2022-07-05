@@ -148,6 +148,12 @@
     <Filter Include="Engine\PhysicsSystem\SoftBody">
       <UniqueIdentifier>{74dcfd06-77cf-4bb2-8d65-2997c4e43627}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\GUISystem">
+      <UniqueIdentifier>{0e59672a-a07a-49d4-82d9-27ab05e572ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GUISystem\Frame">
+      <UniqueIdentifier>{52248711-4a42-4958-85d4-08c8e9237eda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp">
@@ -503,6 +509,12 @@
     <ClInclude Include="TetrahedralMesh.h">
       <Filter>Engine\PhysicsSystem\SoftBody</Filter>
     </ClInclude>
+    <ClInclude Include="Frame.h">
+      <Filter>Engine\GUISystem\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIRect.h">
+      <Filter>Engine\GUISystem\Frame</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -549,5 +561,10 @@
     <Text Include="scene.txt">
       <Filter>App</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Screen.h">
+      <Filter>Engine\GUISystem\Frame</Filter>
+    </None>
   </ItemGroup>
 </Project>

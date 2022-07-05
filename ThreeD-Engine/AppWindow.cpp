@@ -19,6 +19,9 @@
 #include "PhysicalObject.h"
 #include "SkyRenderManager.h"
 #include <iostream>
+#include "Frame.h"
+#include "Screen.h"
+#include "GUIRect.h"
 
 AppWindow* AppWindow::s_main;
 
@@ -55,6 +58,13 @@ void find(SceneObjectPtr obj, std::vector<MeshObjectPtr>& meshes,
 	}
 	for (auto&& [_, child] : obj->getChildren()) {
 		find(child, meshes, physicals, terrains, waters, dlights, plights);
+	}
+}
+
+void getGUIs(FramePtr obj, std::vector<FramePtr>& guis) {
+	guis.push_back(obj);
+	for (auto&& [_, child] : obj->getChildren()) {
+		getGUIs(child, guis);
 	}
 }
 
@@ -150,8 +160,10 @@ void AppWindow::render()
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 	renderScene(m_cb, nullptr);
 
-	std::vector<GUI> guis = { {nullptr, vec2(0.5, 0.5), vec2(0.25, 0.25), 0.5} };
-	//gui_manager->render(guis);
+	std::vector<FramePtr> guis;
+	getGUIs(m_scene->getGUIScreen()->getMain(), guis);
+
+	gui_manager->render(guis);
 
 
 	m_swap_chain->present(true);
@@ -218,6 +230,14 @@ void AppWindow::onCreate()
 	everything = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 	sky_pp = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
 	stars = GraphicsEngine::get()->getRenderSystem()->createFrameBuffer(rc.right - rc.left, rc.bottom - rc.top);
+
+	Constraints c;
+	c.xcenter = []()->float {return 0.5; };
+	c.ycenter = []()->float {return 0.5; };
+	c.width = []()->float {return 0.25; };
+	c.height = []()->float {return 0.25; };
+	m_scene->getGUIScreen()->getMain()->addChild(std::make_shared<GUIRect>("name2", c, vec4(1, 0, 0, 0.2), 0.3));
+	m_scene->getGUIScreen()->getMain()->getChild("name2")->addChild(std::make_shared<GUIRect>("name2",c, vec4(0, 0, 1, 0.9), 0.3));
 }
 
 void AppWindow::onUpdate()

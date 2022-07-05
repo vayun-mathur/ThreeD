@@ -234,7 +234,9 @@
     <ClInclude Include="DirectionalLightObject.h" />
     <ClInclude Include="EditableMesh.h" />
     <ClInclude Include="FEA.h" />
+    <ClInclude Include="Frame.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GUIRect.h" />
     <ClInclude Include="GUIRenderManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -393,6 +395,9 @@
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

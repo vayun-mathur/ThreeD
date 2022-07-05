@@ -14,6 +14,8 @@
 #include "ResourceManager.h"
 #include "Mesh.h"
 #include "PhysicalObject.h"
+#include "Frame.h"
+#include "Screen.h"
 #include <unordered_map>
 
 #include <fstream>
@@ -139,6 +141,13 @@ SceneSystem::SceneSystem(std::wstring file_path)
 	scene_file >> main_camera_id;
 
 	m_main_camera = std::reinterpret_pointer_cast<CameraObject>(components[main_camera_id]);
+
+	Constraints c;
+	c.xcenter = []()->float {return 0; };
+	c.ycenter = []()->float {return 0; };
+	c.width = []()->float {return 1; };
+	c.height = []()->float {return 1; };
+	m_guiscreen = std::make_shared<GUIScreen>(1080, 720, std::make_shared<Frame>("screen", c));
 }
 
 SceneSystem::~SceneSystem()

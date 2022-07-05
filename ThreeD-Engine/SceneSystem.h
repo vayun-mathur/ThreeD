@@ -14,8 +14,10 @@ public:
 
 	inline CameraObjectPtr getCamera() { return m_main_camera; }
 	inline SceneObjectPtr getRoot() { return m_root; }
+	inline GUIScreenPtr getGUIScreen() { return m_guiscreen; }
 private:
 	SceneObjectPtr m_root;
 	CameraObjectPtr m_main_camera;
+	GUIScreenPtr m_guiscreen;
 };
 

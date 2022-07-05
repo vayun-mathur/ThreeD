@@ -2,11 +2,15 @@
 #include "GraphicsEngine.h"
 #include "DeviceContext.h"
 #include "ConstantBuffer.h"
+#include "Frame.h"
+#include "GUIRect.h"
 
 __declspec(align(16))
 struct buf___ {
 	vec2 center;
 	vec2 size;
+	vec4 color;
+	float z;
 	float radius;
 };
 
@@ -36,7 +40,7 @@ void GUIRenderManager::init()
 		list_vertices.size(), shader_byte_code, size_shader, 4);
 }
 
-void GUIRenderManager::render(std::vector<GUI>& guis)
+void GUIRenderManager::render(std::vector<FramePtr>& guis)
 {
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
@@ -46,14 +50,23 @@ void GUIRenderManager::render(std::vector<GUI>& guis)
 
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 
-	for (GUI gui : guis) {
-		b.center = gui.center;
-		b.size = gui.size;
-		b.radius = gui.radius;
-		m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &b);
+	for (FramePtr _gui : guis) {
+		if (_gui->getType() == FrameType::GUIRect) {
+			auto gui = std::reinterpret_pointer_cast<GUIRect>(_gui);
 
-		//GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, texture, index);
+			FrameData d = gui->getRealCoordinates();
+			b.center = d.position;
+			b.size = d.scale;
+			b.z = d.z;
+			b.color = gui->color;
+			b.radius = gui->radius;
+			m_cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &b);
 
-		GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawTriangleList(6, 0);
+			//GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, texture, index);
+
+			GraphicsEngine::get()->getRenderSystem()->setRasterizerState(CULL_MODE::FRONT);
+			GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->drawTriangleList(6, 0);
+			GraphicsEngine::get()->getRenderSystem()->setRasterizerState(CULL_MODE::BACK);
+		}
 	}
 }
