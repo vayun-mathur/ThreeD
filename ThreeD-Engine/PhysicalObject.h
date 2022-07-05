@@ -2,6 +2,7 @@
 #include "prerequisites.h"
 #include "SceneObject.h"
 #include "Vector.h"
+#include "FEA.h"
 
 struct Force {
 	vec3 force;
@@ -25,6 +26,10 @@ public:
 
 	~PhysicalObject();
 
+	TetrahedralMeshPtr getTetrahedral() { return m_tetrahedral; }
+
+	std::shared_ptr<FEA> getFEA() { return m_fea; }
+
 	virtual SceneObjectType getType() const {
 		return SceneObjectType::PhysicalObject;
 	}
@@ -34,5 +39,7 @@ public:
 	virtual ScriptValue* dot(std::string);
 private:
 	EditableMeshPtr m_mesh;
+	TetrahedralMeshPtr m_tetrahedral;
+	std::shared_ptr<FEA> m_fea;
 };
 

@@ -19,6 +19,7 @@ RWStructuredBuffer::RWStructuredBuffer(UINT size_unit, UINT count, RenderSystem*
 	outputDesc.Usage = D3D11_USAGE_STAGING;
 	outputDesc.BindFlags = 0;
 	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	outputDesc.MiscFlags = 0;
 
 	hr = (system->m_d3d_device->CreateBuffer(&outputDesc, 0, &m_bufferCPU));
 
@@ -47,11 +48,11 @@ void RWStructuredBuffer::toGPU(DeviceContextPtr context)
 	context->m_device_context->CopyResource(m_buffer, m_bufferCPU);
 }
 
-void* RWStructuredBuffer::open_data(DeviceContextPtr context)
+D3D11_MAPPED_SUBRESOURCE RWStructuredBuffer::open_data(DeviceContextPtr context)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HRESULT hr = context->m_device_context->Map(m_bufferCPU, 0, D3D11_MAP_READ, 0, &mappedResource);
-	return mappedResource.pData;
+	return mappedResource;
 }
 
 void RWStructuredBuffer::close_data(DeviceContextPtr context)

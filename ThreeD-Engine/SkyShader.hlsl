@@ -51,7 +51,7 @@ PS_INPUT vsmain(VS_INPUT input)
 
 float sampleDensity(float3 pos) {
 	float3 textureSpace = mul(float4(pos, 1), m_inv_transform).xyz / 2 + 0.5;
-	return any(textureSpace != saturate(textureSpace)) ? 0 : Volume.SampleLevel(samplerVolume, textureSpace, 0).r;
+	return any(textureSpace != saturate(textureSpace)) ? 0 : Volume.SampleLevel(samplerVolume, textureSpace, 0).r / 10;
 }
 
 float dist_from_center(float3 p) {
@@ -273,6 +273,8 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	skyColBase = calculateSkyColor(cam_pos, rayDir, Main.Sample(samplerMain, realpos).rgb, linearDepth(Depth.Sample(samplerDepth, realpos).r));
 	float darkness_thres = 0.05;
 	float star_factor = 1/ darkness_thres * saturate(darkness_thres - (skyColBase.x + skyColBase.y + skyColBase.z) / 3);
-	return float4(skyColBase * (1 - star_factor) + Stars.Sample(samplerStars, realpos).rgb * star_factor, 1);
+	float3 out_color = skyColBase * (1 - star_factor) + Stars.Sample(samplerStars, realpos).rgb * star_factor;
+	out_color = (rayDir.y > 0 ? out_color : Main.Sample(samplerMain, realpos).rgb);
+	return float4(out_color, 1);
 
 }

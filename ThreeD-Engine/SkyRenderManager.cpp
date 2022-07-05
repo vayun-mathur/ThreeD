@@ -115,9 +115,9 @@ void SkyRenderManager::render(CameraObjectPtr cam)
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs_sky);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps_sky);
 	double t = (float)::GetTickCount64() / 5000;
-	t = 1;
-	vec3 min = vec3(-10, 20, -10);
-	vec3 max = vec3(10, 40, 10);
+	t = 0.05;
+	vec3 min = vec3(-100, 20, -100);
+	vec3 max = vec3(100, 220, 100);
 	b.inv_transform = mat4();
 	b.inv_transform.setTranslation(min + (max - min) / 2);
 	b.inv_transform.setScale((max - min) / 2);

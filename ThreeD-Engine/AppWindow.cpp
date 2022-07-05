@@ -90,7 +90,9 @@ void AppWindow::renderScene(ConstantBufferPtr cb, FrameBufferPtr toRender) {
 		mesh_manager->render(meshes, m_cb, cc);
 		mesh_manager->render(physicals, m_cb, cc);
 
+		terrain_manager->generate = true;
 		terrain_manager->render(terrains[0], m_cb, cc);
+		terrain_manager->generate = false;
 
 		water_manager->render(waters, m_cb, cc);
 

@@ -11,7 +11,7 @@ public:
 
 	void toCPU(DeviceContextPtr context);
 	void toGPU(DeviceContextPtr context);
-	void* open_data(DeviceContextPtr context);
+	D3D11_MAPPED_SUBRESOURCE open_data(DeviceContextPtr context);
 	void close_data(DeviceContextPtr context);
 
 	~RWStructuredBuffer();

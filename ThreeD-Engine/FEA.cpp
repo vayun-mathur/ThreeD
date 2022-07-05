@@ -53,11 +53,13 @@ FEA::~FEA()
 {
 }
 
-void FEA::SetForce(int node_index, vec3 force)
-{
+void FEA::ResetForces() {
 	m_force = Eigen::MatrixXf(m_xdim, 1);
 	m_force.setZero();
+}
 
+void FEA::SetForce(int node_index, vec3 force)
+{
 	auto resulting_index = m_original_node_indices_mapped_to_non_fixed[node_index];
 	if (resulting_index == -1)
 	{

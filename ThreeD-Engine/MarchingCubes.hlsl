@@ -9,11 +9,11 @@ struct Triangle {
 };
 
 AppendStructuredBuffer<Triangle> triangles : register(u0);
-StructuredBuffer<float4> points : register(t0);
+RWStructuredBuffer<float4> points : register(u1);
 
 static const int numPointsPerAxisXZ = 65;
 static const int numPointsPerAxisY = 33;
-static const float isoLevel = 0.1;
+static const float isoLevel = 0;
 
 float3 interpolateVerts(float4 v1, float4 v2) {
     float t = (isoLevel - v1.w) / (v2.w - v1.w);

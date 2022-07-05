@@ -26,7 +26,7 @@ void TerrainRenderManager::init()
 
 void TerrainRenderManager::render(TerrainObjectPtr terrain, ConstantBufferPtr cb, constant& cc)
 {
-	for (auto&&[pos, mesh] : terrain->getMeshes()) {
+	for (MeshPtr mesh : terrain->getMeshes(cc.m_camera_position.xyz(), generate)) {
 		cc.m_transform.setIdentity();
 		cb->update(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 

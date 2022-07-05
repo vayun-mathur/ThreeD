@@ -5,10 +5,10 @@
 #include <vector>
 #include "Vector.h"
 
-struct Mesh
+struct Mesh2
 {
 public:
-	Mesh(std::vector<vec3> vertex_positions,
+	Mesh2(std::vector<vec3> vertex_positions,
 		std::vector<short> indices)
 	{
 		m_vertex_positions = vertex_positions;
@@ -42,10 +42,10 @@ public:
 class TetrahedralMesh
 {
 public:
-	TetrahedralMesh();
+	TetrahedralMesh(int x_num, int y_num, int z_num, float cube_size);
 	~TetrahedralMesh();
 
-	Mesh GetMesh();
+	Mesh2 GetMesh();
 
 	std::vector<vec3> GetNodes() { return m_nodes; }
 	std::vector<TetrahedralElementIndices> GetElements() { return m_elements; }

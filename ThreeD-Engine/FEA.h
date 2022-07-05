@@ -31,6 +31,8 @@ public:
 
 	void Update();
 
+	void ResetForces();
+
 	// TODO: should allow for setting a force on multiple nodes, in one method
 	void SetForce(int node_index, vec3 force);
 

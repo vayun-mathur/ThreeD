@@ -115,18 +115,17 @@ void Density(int3 id : SV_DispatchThreadID)
         return;
     }
 
-    float3 pos = id + start_position;
+    float3 pos = id+start_position;
     pos.y -= 16;
+
     float finalVal = -pos.y + 5;
 
     float3 warp = float3(snoise(pos * 0.0004), snoise(pos * 0.0004 + 100), snoise(pos * 0.0004 - 100));
 
-    pos += warp * 3;
-
     float frequency = 0.02;
     float amplitude = 8;
     for (int i = 0; i < 3; i++) {
-        finalVal += snoise(pos * frequency) * amplitude;
+        finalVal += snoise((pos+ warp * 3) * frequency) * amplitude;
         frequency *= 2;
         amplitude /= 2;
     }

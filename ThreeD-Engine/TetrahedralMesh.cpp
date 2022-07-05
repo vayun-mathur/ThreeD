@@ -4,26 +4,22 @@
 // NOTE: hardcoded to create a 'wall' of cube, where each cube is formed of two 
 //  triangular pyramids, each made from three tetrahedra
 // would obviously be better to have the mesh definition stored externally in a file
-TetrahedralMesh::TetrahedralMesh()
+TetrahedralMesh::TetrahedralMesh(int x_num, int y_num, int z_num, float cube_size)
 {
-	auto length = 0.75;
-	auto x_num = 8;
-	auto y_num = 4;
-	auto z_num = 1;
 
 	auto x_dim = (x_num + 1);
 	auto y_dim = (y_num + 1);
 	auto z_dim = (z_num + 1);
 
-	auto xOffset = static_cast<float>(-(x_num * length) / 2.0);
+	auto xOffset = static_cast<float>(-(x_num * cube_size) / 2.0);
 
-	for (auto x = 0; x < x_num + 1; ++x)
+	for (auto x = 0; x < x_dim; ++x)
 	{
-		for (auto y = 0; y < y_num + 1; ++y)
+		for (auto y = 0; y < y_dim; ++y)
 		{
-			for (auto z = 0; z < z_num + 1; ++z)
+			for (auto z = 0; z < z_dim; ++z)
 			{
-				m_nodes.push_back(vec3(xOffset + (length * x), length * y, length * z));
+				m_nodes.push_back(vec3(xOffset + (cube_size * x), cube_size * y, cube_size * z));
 			}
 		}
 	}
@@ -87,7 +83,7 @@ void TetrahedralMesh::SetNodePosition(int index, vec3 position)
 	m_nodes[index] = position;
 }
 
-Mesh TetrahedralMesh::GetMesh()
+Mesh2 TetrahedralMesh::GetMesh()
 {
 	// NOTE: colours should also be stored in external file along with the vertices
 	/*auto purple = vec3{ 1.0f, 0.0f, 1.0f };
@@ -161,5 +157,5 @@ Mesh TetrahedralMesh::GetMesh()
 		}
 	}
 
-	return Mesh(m_vertex_positions, m_indices);
+	return Mesh2(m_vertex_positions, m_indices);
 }

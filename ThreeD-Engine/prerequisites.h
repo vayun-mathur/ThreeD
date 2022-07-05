@@ -40,6 +40,7 @@ class FrameBuffer;
 class VolumeObject;
 class PhysicalObject;
 class EditableMesh;
+class TetrahedralMesh;
 
 typedef std::shared_ptr<SwapChain> SwapChainPtr;
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -74,6 +75,7 @@ typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
 typedef std::shared_ptr<VolumeObject> VolumeObjectPtr;
 typedef std::shared_ptr<PhysicalObject> PhysicalObjectPtr;
 typedef std::shared_ptr<EditableMesh> EditableMeshPtr;
+typedef std::shared_ptr<TetrahedralMesh> TetrahedralMeshPtr;
 
 template<typename Base, typename T>
 inline bool instanceof(const T* ptr) {

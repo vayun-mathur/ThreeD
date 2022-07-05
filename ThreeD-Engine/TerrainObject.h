@@ -20,6 +20,8 @@ public:
 	}
 	inline const std::map<c2, MeshPtr>& getMeshes() { return m_meshes; }
 
+	const std::vector<MeshPtr> getMeshes(vec3 pos, bool generate);
+
 	virtual ScriptValue* dot(std::string);
 private:
 	MeshPtr createTerrainMesh(PerlinNoise p, int x, int z);
@@ -28,5 +30,6 @@ private:
 	ComputeShaderPtr pointshader, march;
 	float chunk_size = 64;
 	float chunk_height = 32;
+	PerlinNoise perlin;
 };
 

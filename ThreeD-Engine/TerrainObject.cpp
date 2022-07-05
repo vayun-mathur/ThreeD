@@ -6,6 +6,7 @@
 #include "RWStructuredBuffer.h"
 #include <tiny_obj_loader.h>
 #include <map>
+#include <stdlib.h>
 
 vec3 color(float height, float amplitude) {
 	vec3 sand = vec3(201, 178, 99) / 255;
@@ -78,7 +79,10 @@ struct cbuf {
 
 cbuf cb;
 
+bool generate_off = false;
+
 MeshPtr TerrainObject::createTerrainMesh(PerlinNoise p, int x, int z) {
+
 	int height = chunk_height + 1;
 	int size = chunk_size + 1;
 
@@ -95,20 +99,16 @@ MeshPtr TerrainObject::createTerrainMesh(PerlinNoise p, int x, int z) {
 
 
 	RWStructuredBufferPtr buf = GraphicsEngine::get()->getRenderSystem()->createAppendStructuredBuffer(sizeof(Triangle), size * height * size * 10);
-	pointsbuffer->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
-	vec4* points = (vec4*)pointsbuffer->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 
-	StructuredBufferPtr pts = GraphicsEngine::get()->getRenderSystem()->createStructuredBuffer(points, sizeof(vec4), size * height * size);
-
-	pointsbuffer->close_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setComputeShader(march);
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setStructuredBufferCS(pts, 0);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(pointsbuffer, 1);
 	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->setRWStructuredBufferCS(buf, 0);
 
-	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(chunk_size / 8, chunk_height / 8, chunk_size / 8);
+	GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext()->compute(chunk_size / 8 + 1, chunk_height / 8 + 1, chunk_size / 8 + 1);
 
 	buf->toCPU(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
-	Triangle* tris = (Triangle*)buf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
+	D3D11_MAPPED_SUBRESOURCE tris_data = buf->open_data(GraphicsEngine::get()->getRenderSystem()->getImmediateDeviceContext());
+	Triangle* tris = (Triangle*)tris_data.pData;
 
 	std::vector<TerrainMesh> list_vertices;
 	std::vector<unsigned int> list_indices;
@@ -119,7 +119,9 @@ MeshPtr TerrainObject::createTerrainMesh(PerlinNoise p, int x, int z) {
 
 	for (int i = 0; i < size * height * size * 10; i++) {
 		if (tris->v1.mag() < 0.001 && tris->v2.mag() < 0.001 && tris->v3.mag() < 0.001) {
-			break;
+			//TODO: figure out why appendbuffer is placing triangles in middle of buffer
+			tris++;
+			continue;
 		}
 		vertices.insert({ tris->v1, vertices.size() });
 		vertices.insert({ tris->v2, vertices.size() });
@@ -160,15 +162,17 @@ MeshPtr TerrainObject::createTerrainMesh(PerlinNoise p, int x, int z) {
 	mat->diffuse_texname = "";
 	mat->specular_texname = "";
 	materials.push_back({ 0, (int)list_indices.size(), std::make_shared<Material>(mat) });
-
+	if (list_vertices.size() == 0) {
+		generate_off = true;
+		return nullptr;
+	}
 	return std::make_shared<Mesh>(list_vertices, list_indices, materials);
 }
 
 TerrainObject::TerrainObject(std::string name, SceneSystem* system, int chunk_size, int chunk_height)
-	: SceneObject(name, system), chunk_size(chunk_size), chunk_height(chunk_height)
+	: SceneObject(name, system), chunk_size(chunk_size), chunk_height(chunk_height), perlin(2022, 9, 33 / 2, 0.4)
 {
 
-	PerlinNoise p = PerlinNoise(2022, 9, 33 / 2, 0.4);
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -180,11 +184,29 @@ TerrainObject::TerrainObject(std::string name, SceneSystem* system, int chunk_si
 	GraphicsEngine::get()->getRenderSystem()->compileComputeShader(L"MarchingCubes.hlsl", "March", &shader_byte_code, &size_shader);
 	march = GraphicsEngine::get()->getRenderSystem()->createComputeShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->getRenderSystem()->releaseCompiledShader();
-
 }
 
 TerrainObject::~TerrainObject()
 {
+}
+
+const std::vector<MeshPtr> TerrainObject::getMeshes(vec3 pos, bool generate)
+{
+	int view_chunk_dist = 3;
+
+	if (generate_off) generate = false;
+	int x = floor(pos.x / chunk_size);
+	int z = floor(pos.z / chunk_size);
+	std::vector<MeshPtr> meshes_out;
+	for (int i = -view_chunk_dist; i <= view_chunk_dist; i++) {
+		for (int j = -sqrt(view_chunk_dist* view_chunk_dist - i*i); j <= sqrt(view_chunk_dist * view_chunk_dist - i * i); j++) {
+			if (m_meshes.find({ x+i, z+j }) == m_meshes.end() && generate)
+				m_meshes[{x+i, z+j}] = createTerrainMesh(perlin, x+i, z+j);
+			if (m_meshes.find({ x + i, z + j }) != m_meshes.end() && m_meshes[{x+i, z+j}] != nullptr)
+				meshes_out.push_back(m_meshes[{x + i, z + j}]);
+		}
+	}
+	return meshes_out;
 }
 
 ScriptValue* TerrainObject::dot(std::string s)
